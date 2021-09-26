@@ -255,7 +255,7 @@ describe("InsightFacade", function () {
 				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
-						return facade.addDataset(id, content, InsightDatasetKind.Courses);
+						return facade.addDataset("courses-2", content, InsightDatasetKind.Courses);
 					}).then((res) => {
 						expect(res).to.be.an.instanceof(Array);
 						expect(res).to.have.length(2);
@@ -295,7 +295,6 @@ describe("InsightFacade", function () {
 					}).then((res) => {
 						expect(res).to.be.an.instanceof(Array);
 						expect(res).to.have.length(1);
-						expect(res).to.include.deep.members([id]);
 					});
 			});
 		});
