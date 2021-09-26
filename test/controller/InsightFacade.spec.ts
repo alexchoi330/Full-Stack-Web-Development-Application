@@ -69,8 +69,6 @@ describe("InsightFacade", function () {
 
 		describe("List Datasets", function() {
 			let facade: IInsightFacade;
-			const id: string = "courses";
-			const content: string = datasetContents.get("courses") ?? "";
 
 			beforeEach(function () {
 				clearDisk();
@@ -85,6 +83,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should list one dataset", function () {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => facade.listDatasets())
 					.then((insightDatasets) => {
@@ -102,6 +102,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should list multiple dataset", function () {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
 						return facade.addDataset("courses-2", content, InsightDatasetKind.Courses);
@@ -126,8 +128,6 @@ describe("InsightFacade", function () {
 
 		describe("Remove Datasets", function() {
 			let facade: IInsightFacade;
-			const id: string = "courses";
-			const content: string = datasetContents.get("courses") ?? "";
 
 			beforeEach(function () {
 				clearDisk();
@@ -141,6 +141,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should throw NotFoundError when id is not in Dataset", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
 						return facade.removeDataset("courses-2");
@@ -153,6 +155,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should return the id of the Dataset that is successfully removed", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
 						return facade.removeDataset(id);
@@ -167,6 +171,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("add 2 datasets, only delete 1 of them", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
 						return facade.addDataset("courses-2", content, InsightDatasetKind.Courses);
@@ -187,6 +193,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should delete both disk and memory caches for the dataset for the id", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
 						return facade.removeDataset("courses");
@@ -196,6 +204,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should throw InsightError when delete id is all spaces", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
 						return facade.removeDataset("        ");
@@ -207,6 +217,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should throw InsightError when delete id contains underscore", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
 						return facade.removeDataset("courses_");
@@ -221,8 +233,6 @@ describe("InsightFacade", function () {
 
 		describe("Add Datasets", function() {
 			let facade: IInsightFacade;
-			const id: string = "courses";
-			const content: string = datasetContents.get("courses") ?? "";
 
 			beforeEach(function () {
 				clearDisk();
@@ -230,6 +240,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should successfully add one dataset", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then((res) => {
 						expect(res).to.be.an.instanceof(Array);
@@ -239,6 +251,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should successfully add two dataset", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
 						return facade.addDataset(id, content, InsightDatasetKind.Courses);
@@ -251,6 +265,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should throw InsightError when add id contains underscore", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset("courses_", content, InsightDatasetKind.Courses)
 					.then((res) => {
 						throw new Error(`Resolved with: ${res}`);
@@ -260,6 +276,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should throw InsightError when add id is all spaces", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset("     ", content, InsightDatasetKind.Courses)
 					.then((res) => {
 						throw new Error(`Resolved with: ${res}`);
@@ -269,6 +287,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should reject when add duplicate dataset", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
 						return facade.addDataset(id, content, InsightDatasetKind.Courses);
