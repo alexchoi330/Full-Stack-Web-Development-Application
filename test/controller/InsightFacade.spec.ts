@@ -34,8 +34,6 @@ describe("InsightFacade", function () {
 	});
 
 	describe("Add/Remove/List Dataset", function () {
-		const id: string = "courses";
-		const content: string = datasetContents.get("courses") ?? "";
 
 		before(function () {
 			console.info(`Before: ${this.test?.parent?.title}`);
@@ -61,6 +59,8 @@ describe("InsightFacade", function () {
 
 		// This is a unit test. You should create more like this!
 		it("Should add a valid dataset", function () {
+			const id: string = "courses";
+			const content: string = datasetContents.get("courses") ?? "";
 			const expected: string[] = [id];
 			return insightFacade.addDataset(id, content, InsightDatasetKind.Courses).then((result: string[]) => {
 				expect(result).to.deep.equal(expected);
@@ -69,6 +69,8 @@ describe("InsightFacade", function () {
 
 		describe("List Datasets", function() {
 			let facade: IInsightFacade;
+			const id: string = "courses";
+			const content: string = datasetContents.get("courses") ?? "";
 
 			beforeEach(function () {
 				clearDisk();
@@ -124,6 +126,8 @@ describe("InsightFacade", function () {
 
 		describe("Remove Datasets", function() {
 			let facade: IInsightFacade;
+			const id: string = "courses";
+			const content: string = datasetContents.get("courses") ?? "";
 
 			beforeEach(function () {
 				clearDisk();
@@ -217,6 +221,8 @@ describe("InsightFacade", function () {
 
 		describe("Add Datasets", function() {
 			let facade: IInsightFacade;
+			const id: string = "courses";
+			const content: string = datasetContents.get("courses") ?? "";
 
 			beforeEach(function () {
 				clearDisk();
