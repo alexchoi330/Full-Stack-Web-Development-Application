@@ -14,7 +14,6 @@ import {clearDisk, diskLength} from "../TestUtil";
 
 describe("InsightFacade", function () {
 	let insightFacade: InsightFacade;
-
 	const persistDir = "./data";
 	const datasetContents = new Map<string, string>();
 
