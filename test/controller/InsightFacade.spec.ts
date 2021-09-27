@@ -293,8 +293,12 @@ describe("InsightFacade", function () {
 					.then(() => {
 						return facade.addDataset(id, content, InsightDatasetKind.Courses);
 					}).then((res) => {
-						expect(res).to.be.an.instanceof(Array);
-						expect(res).to.have.length(1);
+						throw new Error(`Resolved with: ${res}`);
+					}).catch ((err) => {
+						expect(err).to.be.instanceof(InsightError);
+						// => {
+						// expect(res).to.be.an.instanceof(Array);
+						// expect(res).to.have.length(1);
 					});
 			});
 		});
@@ -306,8 +310,7 @@ describe("InsightFacade", function () {
 	 * You can still make tests the normal way, this is just a convenient tool for a majority of queries.
 	 */
 	describe("PerformQuery", () => {
-		const id: string = "courses";
-		const content: string = datasetContents.get("courses") ?? "";
+
 		before(function () {
 			console.info(`Before: ${this.test?.parent?.title}`);
 
@@ -355,6 +358,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should preform query", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
 						return facade.performQuery({
@@ -379,6 +384,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should reject with ResultTooLargeError", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
 						return facade.performQuery({
@@ -405,6 +412,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should reject incorrectly formatted query", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
 						return facade.performQuery("hello_i_am_a_bad_query");
@@ -416,6 +425,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should reject if query key doesn't have underscore", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
 						return facade.performQuery({
@@ -440,6 +451,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should reject if query key has invalid dataset_key", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
 						return facade.performQuery({
@@ -464,6 +477,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should reject a dataset not added query", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
 						return facade.performQuery({
@@ -488,6 +503,8 @@ describe("InsightFacade", function () {
 			});
 
 			it("should reject query that references multiple datasets", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
 						return facade.performQuery({
