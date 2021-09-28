@@ -318,11 +318,13 @@ describe("InsightFacade", function () {
 
 			// Load the datasets specified in datasetsToQuery and add them to InsightFacade.
 			// Will *fail* if there is a problem reading ANY dataset.
-			const loadDatasetPromises = [
-				insightFacade.addDataset("courses", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses),
-			];
+			// const loadDatasetPromises = [
+			//	insightFacade.addDataset("courses", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses),
+			// ];
 
-			return Promise.all(loadDatasetPromises);
+			// return Promise.all(loadDatasetPromises);
+			return insightFacade.addDataset("courses", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses)
+				.catch(()=> "error???");
 		});
 
 		after(function () {
@@ -339,6 +341,17 @@ describe("InsightFacade", function () {
 			{
 				errorValidator: (error): error is PQErrorKind =>
 					error === "ResultTooLargeError" || error === "InsightError",
+				assertOnResult(expected: any[], actual: any, input: any ) {
+					const orderKey = input.OPTIONS.ORDER;
+					expect(actual).to.be.instanceof(Array);
+					expect(actual).to.have.length(expected.length);
+					expect(actual).to.have.deep.members(expected);
+					if (orderKey !== undefined) {
+						for (let i = 1; i < actual.length; i = i + 1) {
+							// actual[i - 1][orderKey] <= actual[i][orderKey];
+						}
+					}
+				},
 				assertOnError(expected, actual) {
 					if (expected === "ResultTooLargeError") {
 						expect(actual).to.be.instanceof(ResultTooLargeError);
