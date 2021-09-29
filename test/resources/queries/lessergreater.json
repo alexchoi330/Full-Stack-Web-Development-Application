@@ -1,0 +1,28 @@
+{
+	"title": "lesser than symbol mistaken for greater than",
+	"input": {
+		"WHERE": {
+			"AND": [
+				{
+					"LT": {
+						"courses_avg": 75
+					}
+				},
+				{
+					"IS": {
+						"courses_dept": "cnps"
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_avg"
+			],
+			"ORDER": "courses_avg"
+		}
+	},
+
+	"errorExpected": false,
+	"with": [{"courses_avg":70.66},{"courses_avg":72.69},{"courses_avg":72.83},{"courses_avg":73.5},{"courses_avg":73.5},{"courses_avg":73.82},{"courses_avg":74.35}]
+}
