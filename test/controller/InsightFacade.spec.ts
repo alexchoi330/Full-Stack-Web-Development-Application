@@ -244,8 +244,7 @@ describe("InsightFacade", function () {
 				const content: string = datasetContents.get("coursesInvalidJSON") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then((res) => {
-						expect(res).to.be.an.instanceof(Array);
-						expect(res).to.have.length(1);
+
 						expect(res).to.deep.equal(["coursesInvalidJSON"]);
 					});
 			};
