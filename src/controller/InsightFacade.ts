@@ -10,12 +10,14 @@ import {persistDir} from "../../test/TestUtil";
 export default class InsightFacade implements IInsightFacade {
 
 	private datasetContents;
-	private idKindMapping;
+	private datasetKind;
+	private datasetSize;
 	private persistDir = "./data";
 
 	constructor() {
 		this.datasetContents =  new Map<string, Map<string, any[]>>();
-		this.idKindMapping = new Map<string, InsightDatasetKind>();
+		this.datasetKind = new Map<string, InsightDatasetKind>();
+		this.datasetSize = new Map<string, number>();
 		// console.trace("InsightFacadeImpl::init()");
 	}
 
@@ -27,12 +29,14 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		const jsZip = new JSZip();
 		let courseSections = new Map<string, any[]>();
+		let size = 0;
 
 		await jsZip.loadAsync(content, {base64: true});
 		for (const filename of Object.keys(jsZip.files)) {
 			let fileData = await jsZip.files[filename].async("string");
 			try {
 				let data = JSON.parse(fileData);
+				size += data.result.length;
 				let coursePath = filename.split("/");
 				courseSections.set(coursePath[coursePath.length - 1], data);
 			} catch (e) {
@@ -40,18 +44,12 @@ export default class InsightFacade implements IInsightFacade {
 			}
 		}
 
-		// if we are doing async
-		// jsZip.loadAsync(content, {base64: true}).then(function (zip) {
-		// 	Object.keys(zip.files).forEach(function (filename) {
-		// 		zip.files[filename].async("string").then(function (fileData) {
-		// 			let data = JSON.parse(fileData);
-		// 			courseSections.set(filename, data);
-		// 		});
-		// 	});
-		// });
-
+		// add dataset to our internal data structures
 		this.datasetContents.set(id, courseSections);
-		this.idKindMapping.set(id, kind);
+		this.datasetKind.set(id, kind);
+		this.datasetSize.set(id, size);
+
+		// add dataset to hard disk
 		this.saveToDisk(this.datasetContents.get(id) as Map<string, any[]>, this.persistDir + "/" + id + "/");
 		return Promise.resolve(Array.from(this.datasetContents.keys()));
 	}
@@ -65,8 +63,12 @@ export default class InsightFacade implements IInsightFacade {
 			return Promise.reject(new NotFoundError("id has not been added yet"));
 		}
 
+		// delete key, value pair from corresponding maps
 		this.datasetContents.delete(id);
-		this.idKindMapping.delete(id);
+		this.datasetKind.delete(id);
+		this.datasetSize.delete(id);
+
+		// remove from hard disk
 		fs.removeSync(persistDir + "/" + id);
 		return Promise.resolve(id);
 	}
@@ -76,7 +78,16 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	public listDatasets(): Promise<InsightDataset[]> {
-		return Promise.reject("Not implemented.");
+		let datasets = [];
+		for (let [key] of this.datasetContents) {
+			let dataset = {
+				id: key,
+				kind: this.datasetKind.get(key),
+				numRows: this.datasetSize.get(key),
+			};
+			datasets.push(dataset);
+		}
+		return Promise.resolve(datasets as InsightDataset[]);
 	}
 
 	private saveToDisk(data: Map<string, any[]>, path: string): void {
