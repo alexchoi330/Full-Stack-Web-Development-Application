@@ -1,6 +1,7 @@
 import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "./IInsightFacade";
 import JSZip from "jszip";
 import fs from "fs-extra";
+import {persistDir} from "../../test/TestUtil";
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
@@ -54,7 +55,17 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	public removeDataset(id: string): Promise<string> {
-		return Promise.reject("Not implemented.");
+		if(id.includes("_")
+			|| !id.replace(/\s/g, "").length) {
+			return Promise.reject(new InsightError("id contains an underscore or is all white spaces"));
+		}
+		if(!this.datasetContents.has(id)) {
+			return Promise.reject(new NotFoundError("id has not been added yet"));
+		}
+
+		this.datasetContents.delete(id);
+		fs.removeSync(persistDir + "/" + id);
+		return Promise.resolve(id);
 	}
 
 	public performQuery(query: any): Promise<any[]> {
