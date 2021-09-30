@@ -1,6 +1,7 @@
 import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "./IInsightFacade";
 import JSZip from "jszip";
 import fs from "fs-extra";
+import {persistDir} from "../../test/TestUtil";
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
@@ -9,10 +10,12 @@ import fs from "fs-extra";
 export default class InsightFacade implements IInsightFacade {
 
 	private datasetContents;
+	private idKindMapping;
 	private persistDir = "./data";
 
 	constructor() {
 		this.datasetContents =  new Map<string, Map<string, any[]>>();
+		this.idKindMapping = new Map<string, InsightDatasetKind>();
 		// console.trace("InsightFacadeImpl::init()");
 	}
 
@@ -24,7 +27,6 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		const jsZip = new JSZip();
 		let courseSections = new Map<string, any[]>();
-		this.datasetContents.set(id, new Map<string, any[]>());
 
 		await jsZip.loadAsync(content, {base64: true});
 		for (const filename of Object.keys(jsZip.files)) {
@@ -49,12 +51,24 @@ export default class InsightFacade implements IInsightFacade {
 		// });
 
 		this.datasetContents.set(id, courseSections);
+		this.idKindMapping.set(id, kind);
 		this.saveToDisk(this.datasetContents.get(id) as Map<string, any[]>, this.persistDir + "/" + id + "/");
 		return Promise.resolve(Array.from(this.datasetContents.keys()));
 	}
 
 	public removeDataset(id: string): Promise<string> {
-		return Promise.reject("Not implemented.");
+		if(id.includes("_")
+			|| !id.replace(/\s/g, "").length) {
+			return Promise.reject(new InsightError("id contains an underscore or is all white spaces"));
+		}
+		if(!this.datasetContents.has(id)) {
+			return Promise.reject(new NotFoundError("id has not been added yet"));
+		}
+
+		this.datasetContents.delete(id);
+		this.idKindMapping.delete(id);
+		fs.removeSync(persistDir + "/" + id);
+		return Promise.resolve(id);
 	}
 
 	public performQuery(query: any): Promise<any[]> {
