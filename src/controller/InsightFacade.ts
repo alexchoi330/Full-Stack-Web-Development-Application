@@ -10,10 +10,12 @@ import {persistDir} from "../../test/TestUtil";
 export default class InsightFacade implements IInsightFacade {
 
 	private datasetContents;
+	private idKindMapping;
 	private persistDir = "./data";
 
 	constructor() {
 		this.datasetContents =  new Map<string, Map<string, any[]>>();
+		this.idKindMapping = new Map<string, InsightDatasetKind>();
 		// console.trace("InsightFacadeImpl::init()");
 	}
 
@@ -25,7 +27,6 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		const jsZip = new JSZip();
 		let courseSections = new Map<string, any[]>();
-		this.datasetContents.set(id, new Map<string, any[]>());
 
 		await jsZip.loadAsync(content, {base64: true});
 		for (const filename of Object.keys(jsZip.files)) {
@@ -50,6 +51,7 @@ export default class InsightFacade implements IInsightFacade {
 		// });
 
 		this.datasetContents.set(id, courseSections);
+		this.idKindMapping.set(id, kind);
 		this.saveToDisk(this.datasetContents.get(id) as Map<string, any[]>, this.persistDir + "/" + id + "/");
 		return Promise.resolve(Array.from(this.datasetContents.keys()));
 	}
@@ -64,6 +66,7 @@ export default class InsightFacade implements IInsightFacade {
 		}
 
 		this.datasetContents.delete(id);
+		this.idKindMapping.delete(id);
 		fs.removeSync(persistDir + "/" + id);
 		return Promise.resolve(id);
 	}
