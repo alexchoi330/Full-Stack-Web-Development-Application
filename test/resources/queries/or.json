@@ -1,0 +1,28 @@
+{
+	"title": "or operator test",
+	"input": {
+		"WHERE": {
+			"OR": [
+				{
+					"GT": {
+						"courses_avg": 99
+					}
+				},
+				{
+					"GT": {
+						"courses_avg": 98.8
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_avg"
+			],
+			"ORDER": "courses_avg"
+		}
+	},
+
+	"errorExpected": false,
+	"with": [{"courses_avg":98.98},{"courses_avg":98.98},{"courses_avg":99.19},{"courses_avg":99.78},{"courses_avg":99.78}]
+}

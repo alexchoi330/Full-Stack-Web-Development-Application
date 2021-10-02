@@ -12,6 +12,8 @@ import {testFolder} from "@ubccpsc310/folder-test";
 import {expect} from "chai";
 import {clearDisk, diskLength} from "../TestUtil";
 
+mocha.timeout(5000);
+
 describe("InsightFacade", function () {
 	let insightFacade: InsightFacade;
 	const persistDir = "./data";
@@ -21,6 +23,7 @@ describe("InsightFacade", function () {
 	// automatically be loaded in the 'before' hook.
 	const datasetsToLoad: {[key: string]: string} = {
 		courses: "./test/resources/archives/courses.zip",
+		coursesInvalidJSON: "./test/resources/archives/coursesInvalidJSON.zip"
 	};
 
 	before(function () {
@@ -238,7 +241,15 @@ describe("InsightFacade", function () {
 				clearDisk();
 				facade = new InsightFacade();
 			});
+			it ("should ignore a bad json file"), function() {
+				const id: string = "coursesInvalidJSON";
+				const content: string = datasetContents.get("coursesInvalidJSON") ?? "";
+				return facade.addDataset(id, content, InsightDatasetKind.Courses)
+					.then((res) => {
 
+						expect(res).to.deep.equal(["coursesInvalidJSON"]);
+					});
+			};
 			it("should successfully add one dataset", function() {
 				const id: string = "courses";
 				const content: string = datasetContents.get("courses") ?? "";
@@ -348,7 +359,8 @@ describe("InsightFacade", function () {
 					expect(actual).to.have.deep.members(expected);
 					if (orderKey !== undefined) {
 						for (let i = 1; i < actual.length; i = i + 1) {
-							// actual[i - 1][orderKey] <= actual[i][orderKey];
+							// expect(actual[i - 1][orderKey]).is.lessThan(actual[i][orderKey]);
+							// need more thought about this one
 						}
 					}
 				},

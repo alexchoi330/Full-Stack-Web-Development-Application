@@ -1,0 +1,12 @@
+{
+	"title": "Invalid key type",
+	"input": {
+		"WHERE": {"GT": {"courses_id": 99}},
+		"OPTIONS": {
+			"COLUMNS": ["courses_id"],
+			"ORDER": "courses_id"
+		}
+	},
+	"errorExpected": true,
+	"with": "InsightError"
+}
