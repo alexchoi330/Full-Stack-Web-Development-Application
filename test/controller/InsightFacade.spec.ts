@@ -12,6 +12,8 @@ import {testFolder} from "@ubccpsc310/folder-test";
 import {expect} from "chai";
 import {clearDisk, diskLength} from "../TestUtil";
 
+mocha.timeout(5000);
+
 describe("InsightFacade", function () {
 	let insightFacade: InsightFacade;
 	const persistDir = "./data";
