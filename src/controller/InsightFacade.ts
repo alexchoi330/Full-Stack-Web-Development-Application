@@ -96,7 +96,7 @@ export default class InsightFacade implements IInsightFacade {
 				if (err) {
 					throw err;
 				}
-				console.log("JSON data is saved.");
+				// console.log("JSON data is saved."); // commented out to run tests
 			});
 		}
 		return;

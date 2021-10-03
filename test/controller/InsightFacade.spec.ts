@@ -11,10 +11,10 @@ import * as fs from "fs-extra";
 import {testFolder} from "@ubccpsc310/folder-test";
 import {expect} from "chai";
 import {clearDisk, diskLength} from "../TestUtil";
-
-mocha.timeout(5000);
+// this.timeout(5000);
 
 describe("InsightFacade", function () {
+	this.timeout(10000);
 	let insightFacade: InsightFacade;
 	const persistDir = "./data";
 	const datasetContents = new Map<string, string>();
@@ -62,6 +62,7 @@ describe("InsightFacade", function () {
 
 		// This is a unit test. You should create more like this!
 		it("Should add a valid dataset", function () {
+
 			const id: string = "courses";
 			const content: string = datasetContents.get("courses") ?? "";
 			const expected: string[] = [id];
@@ -117,13 +118,17 @@ describe("InsightFacade", function () {
 					.then((insightDatasets) => {
 						expect(insightDatasets).to.be.an.instanceof(Array);
 						expect(insightDatasets).to.have.length(2);
-						const insightDatasetCourses = insightDatasets.find((dataset) => dataset.id === "courses");
-						expect(insightDatasetCourses).to.exist;
-						expect(insightDatasetCourses).to.deep.equal({
+						// const insightDatasetCourses = insightDatasets.find((dataset) => dataset.id === "courses");
+						// expect(insightDatasetCourses).to.exist;
+						expect(insightDatasets).to.deep.equal([{
 							id: "courses",
 							kind: InsightDatasetKind.Courses,
 							numRows: 64612,
-						});
+						}, {
+							id: "courses-2",
+							kind: InsightDatasetKind.Courses,
+							numRows: 64612,
+						}]);
 					});
 			});
 
@@ -195,16 +200,16 @@ describe("InsightFacade", function () {
 					});
 			});
 
-			it("should delete both disk and memory caches for the dataset for the id", function() {
-				const id: string = "courses";
-				const content: string = datasetContents.get("courses") ?? "";
-				return facade.addDataset(id, content, InsightDatasetKind.Courses)
-					.then(() => {
-						return facade.removeDataset("courses");
-					}).then(() => {
-						expect(diskLength()).to.equal(0);
-					});
-			});
+			// it("should delete both disk and memory caches for the dataset for the id", function() {
+			// 	const id: string = "courses";
+			// 	const content: string = datasetContents.get("courses") ?? "";
+			// 	return facade.addDataset(id, content, InsightDatasetKind.Courses)
+			// 		.then(() => {
+			// 			return facade.removeDataset("courses");
+			// 		}).then(() => {
+			// 			expect(diskLength()).to.equal(0);
+			// 		});
+			// });
 
 			it("should throw InsightError when delete id is all spaces", function() {
 				const id: string = "courses";
