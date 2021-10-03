@@ -1,0 +1,9 @@
+{
+	"title": "Bad orderkey",
+	"input": {"WHERE":{"LT":{"courses_avg":99}},
+		"OPTIONS":{"COLUMNS":["courses_avg"],
+			"ORDE":"courses_avg"}
+	},
+	"errorExpected": true,
+	"with": "InsightError"
+}
