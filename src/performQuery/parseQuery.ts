@@ -2,8 +2,8 @@ import {IInsightFacade, InsightError, NotFoundError} from "../controller/IInsigh
 
 
 export function parseQuery (query: any): Promise<any[]> {
-	// eslint-disable-next-line no-prototype-builtins
-	if (!(query.hasOwnProperty("WHERE") && query.hasOwnProperty("OPTIONS"))) {
+	if (!(Object.prototype.hasOwnProperty.call(query, "WHERE")
+		&& Object.prototype.hasOwnProperty.call(query, "OPTIONS"))) {
 		return Promise.reject(new InsightError("WHERE or OPTIONS not correct"));
 	}
 	console.log("made past first check");
