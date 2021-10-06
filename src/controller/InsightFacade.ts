@@ -2,6 +2,7 @@ import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, NotFou
 import JSZip from "jszip";
 import fs from "fs-extra";
 import {persistDir} from "../../test/TestUtil";
+import {parseQuery} from "../performQuery/parseQuery";
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
@@ -74,6 +75,7 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	public performQuery(query: any): Promise<any[]> {
+		return parseQuery(query);
 		return Promise.reject("Not implemented.");
 	}
 
