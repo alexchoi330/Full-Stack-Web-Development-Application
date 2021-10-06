@@ -246,7 +246,8 @@ describe("InsightFacade", function () {
 				clearDisk();
 				facade = new InsightFacade();
 			});
-			it ("should ignore a bad json file"), function() {
+
+			it ("should ignore a bad json file", function() {
 				const id: string = "coursesInvalidJSON";
 				const content: string = datasetContents.get("coursesInvalidJSON") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
@@ -254,7 +255,8 @@ describe("InsightFacade", function () {
 
 						expect(res).to.deep.equal(["coursesInvalidJSON"]);
 					});
-			};
+			});
+
 			it("should successfully add one dataset", function() {
 				const id: string = "courses";
 				const content: string = datasetContents.get("courses") ?? "";
