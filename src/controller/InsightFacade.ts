@@ -38,7 +38,7 @@ export default class InsightFacade implements IInsightFacade {
 				let data = JSON.parse(fileData);
 				size += data.result.length;
 				let coursePath = filename.split("/");
-				courseSections.set(coursePath[coursePath.length - 1], data);
+				courseSections.set(coursePath[coursePath.length - 1], data.result);
 			} catch (e) {
 				// do nothing
 			}
