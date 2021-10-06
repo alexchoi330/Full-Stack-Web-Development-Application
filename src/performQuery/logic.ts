@@ -2,16 +2,15 @@ function greaterThan(data: Map<string, any[]>, comparator: string, compare_value
 	let result = new Map<string, any[]>();
 	data.forEach((value: any[], key: string) => {
 		let course = JSON.parse(JSON.stringify(value));
-		// eslint-disable-next-line @typescript-eslint/prefer-for-of
-		for (let i = 0; i < course.result.length; i++) {
-			let currValue = course.result[i][comparator];
+		for (let currSection of course.result) {
+			let currValue = currSection[comparator];
 			if(currValue > compare_value) {
 				let sections = result.get(key) as any[];
 				if(sections !== undefined) {
-					sections.push(course.result[i]);
+					sections.push(currSection);
 				} else {
 					sections = [];
-					sections.push(course.result[i]);
+					sections.push(currSection);
 				}
 				result.set(key, sections);
 			}
@@ -24,16 +23,15 @@ function lessThan(data: Map<string, any[]>, comparator: string, compare_value: n
 	let result = new Map<string, any[]>();
 	data.forEach((value: any[], key: string) => {
 		let course = JSON.parse(JSON.stringify(value));
-		// eslint-disable-next-line @typescript-eslint/prefer-for-of
-		for (let i = 0; i < course.result.length; i++) {
-			let currValue = course.result[i][comparator];
+		for (let currSection of course.result) {
+			let currValue = currSection[comparator];
 			if(currValue < compare_value) {
 				let sections = result.get(key) as any[];
 				if(sections !== undefined) {
-					sections.push(course.result[i]);
+					sections.push(currSection);
 				} else {
 					sections = [];
-					sections.push(course.result[i]);
+					sections.push(currSection);
 				}
 				result.set(key, sections);
 			}
@@ -46,16 +44,15 @@ function equalTo(data: Map<string, any[]>, comparator: string, compare_value: nu
 	let result = new Map<string, any[]>();
 	data.forEach((value: any[], key: string) => {
 		let course = JSON.parse(JSON.stringify(value));
-		// eslint-disable-next-line @typescript-eslint/prefer-for-of
-		for (let i = 0; i < course.result.length; i++) {
-			let currValue = course.result[i][comparator];
+		for (let currSection of course.result) {
+			let currValue = currSection[comparator];
 			if(currValue === compare_value) {
 				let sections = result.get(key) as any[];
 				if(sections !== undefined) {
-					sections.push(course.result[i]);
+					sections.push(currSection);
 				} else {
 					sections = [];
-					sections.push(course.result[i]);
+					sections.push(currSection);
 				}
 				result.set(key, sections);
 			}
