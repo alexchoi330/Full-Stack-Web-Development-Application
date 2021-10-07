@@ -4,6 +4,7 @@ import fs from "fs-extra";
 import {persistDir} from "../../test/TestUtil";
 // import {parseQuery} from "../performQuery/parseQuery";
 import {is, and, or, lessThan, greaterThan, equalTo} from "../performQuery/logic";
+import {MSFieldHelper} from "../performQuery/parseQuery";
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
@@ -89,10 +90,12 @@ export default class InsightFacade implements IInsightFacade {
 		} else if (Object.keys(whereObj).length > 1) {
 			return Promise.reject(new InsightError("Too many objects in WHERE"));
 		}
-		console.log(this.recursiveAppend(whereObj));
-		return Promise.resolve(this.recursiveAppend(whereObj));
+		// console.log(this.recursiveAppend(whereObj));
+		let whereReturn = this.recursiveAppend(whereObj);
+		// TODO: call option function on whereReturn;
+		// return Promise.resolve(this.recursiveAppend(whereObj));
 		// return parseQuery(query);
-		// return Promise.reject("Not implemented.");
+		return Promise.reject("Not implemented.");
 	}
 
 	public listDatasets(): Promise<InsightDataset[]> {
@@ -119,56 +122,65 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		return;
 	}
-	private recursiveAppend (query: any): Promise<any[]> {
+	private recursiveAppend (query: any): Map<string, any[]> {
 		let orderArr = [];
 		console.log("object keys:");
 		console.log (Object.keys(query));
-		if (Object.keys(query)[0] === "IS"){
-			let temp = Object.values(query)[0] as any;
-			if (!(Object.keys(temp).length === 1)){
-				return Promise.reject(new InsightError("Too many keys inside IS"));
-			}
-			let dsID = Object.keys(temp)[0] as string;
-			let courseID = dsID.split("_", 1)[0];
-			// check course ID exists
-			let skey = dsID.split("_", 1)[1];
-			// check skey is legitimate skey
-			// return Promise.resolve(is(this.datasetContents.get(courseID), skey, Object.values(temp)[0] as string));
-			// let dsInfo = Object.values();
-		} else if (Object.keys(query)[0] === "GT") {
-			//
-		} else if (Object.keys(query)[0] === "LT") {
-			//
-		} else if (Object.keys(query)[0] === "EQ") {
-			return Promise.resolve(Object.keys(query));
-			// }
-			// else if (Object.keys(query)[0] === "NOT") {
-			// 	for (let item in query["NOT"]) {
-			// 		orderArr.push(recursiveAppend(item));
-			// 	}
-			// 	// orderArr.push(recursiveAppend(Object.keys(query)));
-			// 	// return orderArr
-			// } else if (Object.keys(query)[0] === "AND") {
-			// 	for (let item in query["AND"]) {
-			// 		orderArr.push(recursiveAppend(item));
-			// 	}
+		if (Object.keys(query)[0] === "IS"
+			|| Object.keys(query)[0] === "GT"
+			|| Object.keys(query)[0] === "LT"
+			|| Object.keys(query)[0] === "EQ"){
+			console.log(" in IS EQ GT LT");
+			console.log(this.MSComparisonHelper(Object.keys(query)[0], query));
+			return this.MSComparisonHelper(Object.keys(query)[0], query);
 		} else if (Object.keys(query)[0] === "OR"
 			|| Object.keys(query)[0] === "AND"
 			|| Object.keys(query)[0] === "NOT") {
 			console.log("in or and not");
 			// console.log(Object.values(query));
 			console.log(Object.values(query)[0]);
-			let values = Object.values(query)[0] as any[];
-			for (let item of values) {
-				console.log(item);
-				orderArr.push(this.recursiveAppend(item));
-			}
+			// let values = Object.values(query)[0] as any[];
+			// for (let item of values) {
+			// 	console.log(item);
+			// 	orderArr.push(this.recursiveAppend(item));
+			// }
 		} else {
-			return Promise.reject(new InsightError("Unrecognizable key in WHERE"));
+			throw new InsightError("Unrecognizable key in WHERE");
 		}
 		console.log("recursion");
-		console.log(orderArr);
-		return Promise.resolve(orderArr);
+		// console.log(orderArr);
+		// return Promise.resolve(orderArr);
+		throw new InsightError("Not fully implemented");
+	}
+	private MSComparisonHelper (key: string, query: any): Map<string, any[]> {
+		let temp = Object.values(query)[0] as any;
+		if (!(Object.keys(temp).length === 1)){
+			throw new InsightError("Too many keys inside " + key);
+		}
+		let dsID = Object.keys(temp)[0] as string;
+		let courseID = dsID.split("_", 1)[0];
+		// TODO: check course ID exists
+		let msKey = dsID.split("_", 2)[1];
+		msKey = MSFieldHelper(msKey);
+		// TODO: check mskey is legitimate mkey or skey
+		if (key === "IS") {
+			// return is(this.datasetContents.get(courseID), msKey, Object.values(temp)[0] as string);
+			// return Promise.resolve(is(this.datasetContents.get(courseID), msKey, Object.values(temp)[0] as string));
+		} else if (key === "GT") {
+			// console.log(this.datasetContents.get(courseID));
+			// console.log(msKey);
+			// console.log(Object.values(temp)[0]);
+			return greaterThan(this.datasetContents.get(courseID) as Map<string, any[]>,
+				msKey, Object.values(temp)[0] as number);
+			//
+		} else if (key === "LT") {
+			return lessThan(this.datasetContents.get(courseID) as Map<string, any[]>,
+				msKey, Object.values(temp)[0] as number);
+		} else if (key === "EQ") {
+			equalTo(this.datasetContents.get(courseID) as Map<string, any[]>,
+				msKey, Object.values(temp)[0] as number);
+		}
+		throw new InsightError("should not be here");
 	}
 
 }
