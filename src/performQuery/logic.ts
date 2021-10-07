@@ -61,7 +61,15 @@ function equalTo(data: Map<string, any[]>, comparator: string, compare_value: nu
 	return result;
 }
 
-function and(data_1: Map<string, any[]>, data_2: Map<string, any[]>): Map<string, any[]> {
+function and(data: Array<Map<string, any[]>>): Map<string, any[]> {
+	let result = andTwo(data[0], data[1]);
+	for (let i = 2; i < data.length; i++) {
+		result = andTwo(result, data[i]);
+	}
+	return result;
+}
+
+function andTwo(data_1: Map<string, any[]>, data_2: Map<string, any[]>): Map<string, any[]> {
 	let result = new Map<string, any[]>();
 	data_1.forEach((value: any[], key: string) => {
 		if(data_2.has(key)) {
