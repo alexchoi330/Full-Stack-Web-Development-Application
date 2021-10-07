@@ -133,8 +133,25 @@ function orTwo(data_1: Map<string, any[]>, data_2: Map<string, any[]>): Map<stri
 	return result;
 }
 
-function is(data: any[], comparator: string, compare_value: string): any[] {
-	return [];
+function is(data: Map<string, any[]>, comparator: string, compare_value: string): Map<string, any[]> {
+	let result = new Map<string, any[]>();
+	data.forEach((value: any[], key: string) => {
+		let course = JSON.parse(JSON.stringify(value));
+		for (let currSection of course) {
+			let currValue = currSection[comparator];
+			if(currValue === compare_value) {
+				let sections = result.get(key) as any[];
+				if(sections !== undefined) {
+					sections.push(currSection);
+				} else {
+					sections = [];
+					sections.push(currSection);
+				}
+				result.set(key, sections);
+			}
+		}
+	});
+	return result;
 }
 
 export{greaterThan, lessThan, equalTo, and, or, is};
