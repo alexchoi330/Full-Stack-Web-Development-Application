@@ -131,7 +131,7 @@ export default class InsightFacade implements IInsightFacade {
 			|| Object.keys(query)[0] === "LT"
 			|| Object.keys(query)[0] === "EQ"){
 			console.log(" in IS EQ GT LT");
-			console.log(this.MSComparisonHelper(Object.keys(query)[0], query));
+			// console.log(this.MSComparisonHelper(Object.keys(query)[0], query));
 			return this.MSComparisonHelper(Object.keys(query)[0], query);
 		} else if (Object.keys(query)[0] === "OR"
 			|| Object.keys(query)[0] === "AND"
@@ -139,15 +139,17 @@ export default class InsightFacade implements IInsightFacade {
 			console.log("in or and not");
 			// console.log(Object.values(query));
 			console.log(Object.values(query)[0]);
-			// let values = Object.values(query)[0] as any[];
-			// for (let item of values) {
-			// 	console.log(item);
-			// 	orderArr.push(this.recursiveAppend(item));
-			// }
+			let values = Object.values(query)[0] as any[];
+			for (let item of values) {
+				console.log(item);
+				orderArr.push(this.recursiveAppend(item));
+			}
+			console.log(this.logicComparisonHelper(Object.keys(query)[0], orderArr));
+			return this.logicComparisonHelper(Object.keys(query)[0], orderArr);
 		} else {
 			throw new InsightError("Unrecognizable key in WHERE");
 		}
-		console.log("recursion");
+		// console.log("recursion");
 		// console.log(orderArr);
 		// return Promise.resolve(orderArr);
 		throw new InsightError("Not fully implemented");
@@ -164,7 +166,8 @@ export default class InsightFacade implements IInsightFacade {
 		msKey = MSFieldHelper(msKey);
 		// TODO: check mskey is legitimate mkey or skey
 		if (key === "IS") {
-			// return is(this.datasetContents.get(courseID), msKey, Object.values(temp)[0] as string);
+			return is(this.datasetContents.get(courseID) as Map<string, any[]>,
+				msKey, Object.values(temp)[0] as string);
 			// return Promise.resolve(is(this.datasetContents.get(courseID), msKey, Object.values(temp)[0] as string));
 		} else if (key === "GT") {
 			// console.log(this.datasetContents.get(courseID));
@@ -179,6 +182,17 @@ export default class InsightFacade implements IInsightFacade {
 		} else if (key === "EQ") {
 			equalTo(this.datasetContents.get(courseID) as Map<string, any[]>,
 				msKey, Object.values(temp)[0] as number);
+		}
+		throw new InsightError("should not be here");
+	}
+
+	private logicComparisonHelper (key: string, queryList: Array<Map<string, any[]>>): Map<string, any[]> {
+		if (key === "AND") {
+			return and(queryList);
+		} else if (key === "OR") {
+			return or(queryList);
+		} else if (key === "NOT") {
+			// return not(queryList);
 		}
 		throw new InsightError("should not be here");
 	}
