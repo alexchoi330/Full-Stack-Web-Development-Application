@@ -1,5 +1,31 @@
-// import {IInsightFacade, InsightError, NotFoundError} from "../controller/IInsightFacade";
-// import {greaterThan, lessThan, is, or, and, equalTo} from "./logic";
+import {IInsightFacade, InsightError, NotFoundError} from "../controller/IInsightFacade";
+import {greaterThan, lessThan, is, or, and, equalTo} from "./logic";
+
+export function MSFieldHelper (field: string): string {
+	if (field === "avg") {
+		return "Avg";
+	} else if  (field === "pass") {
+		return "Pass";
+	} else if (field === "fail") {
+		return "Fail";
+	} else if (field === "audit") {
+		return "Audit";
+	} else if (field === "year") {
+		return "Year";
+	} else if (field === "dept") {
+		return "Subject";
+	} else if (field === "id)") {
+		return "Course";
+	} else if (field === "instructor") {
+		return "Professor";
+	} else if (field === "title") {
+		return "Title";
+	} else if (field === "uuid") {
+		return "id";
+	} else {
+		return "Shouldn't be here";
+	}
+}
 //
 //
 // export function parseQuery (query: any): Promise<any[]> {
