@@ -16,12 +16,14 @@ export default class InsightFacade implements IInsightFacade {
 	private datasetKind;
 	private datasetSize;
 	private persistDir = "./data";
+	private currentDatasetID;
 
 	constructor() {
 		this.datasetContents =  new Map<string, Map<string, any[]>>();
 		this.datasetKind = new Map<string, InsightDatasetKind>();
 		this.datasetSize = new Map<string, number>();
 		// console.trace("InsightFacadeImpl::init()");
+		this.currentDatasetID = "";
 	}
 
 	public async addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
@@ -135,9 +137,8 @@ export default class InsightFacade implements IInsightFacade {
 			// console.log(this.MSComparisonHelper(Object.keys(query)[0], query));
 			return this.MSComparisonHelper(Object.keys(query)[0], query);
 		} else if (Object.keys(query)[0] === "OR"
-			|| Object.keys(query)[0] === "AND"
-			|| Object.keys(query)[0] === "NOT") {
-			console.log("in or and not");
+			|| Object.keys(query)[0] === "AND") {
+			console.log("in or and");
 			// console.log(Object.values(query));
 			console.log(Object.values(query)[0]);
 			let values = Object.values(query)[0] as any[];
@@ -147,6 +148,13 @@ export default class InsightFacade implements IInsightFacade {
 			}
 			console.log(this.logicComparisonHelper(Object.keys(query)[0], orderArr));
 			return this.logicComparisonHelper(Object.keys(query)[0], orderArr);
+		} else if (Object.keys(query)[0] === "NOT"){
+			console.log("in not");
+			// console.log(Object.values(query));
+			console.log(Object.values(query)[0]);
+			return not(this.datasetContents.get(this.currentDatasetID) as Map<string, any[]>,
+				this.recursiveAppend(Object.values(query)[0]));
+			// TODO: update currentDatasetID with the current dataset ID in MSComparisonHelper
 		} else {
 			throw new InsightError("Unrecognizable key in WHERE");
 		}
@@ -163,7 +171,7 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		let dsID = Object.keys(temp)[0] as string;
 		let courseID = dsID.split("_", 1)[0];
-		// TODO: check course ID exists
+		// TODO: check course ID exists using currentDatasetID
 		let msKey = dsID.split("_", 2)[1];
 		msKey = MSFieldHelper(msKey);
 		// TODO: check mskey is legitimate mkey or skey
@@ -193,8 +201,6 @@ export default class InsightFacade implements IInsightFacade {
 			return and(queryList);
 		} else if (key === "OR") {
 			return or(queryList);
-		} else if (key === "NOT") {
-			// return not(queryList);
 		}
 		throw new InsightError("should not be here");
 	}
