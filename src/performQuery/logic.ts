@@ -154,4 +154,40 @@ function is(data: Map<string, any[]>, comparator: string, compare_value: string)
 	return result;
 }
 
-export{greaterThan, lessThan, equalTo, and, or, is};
+function not(overall: Map<string, any[]>, notMAP: Map<string, any[]>): Map<string, any[]> {
+	let result = new Map<string, any[]>();
+	overall.forEach((value: any[], key: string) => {
+		if(!notMAP.has(key)) {
+			if(value.length !== 0) {
+				result.set(key, value);
+			}
+		} else {
+			let course1 = JSON.parse(JSON.stringify(value));
+			let course2 = JSON.parse(JSON.stringify(notMAP.get(key)));
+			for (let currSection1 of course1) {
+				let id1 = currSection1["id"];
+				let found = false;
+				for (let currSection2 of course2) {
+					let id2 = currSection2["id"];
+					if(id1 === id2) {
+						found = true;
+						break;
+					}
+				}
+				if(!found) {
+					let sections = result.get(key) as any[];
+					if(sections !== undefined) {
+						sections.push(currSection1);
+					} else {
+						sections = [];
+						sections.push(currSection1);
+					}
+					result.set(key, sections);
+				}
+			}
+		}
+	});
+	return result;
+}
+
+export{greaterThan, lessThan, equalTo, and, or, is, not};
