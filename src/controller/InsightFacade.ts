@@ -3,7 +3,7 @@ import JSZip from "jszip";
 import fs from "fs-extra";
 import {persistDir} from "../../test/TestUtil";
 // import {parseQuery} from "../performQuery/parseQuery";
-import {is, and, or, lessThan, greaterThan, equalTo} from "../performQuery/logic";
+import {is, and, or, lessThan, greaterThan, equalTo, not} from "../performQuery/logic";
 import {MSFieldHelper} from "../performQuery/parseQuery";
 /**
  * This is the main programmatic entry point for the project.
@@ -31,7 +31,7 @@ export default class InsightFacade implements IInsightFacade {
 			return Promise.reject(new InsightError("id contains an underscore"));
 		}
 		const jsZip = new JSZip();
-		let courseSections = new Map<string, any[]>();
+		let courses = new Map<string, any[]>();
 		let size = 0;
 
 		await jsZip.loadAsync(content, {base64: true});
@@ -41,14 +41,14 @@ export default class InsightFacade implements IInsightFacade {
 				let data = JSON.parse(fileData);
 				size += data.result.length;
 				let coursePath = filename.split("/");
-				courseSections.set(coursePath[coursePath.length - 1], data.result);
+				courses.set(coursePath[coursePath.length - 1], data.result);
 			} catch (e) {
 				// do nothing
 			}
 		}
 
 		// add dataset to our internal data structures
-		this.datasetContents.set(id, courseSections);
+		this.datasetContents.set(id, courses);
 		this.datasetKind.set(id, kind);
 		this.datasetSize.set(id, size);
 
@@ -122,6 +122,7 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		return;
 	}
+
 	private recursiveAppend (query: any): Map<string, any[]> {
 		let orderArr = [];
 		console.log("object keys:");
@@ -154,6 +155,7 @@ export default class InsightFacade implements IInsightFacade {
 		// return Promise.resolve(orderArr);
 		throw new InsightError("Not fully implemented");
 	}
+
 	private MSComparisonHelper (key: string, query: any): Map<string, any[]> {
 		let temp = Object.values(query)[0] as any;
 		if (!(Object.keys(temp).length === 1)){
