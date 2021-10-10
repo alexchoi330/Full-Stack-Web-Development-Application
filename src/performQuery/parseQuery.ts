@@ -1,6 +1,29 @@
 import {IInsightFacade, InsightError, NotFoundError} from "../controller/IInsightFacade";
 import {greaterThan, lessThan, is, or, and, equalTo} from "./logic";
 
+export enum Field {
+	avg = "Avg",
+	pass = "Pass",
+	fail = "Fail",
+	audit = "Audit",
+	year = "Year",
+	dept = "Subject",
+	id = "Course",
+	instructor = "Professor",
+	title = "Title",
+	uuid = "id",
+	Avg = "avg",
+	Pass = "pass",
+	Fail = "fail",
+	Audit = "audit",
+	Year = "year",
+	Subject = "dept",
+	Course = "id",
+	Professor = "instructor",
+	Title = "title",
+	idTwo = "uuid"
+}
+
 export function MSFieldHelper (field: string): string {
 	if (field === "avg") {
 		return "Avg";
@@ -14,7 +37,7 @@ export function MSFieldHelper (field: string): string {
 		return "Year";
 	} else if (field === "dept") {
 		return "Subject";
-	} else if (field === "id)") {
+	} else if (field === "id") {
 		return "Course";
 	} else if (field === "instructor") {
 		return "Professor";
@@ -23,7 +46,33 @@ export function MSFieldHelper (field: string): string {
 	} else if (field === "uuid") {
 		return "id";
 	} else {
-		return "Shouldn't be here";
+		return "BAD ID";
+	}
+}
+
+export function MSFieldHelperReverse (field: string): string {
+	if (field === "Avg") {
+		return "avg";
+	} else if  (field === "Pass") {
+		return "pass";
+	} else if (field === "Fail") {
+		return "fail";
+	} else if (field === "Audit") {
+		return "audit";
+	} else if (field === "Year") {
+		return "year";
+	} else if (field === "Subject") {
+		return "dept";
+	} else if (field === "Course") {
+		return "id";
+	} else if (field === "Professor") {
+		return "instructor";
+	} else if (field === "Title") {
+		return "title";
+	} else if (field === "id") {
+		return "uuid";
+	} else {
+		return "BAD ID";
 	}
 }
 //

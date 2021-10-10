@@ -366,7 +366,7 @@ describe("InsightFacade", function () {
 					expect(actual).to.have.deep.members(expected);
 					if (orderKey !== undefined) {
 						for (let i = 1; i < actual.length; i = i + 1) {
-							// expect(actual[i - 1][orderKey]).is.lessThan(actual[i][orderKey]);
+							expect(actual[i - 1]).to.deep.equal(expected[i - 1]);
 							// need more thought about this one
 						}
 					}

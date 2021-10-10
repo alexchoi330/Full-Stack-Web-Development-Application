@@ -4,7 +4,7 @@ import fs from "fs-extra";
 import {persistDir} from "../../test/TestUtil";
 // import {parseQuery} from "../performQuery/parseQuery";
 import {is, and, or, lessThan, greaterThan, equalTo, not} from "../performQuery/logic";
-import {MSFieldHelper} from "../performQuery/parseQuery";
+import {Field, MSFieldHelper, MSFieldHelperReverse} from "../performQuery/parseQuery";
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
@@ -95,9 +95,14 @@ export default class InsightFacade implements IInsightFacade {
 		// console.log(this.recursiveAppend(whereObj));
 		let whereReturn = this.recursiveAppend(whereObj);
 		// TODO: call option function on whereReturn;
-		// return Promise.resolve(this.recursiveAppend(whereObj));
+		// console.log(optionObj);
+		// console.log (whereReturn);
+		let optionsReturn = this.optionsSort(optionObj, whereReturn);
+		// console.log("return: ");
+		// console.log(optionsReturn);
+		return Promise.resolve(optionsReturn);
 		// return parseQuery(query);
-		return Promise.reject("Not implemented.");
+		// return Promise.reject("Not implemented.");
 	}
 
 	public listDatasets(): Promise<InsightDataset[]> {
@@ -127,26 +132,26 @@ export default class InsightFacade implements IInsightFacade {
 
 	private recursiveAppend (query: any): Map<string, any[]> {
 		let orderArr = [];
-		console.log("object keys:");
-		console.log (Object.keys(query));
+		// console.log("object keys:");
+		// console.log (Object.keys(query));
 		if (Object.keys(query)[0] === "IS"
 			|| Object.keys(query)[0] === "GT"
 			|| Object.keys(query)[0] === "LT"
 			|| Object.keys(query)[0] === "EQ"){
-			console.log(" in IS EQ GT LT");
+			// console.log(" in IS EQ GT LT");
 			// console.log(this.MSComparisonHelper(Object.keys(query)[0], query));
 			return this.MSComparisonHelper(Object.keys(query)[0], query);
 		} else if (Object.keys(query)[0] === "OR"
 			|| Object.keys(query)[0] === "AND") {
-			console.log("in or and");
+			// console.log("in or and");
 			// console.log(Object.values(query));
-			console.log(Object.values(query)[0]);
+			// console.log(Object.values(query)[0]);
 			let values = Object.values(query)[0] as any[];
 			for (let item of values) {
 				console.log(item);
 				orderArr.push(this.recursiveAppend(item));
 			}
-			console.log(this.logicComparisonHelper(Object.keys(query)[0], orderArr));
+			// console.log(this.logicComparisonHelper(Object.keys(query)[0], orderArr));
 			return this.logicComparisonHelper(Object.keys(query)[0], orderArr);
 		} else if (Object.keys(query)[0] === "NOT"){
 			console.log("in not");
@@ -156,6 +161,7 @@ export default class InsightFacade implements IInsightFacade {
 				this.recursiveAppend(Object.values(query)[0]));
 			// TODO: update currentDatasetID with the current dataset ID in MSComparisonHelper
 		} else {
+			// TODO: check that Object.keys(query)[0] is empty, if it is return all dataset contents
 			throw new InsightError("Unrecognizable key in WHERE");
 		}
 		// console.log("recursion");
@@ -171,7 +177,8 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		let dsID = Object.keys(temp)[0] as string;
 		let courseID = dsID.split("_", 1)[0];
-		// TODO: check course ID exists using currentDatasetID
+		this.currentDatasetID = courseID;
+		// TODO: check course ID exists using currentDatasetID, also check they aren't two different course ids
 		let msKey = dsID.split("_", 2)[1];
 		msKey = MSFieldHelper(msKey);
 		// TODO: check mskey is legitimate mkey or skey
@@ -190,7 +197,7 @@ export default class InsightFacade implements IInsightFacade {
 			return lessThan(this.datasetContents.get(courseID) as Map<string, any[]>,
 				msKey, Object.values(temp)[0] as number);
 		} else if (key === "EQ") {
-			equalTo(this.datasetContents.get(courseID) as Map<string, any[]>,
+			return equalTo(this.datasetContents.get(courseID) as Map<string, any[]>,
 				msKey, Object.values(temp)[0] as number);
 		}
 		throw new InsightError("should not be here");
@@ -205,4 +212,48 @@ export default class InsightFacade implements IInsightFacade {
 		throw new InsightError("should not be here");
 	}
 
+	private optionsSort (query: any, data: Map<string,any[]>): any[] {
+		let options = false;
+		if (!(Object.prototype.hasOwnProperty.call(query, "COLUMNS"))) {
+			throw new InsightError("COLUMNS not correct");
+		} else if (Object.prototype.hasOwnProperty.call(query, "OPTIONS")) {
+			options = true;
+		}
+		let columns = query["COLUMNS"] as string[];
+		// console.log(columns);
+		let checkColumns = [];
+		for (const column in columns) {
+			// console.log(columns[column]);
+			let courseID = columns[column].split("_", 1)[0];
+			// TODO: check courseID is valid and is the same as the rest
+			let msKey = columns[column].split("_", 2)[1];
+			// TODO: check msKey is valid
+			// console.log(msKey);
+			checkColumns.push(MSFieldHelper(msKey));
+		}
+		console.log(checkColumns);
+		let finalArr = [];
+		for (let value of data.values()) {
+			for (let item of value) {
+				// console.log(item);
+				for (let key of Object.keys(item)) {
+					// console.log(key);
+					if (!(checkColumns.indexOf(key) > -1)) {
+						delete item[key];
+					} else {
+						delete Object.assign(item,
+							{[this.currentDatasetID + "_" + MSFieldHelperReverse(key)]: item[key] })[key];
+					}
+				}
+				// console.log("after");
+				// console.log(item);
+				finalArr.push(item);
+			}
+		}
+		if (!options) {
+			return finalArr;
+		} else {
+			return [];
+		}
+	}
 }
