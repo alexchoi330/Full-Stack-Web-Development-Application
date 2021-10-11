@@ -4,7 +4,7 @@ import fs from "fs-extra";
 import {persistDir} from "../../test/TestUtil";
 // import {parseQuery} from "../performQuery/parseQuery";
 import {is, and, or, lessThan, greaterThan, equalTo, not} from "../performQuery/logic";
-import {Field, MSFieldHelper, MSFieldHelperReverse} from "../performQuery/parseQuery";
+import {Field, MSFieldHelper, MSFieldHelperReverse, selectionSortS, selectionSortN} from "../performQuery/parseQuery";
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
@@ -134,6 +134,7 @@ export default class InsightFacade implements IInsightFacade {
 		let orderArr = [];
 		// console.log("object keys:");
 		// console.log (Object.keys(query));
+		// TODO: if two keys are the same then the latest one is taken, right now i think the first one is taken
 		if (Object.keys(query)[0] === "IS"
 			|| Object.keys(query)[0] === "GT"
 			|| Object.keys(query)[0] === "LT"
@@ -148,7 +149,7 @@ export default class InsightFacade implements IInsightFacade {
 			// console.log(Object.values(query)[0]);
 			let values = Object.values(query)[0] as any[];
 			for (let item of values) {
-				console.log(item);
+				// console.log(item);
 				orderArr.push(this.recursiveAppend(item));
 			}
 			// console.log(this.logicComparisonHelper(Object.keys(query)[0], orderArr));
@@ -213,14 +214,15 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	private optionsSort (query: any, data: Map<string,any[]>): any[] {
-		let options = false;
+		let orderBool = false;
 		if (!(Object.prototype.hasOwnProperty.call(query, "COLUMNS"))) {
 			throw new InsightError("COLUMNS not correct");
-		} else if (Object.prototype.hasOwnProperty.call(query, "OPTIONS")) {
-			options = true;
+		} else if (Object.prototype.hasOwnProperty.call(query, "ORDER")) {
+			orderBool = true;
 		}
 		let columns = query["COLUMNS"] as string[];
-		// console.log(columns);
+		let order = query["ORDER"] as string;
+		console.log(order);
 		let checkColumns = [];
 		for (const column in columns) {
 			// console.log(columns[column]);
@@ -250,10 +252,29 @@ export default class InsightFacade implements IInsightFacade {
 				finalArr.push(item);
 			}
 		}
-		if (!options) {
+		if (!orderBool) {
+			console.log (finalArr);
 			return finalArr;
 		} else {
-			return [];
+			// console.log("OPTIONS!!!!!!!!!");
+			return this.orderHelper(order, finalArr);
+		}
+	}
+
+	private orderHelper (query: string, data: any[]): any[] {
+		let courseID = query.split("_", 1)[0];
+		if (!(this.currentDatasetID === courseID)) {
+			throw new InsightError("courseID in order doesn't match");
+		}
+		// console.log(data);
+		if (typeof data[0][query] === "number") {
+			console.log(selectionSortN(data, query, data.length));
+			return selectionSortN(data, query, data.length);
+		} else if (typeof  data[0][query] === "string") {
+			console.log(selectionSortS(data, query, data.length));
+			return selectionSortS(data, query, data.length);
+		} else {
+			throw new InsightError("Order data doesn't make sense");
 		}
 	}
 }

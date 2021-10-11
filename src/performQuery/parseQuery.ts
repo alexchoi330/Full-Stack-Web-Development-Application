@@ -75,6 +75,41 @@ export function MSFieldHelperReverse (field: string): string {
 		return "BAD ID";
 	}
 }
+
+export function swap (arr: any[],objOne: number, objTwo: number): any[] {
+	let temp = arr[objOne];
+	arr[objOne] = arr[objTwo];
+	arr[objTwo] = temp;
+	return arr;
+}
+
+// using selection sort for numbers
+export function selectionSortN(arr: any[], query: string, n: number): any[] {
+	let temp = arr;
+	for (let i = 0; i < n - 1; i++) {
+		let index = i;
+		for (let j = i + 1; j < n; j++) {
+			if (temp[j][query] < temp[index][query]) {
+				index = j;
+			}
+		}
+		temp = swap(temp, index, i);
+	}
+	return temp;
+}
+
+// using bubble sort for strings
+export function selectionSortS(arr: any[], query: string, n: number): any[] {
+	let temp = arr;
+	for (let i = 0; i < n - 1; i++) {
+		for (let j = 0; j < n - i - 1; j++) {
+			if (temp[j][query].localeCompare(temp[j + 1][query]) > -1) {
+				temp = swap(temp, j, j + 1);
+			}
+		}
+	}
+	return temp;
+}
 //
 //
 // export function parseQuery (query: any): Promise<any[]> {

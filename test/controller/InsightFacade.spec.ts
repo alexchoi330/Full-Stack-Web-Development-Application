@@ -355,7 +355,7 @@ describe("InsightFacade", function () {
 		testFolder<any, any[], PQErrorKind>(
 			"Dynamic InsightFacade PerformQuery tests",
 			(input) => insightFacade.performQuery(input),
-			"./test/resources/testing queries",
+			"./test/resources/queries",
 			{
 				errorValidator: (error): error is PQErrorKind =>
 					error === "ResultTooLargeError" || error === "InsightError",
@@ -363,10 +363,10 @@ describe("InsightFacade", function () {
 					const orderKey = input.OPTIONS.ORDER;
 					expect(actual).to.be.instanceof(Array);
 					expect(actual).to.have.length(expected.length);
-					expect(actual).to.have.deep.members(expected);
+					expect(actual).to.eql(expected);
 					if (orderKey !== undefined) {
 						for (let i = 1; i < actual.length; i = i + 1) {
-							expect(actual[i - 1]).to.deep.equal(expected[i - 1]);
+							expect(actual[i - 1]).to.deep.include(expected[i - 1]);
 							// need more thought about this one
 						}
 					}
