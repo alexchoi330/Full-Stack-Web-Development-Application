@@ -192,9 +192,28 @@ function not(overall: Map<string, any[]>, notMAP: Map<string, any[]>): Map<strin
 
 function isEqualString(compare: string, compareTo: string): boolean {
 	if(compare.includes("*")) {
-		let noAsterisks = compare.replace(/\*/g, "");
-		return (compareTo.includes(noAsterisks));
+		// If wildcard contains * at front and end
+		if(compare.charAt(0) === "*" && compare.charAt(compare.length - 1) === "*") {
+			let noAsterisks = compare.replace(/\*/g, "");
+			return (compareTo.includes(noAsterisks));
+		} else if(compare.charAt(0) === "*") { 		// If wildcard contains * at front
+			for(let i = 0; i < compare.length - 1; i++) {
+				if(compare.charAt(compare.length - 1 - i) !== compareTo.charAt(compareTo.length - 1 - i)) {
+					return false;
+				}
+			}
+			return true;
+		} else if(compare.charAt(compare.length - 1) === "*") { 	// If wildcard contains * at end
+			for(let i = 0; i < compare.length - 1; i++) {
+				if(compare.charAt(i) !== compareTo.charAt(i)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return true;
 	} else {
+		// If not a wildcard just do regular comparison
 		return compare === compareTo;
 	}
 }
