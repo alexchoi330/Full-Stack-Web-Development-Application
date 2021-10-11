@@ -1,0 +1,36 @@
+{
+	"title": "logic comparison should handle more than two - kevin",
+	"input": {
+		"WHERE": {
+			"OR": [
+				{
+					"IS": {
+						"courses_uuid": "9329"
+					}
+				},
+
+				{
+					"IS": {
+						"courses_uuid": "70436"
+					}
+				},
+				{
+					"IS": {
+						"courses_uuid": "92131"
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_uuid",
+				"courses_id",
+				"courses_avg"
+			],
+			"ORDER": "courses_avg"
+		}
+	},
+
+	"errorExpected": false,
+	"with": [{"courses_uuid":"9329","courses_id":"499","courses_avg":90.02},{"courses_uuid":"70436","courses_id":"426","courses_avg":90.02},{"courses_uuid":"92131","courses_id":"531","courses_avg":90.03}]
+}
