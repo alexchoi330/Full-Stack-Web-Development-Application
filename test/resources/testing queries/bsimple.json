@@ -1,0 +1,20 @@
+{
+	"title": "course dept test",
+	"input": {
+		"WHERE": {
+			"GT": {
+				"courses_avg": 98.6
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_instructor",
+				"courses_avg"
+			],
+			"ORDER": "courses_instructor"
+		}
+	},
+	"with": [
+		{"courses_instructor":"","courses_avg":98.71},{"courses_instructor":"","courses_avg":98.75},{"courses_instructor":"","courses_avg":98.98},{"courses_instructor":"","courses_avg":99.78},{"courses_instructor":"","courses_avg":98.76},{"courses_instructor":"brew, nancy","courses_avg":98.71},{"courses_instructor":"cole, kenneth","courses_avg":98.7},{"courses_instructor":"coria, lino","courses_avg":98.75},{"courses_instructor":"cox, daniel","courses_avg":99.19},{"courses_instructor":"frank, erica","courses_avg":98.98},{"courses_instructor":"gomez, jose","courses_avg":99.78},{"courses_instructor":"grow, laura","courses_avg":98.8},{"courses_instructor":"grow, laura","courses_avg":98.76}
+		]
+}
