@@ -329,7 +329,7 @@ describe("InsightFacade", function () {
 	 */
 	describe("PerformQuery", () => {
 
-		before(function () {
+		beforeEach(function () {
 			console.info(`Before: ${this.test?.parent?.title}`);
 
 			insightFacade = new InsightFacade();

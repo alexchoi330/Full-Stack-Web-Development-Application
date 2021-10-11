@@ -180,8 +180,8 @@ export default class InsightFacade implements IInsightFacade {
 		} else if (Object.keys(query)[0] === "NOT"){
 			console.log("in not");
 			console.log(Object.values(query)[0]);
-			return not(this.datasetContents.get(this.currentDatasetID) as Map<string, any[]>,
-				this.recursiveAppend(Object.values(query)[0]));
+			let notMap = this.recursiveAppend(Object.values(query)[0]);
+			return not(this.datasetContents.get(this.currentDatasetID) as Map<string, any[]>, notMap);
 		} else {
 			throw new InsightError("Unrecognizable key in WHERE");
 		}
