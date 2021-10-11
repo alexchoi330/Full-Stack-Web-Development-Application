@@ -192,6 +192,9 @@ function not(overall: Map<string, any[]>, notMAP: Map<string, any[]>): Map<strin
 
 function isEqualString(compare: string, compareTo: string): boolean {
 	if(compare.includes("*")) {
+		if(compare === "**" || compare === "*") {
+			return true;
+		}
 		let noAsterisks = compare.replace(/\*/g, "");
 		return (compareTo.includes(noAsterisks));
 	} else {
