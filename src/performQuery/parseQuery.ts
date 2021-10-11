@@ -21,7 +21,8 @@ export enum Field {
 	Course = "id",
 	Professor = "instructor",
 	Title = "title",
-	idTwo = "uuid"
+	idTwo = "uuid",
+	Section = "Section"
 }
 
 export function MSFieldHelper (field: string): string {

@@ -41,9 +41,14 @@ export default class InsightFacade implements IInsightFacade {
 			let fileData = await jsZip.files[filename].async("string");
 			try {
 				let data = JSON.parse(fileData);
-				size += data.result.length;
+				let parsedData = InsightFacade.parseCourses(data.result);
+				size += parsedData.length;
 				let coursePath = filename.split("/");
-				courses.set(coursePath[coursePath.length - 1], data.result);
+
+				// A valid course has to contain at least one valid course section
+				if(parsedData.length !== 0) {
+					courses.set(coursePath[coursePath.length - 1], parsedData);
+				}
 			} catch (e) {
 				// do nothing
 			}
@@ -55,7 +60,7 @@ export default class InsightFacade implements IInsightFacade {
 		this.datasetSize.set(id, size);
 
 		// add dataset to hard disk
-		this.saveToDisk(this.datasetContents.get(id) as Map<string, any[]>, this.persistDir + "/" + id + "/");
+		InsightFacade.saveToDisk(this.datasetContents.get(id) as Map<string, any[]>, this.persistDir + "/" + id + "/");
 		return Promise.resolve(Array.from(this.datasetContents.keys()));
 	}
 
@@ -118,7 +123,7 @@ export default class InsightFacade implements IInsightFacade {
 		return Promise.resolve(datasets as InsightDataset[]);
 	}
 
-	private saveToDisk(data: Map<string, any[]>, path: string): void {
+	private static saveToDisk(data: Map<string, any[]>, path: string): void {
 		for (let [key, value] of data) {
 			fs.outputJson(path + key + ".json", value, (err) => {
 				if (err) {
@@ -128,6 +133,29 @@ export default class InsightFacade implements IInsightFacade {
 			});
 		}
 		return;
+	}
+
+	private static parseCourses(course: any[]): any[] {
+		let result = [];
+		if(course.length === 0) {
+			return [];
+		}
+		for (let section of course) {
+			// If the "Section" property in the source data is set to "overall", you should set the year for that section to 1900.
+			if(section[Field.Section] === "overall") {
+				section[Field.year] = 1900;
+			}
+			// If any of the property in the source data is not present at all, skip the section
+			if(section[Field.dept] == null || section[Field.id] == null || section[Field.avg] == null
+				|| section[Field.instructor] == null || section[Field.title] == null
+				|| section[Field.pass] == null || section[Field.fail] == null
+				|| section[Field.audit] == null || section[Field.uuid] == null
+				|| section[Field.year] == null) {
+				continue;
+			}
+			result.push(section);
+		}
+		return result;
 	}
 
 	private recursiveAppend (query: any): Map<string, any[]> {
