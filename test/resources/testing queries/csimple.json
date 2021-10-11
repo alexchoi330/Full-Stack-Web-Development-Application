@@ -1,0 +1,20 @@
+{
+	"title": "WILDCARD test",
+	"input": {
+		"WHERE": {
+			"IS":{
+				"courses_instructor": "*oria, *"
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_instructor",
+				"courses_avg"
+			],
+			"ORDER": "courses_avg"
+		}
+	},
+	"with": [
+		{"courses_instructor":"coria, lino","courses_avg":98.75}
+	]
+}

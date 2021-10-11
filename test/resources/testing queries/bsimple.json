@@ -3,7 +3,7 @@
 	"input": {
 		"WHERE": {
 			"GT": {
-				"courses_avg": 98.6
+				"courses_avg": 98.69
 			}
 		},
 		"OPTIONS": {
