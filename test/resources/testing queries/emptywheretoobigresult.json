@@ -1,0 +1,16 @@
+{
+	"title": "SELECT dept, avg WHERE is empty, so get every single data. Expect error for too big of a result",
+	"input": {
+		"WHERE":{ },
+		"OPTIONS":{
+			"COLUMNS":[
+				"courses_dept",
+				"courses_avg"
+			],
+			"ORDER":"courses_avg"
+		}
+	},
+	"errorExpected": true,
+"with": "InsightError"
+}
+

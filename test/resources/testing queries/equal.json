@@ -1,0 +1,21 @@
+{
+	"title": "SELECT dept, avg, uuid WHERE courses avg = 97",
+	"input": {
+		"WHERE": {
+			"EQ": {
+				"courses_avg": 97
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"courses_avg",
+				"courses_uuid"
+			],
+			"ORDER": "courses_avg"
+		}
+	},
+	"errorExpected": false,
+"with": [{"courses_dept":"psyc","courses_avg":97,"courses_uuid":"54846"},{"courses_dept":"epse","courses_avg":97,"courses_uuid":"76310"},{"courses_dept":"crwr","courses_avg":97,"courses_uuid":"26255"}]
+}
+
