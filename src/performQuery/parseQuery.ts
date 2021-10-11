@@ -129,3 +129,12 @@ export function courseIDCheck(datasets: Map<string, Map<string,any[]>>, id: stri
 		return true;
 	}
 }
+
+export function logicComparisonHelper (key: string, queryList: Array<Map<string, any[]>>): Map<string, any[]> {
+	if (key === "AND") {
+		return and(queryList);
+	} else if (key === "OR") {
+		return or(queryList);
+	}
+	throw new InsightError("should not be here");
+}
