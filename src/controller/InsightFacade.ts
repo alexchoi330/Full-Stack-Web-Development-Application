@@ -44,7 +44,6 @@ export default class InsightFacade implements IInsightFacade {
 				let parsedData = InsightFacade.parseCourses(data.result);
 				size += parsedData.length;
 				let coursePath = filename.split("/");
-
 				// A valid course has to contain at least one valid course section
 				if(parsedData.length !== 0) {
 					courses.set(coursePath[coursePath.length - 1], parsedData);
@@ -53,12 +52,10 @@ export default class InsightFacade implements IInsightFacade {
 				// do nothing
 			}
 		}
-
 		// add dataset to our internal data structures
 		this.datasetContents.set(id, courses);
 		this.datasetKind.set(id, kind);
 		this.datasetSize.set(id, size);
-
 		// add dataset to hard disk
 		InsightFacade.saveToDisk(this.datasetContents.get(id) as Map<string, any[]>, this.persistDir + "/" + id + "/");
 		return Promise.resolve(Array.from(this.datasetContents.keys()));
@@ -72,12 +69,10 @@ export default class InsightFacade implements IInsightFacade {
 		if(!this.datasetContents.has(id)) {
 			return Promise.reject(new NotFoundError("id has not been added yet"));
 		}
-
 		// delete key, value pair from corresponding maps
 		this.datasetContents.delete(id);
 		this.datasetKind.delete(id);
 		this.datasetSize.delete(id);
-
 		// remove from hard disk
 		fs.removeSync(persistDir + "/" + id);
 		return Promise.resolve(id);
@@ -97,7 +92,6 @@ export default class InsightFacade implements IInsightFacade {
 		} else if (Object.keys(whereObj).length > 1) {
 			return Promise.reject(new InsightError("Too many objects in WHERE"));
 		}
-		// console.log(this.recursiveAppend(whereObj));
 		let whereReturn = this.recursiveAppend(whereObj);
 		// TODO: call option function on whereReturn;
 		// console.log(optionObj);
@@ -180,7 +174,6 @@ export default class InsightFacade implements IInsightFacade {
 				// console.log(item);
 				orderArr.push(this.recursiveAppend(item));
 			}
-			// console.log(this.logicComparisonHelper(Object.keys(query)[0], orderArr));
 			return this.logicComparisonHelper(Object.keys(query)[0], orderArr);
 		} else if (Object.keys(query)[0] === "NOT"){
 			console.log("in not");
@@ -193,9 +186,7 @@ export default class InsightFacade implements IInsightFacade {
 			// TODO: check that Object.keys(query)[0] is empty, if it is return all dataset contents
 			throw new InsightError("Unrecognizable key in WHERE");
 		}
-		// console.log("recursion");
 		// console.log(orderArr);
-		// return Promise.resolve(orderArr);
 		throw new InsightError("Not fully implemented");
 	}
 
@@ -221,7 +212,6 @@ export default class InsightFacade implements IInsightFacade {
 			// console.log(Object.values(temp)[0]);
 			return greaterThan(this.datasetContents.get(courseID) as Map<string, any[]>,
 				msKey, Object.values(temp)[0] as number);
-			//
 		} else if (key === "LT") {
 			return lessThan(this.datasetContents.get(courseID) as Map<string, any[]>,
 				msKey, Object.values(temp)[0] as number);
