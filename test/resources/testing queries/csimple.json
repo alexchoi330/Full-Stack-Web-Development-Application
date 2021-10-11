@@ -2,19 +2,33 @@
 	"title": "WILDCARD test",
 	"input": {
 		"WHERE": {
-			"IS":{
-				"courses_instructor": "*oria, *"
-			}
+			"OR": [
+				{
+					"IS": {
+						"courses_instructor": "*oria, *"
+					}
+				},
+				{
+					"IS": {
+						"courses_instructor": "barr, a*"
+					}
+				},
+				{
+					"IS": {
+						"courses_instructor": "*ervin"
+					}
+				}
+			]
 		},
 		"OPTIONS": {
 			"COLUMNS": [
 				"courses_instructor",
 				"courses_avg"
 			],
-			"ORDER": "courses_avg"
+			"ORDER": "courses_instructor"
 		}
 	},
 	"with": [
-		{"courses_instructor":"coria, lino","courses_avg":98.75}
+		{"courses_instructor":"barr, alasdair;bernatchez, pascal;horne, andrew","courses_avg":84.4},{"courses_instructor":"barr, alasdair;bernatchez, pascal;horne, andrew;kurata, harley;walker, michael j a","courses_avg":85.29},{"courses_instructor":"coria, lino","courses_avg":98.75},{"courses_instructor":"teymouri, shervin","courses_avg":74.11},{"courses_instructor":"teymouri, shervin","courses_avg":77.86},{"courses_instructor":"teymouri, shervin","courses_avg":79.82}
 	]
 }
