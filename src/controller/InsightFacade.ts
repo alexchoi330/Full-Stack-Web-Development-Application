@@ -13,7 +13,7 @@ import {persistDir} from "../../test/TestUtil";
 import {is, and, or, lessThan, greaterThan, equalTo, not} from "../performQuery/logic";
 import {
 	Field, MSFieldHelper, MSFieldHelperReverse, selectionSortS,
-	selectionSortN, skeyCheck, mkeyCheck, courseIDCheck
+	selectionSortN, skeyCheck, mkeyCheck, courseIDCheck, logicComparisonHelper
 } from "../performQuery/parseQuery";
 /**
  * This is the main programmatic entry point for the project.
@@ -175,10 +175,12 @@ export default class InsightFacade implements IInsightFacade {
 		} else if (Object.keys(query)[0] === "OR"
 			|| Object.keys(query)[0] === "AND") {
 			let values = Object.values(query)[0] as any[];
+			console.log(values);
 			for (let item of values) {
 				orderArr.push(this.recursiveAppend(item));
 			}
-			return this.logicComparisonHelper(Object.keys(query)[0], orderArr);
+			console.log(orderArr);
+			return logicComparisonHelper(Object.keys(query)[0], orderArr);
 		} else if (Object.keys(query)[0] === "NOT"){
 			console.log("in not");
 			console.log(Object.values(query)[0]);
@@ -209,11 +211,14 @@ export default class InsightFacade implements IInsightFacade {
 			}
 		}
 		if (key === "IS") {
+			console.log("in IS");
 			if (!skeyCheck(MSFieldHelperReverse(msKey))) {
 				throw new InsightError("skey incorrect in IS");
 			}
+			console.log(is(this.datasetContents.get(courseID) as Map<string, any[]>,
+				msKey, Object.values(temp)[0] as string | number));
 			return is(this.datasetContents.get(courseID) as Map<string, any[]>,
-				msKey, Object.values(temp)[0] as string);
+				msKey, Object.values(temp)[0] as string | number);
 		} else if (key === "GT") {
 			return greaterThan(this.datasetContents.get(courseID) as Map<string, any[]>,
 				msKey, Object.values(temp)[0] as number);
@@ -223,15 +228,6 @@ export default class InsightFacade implements IInsightFacade {
 		} else if (key === "EQ") {
 			return equalTo(this.datasetContents.get(courseID) as Map<string, any[]>,
 				msKey, Object.values(temp)[0] as number);
-		}
-		throw new InsightError("should not be here");
-	}
-
-	private logicComparisonHelper (key: string, queryList: Array<Map<string, any[]>>): Map<string, any[]> {
-		if (key === "AND") {
-			return and(queryList);
-		} else if (key === "OR") {
-			return or(queryList);
 		}
 		throw new InsightError("should not be here");
 	}
