@@ -138,3 +138,31 @@ export function logicComparisonHelper (key: string, queryList: Array<Map<string,
 	}
 	throw new InsightError("should not be here");
 }
+
+export function parseOptions (query: any): string {
+	let orderBool = false;
+	if (!(Object.prototype.hasOwnProperty.call(query, "COLUMNS"))) {
+		throw new InsightError("COLUMNS not correct");
+	} else if (Object.prototype.hasOwnProperty.call(query, "ORDER")) {
+		orderBool = true;
+	}
+	if (Object.keys(query).length > 1 && !orderBool) {
+		throw new InsightError("invalid key in OPTIONS");
+	}
+	let columns = query["COLUMNS"] as string[];
+	let order = query["ORDER"] as string;
+	let courseID = columns[0].split("_", 1)[0];
+	let checkColumns = [];
+	for (const column in columns) {
+		let courseIDTwo = columns[column].split("_", 1)[0];
+		if (!(courseID === courseIDTwo)) {
+			throw new InsightError("Wrong courseID in OPTIONS");
+		}
+		let msKey = columns[column].split("_", 2)[1];
+		if (!(skeyCheck(msKey) || mkeyCheck(msKey))) {
+			throw new InsightError("key inside ORDER is wrong");
+		}
+		checkColumns.push(MSFieldHelper(msKey));
+	}
+	return courseID;
+}

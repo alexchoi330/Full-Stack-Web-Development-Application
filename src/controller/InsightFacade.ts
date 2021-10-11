@@ -7,7 +7,7 @@ import {persistDir} from "../../test/TestUtil";
 import {is, and, or, lessThan, greaterThan, equalTo, not} from "../performQuery/logic";
 import {
 	Field, MSFieldHelper, MSFieldHelperReverse, selectionSortS,
-	selectionSortN, skeyCheck, mkeyCheck, courseIDCheck, logicComparisonHelper
+	selectionSortN, skeyCheck, mkeyCheck, courseIDCheck, logicComparisonHelper, parseOptions
 } from "../performQuery/parseQuery";
 /**
  * This is the main programmatic entry point for the project.
@@ -89,6 +89,7 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		const whereObj = query["WHERE"];
 		const optionObj = query["OPTIONS"];
+		this.currentDatasetID = parseOptions(optionObj);
 		let whereReturn;
 		console.log(whereObj, optionObj);
 		if (Object.keys(whereObj).length === 0) {
@@ -185,7 +186,6 @@ export default class InsightFacade implements IInsightFacade {
 		} else {
 			throw new InsightError("Unrecognizable key in WHERE");
 		}
-		throw new InsightError("Not fully implemented");
 	}
 
 	private MSComparisonHelper (key: string, query: any): Map<string, any[]> {
@@ -195,7 +195,7 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		let dsID = Object.keys(temp)[0] as string;
 		let courseID = dsID.split("_", 1)[0];
-		this.currentDatasetID = courseID;
+		// this.currentDatasetID = courseID;
 		if (!courseIDCheck(this.datasetContents, courseID, this.currentDatasetID)) {
 			throw new InsightError("Wrong courseID in base case");
 		}
@@ -230,26 +230,14 @@ export default class InsightFacade implements IInsightFacade {
 
 	private optionsSort (query: any, data: Map<string,any[]>): any[] {
 		let orderBool = false;
-		if (!(Object.prototype.hasOwnProperty.call(query, "COLUMNS"))) {
-			throw new InsightError("COLUMNS not correct");
-		} else if (Object.prototype.hasOwnProperty.call(query, "ORDER")) {
+		if (Object.prototype.hasOwnProperty.call(query, "ORDER")) {
 			orderBool = true;
-		}
-		if (Object.keys(query).length > 1 && !orderBool) {
-			throw new InsightError("invalid key in OPTIONS");
 		}
 		let columns = query["COLUMNS"] as string[];
 		let order = query["ORDER"] as string;
 		let checkColumns = [];
 		for (const column in columns) {
-			let courseID = columns[column].split("_", 1)[0];
-			if (!courseIDCheck(this.datasetContents, courseID, this.currentDatasetID)) {
-				throw new InsightError("Wrong courseID in OPTIONS");
-			}
 			let msKey = columns[column].split("_", 2)[1];
-			if (!(skeyCheck(msKey) || mkeyCheck(msKey))) {
-				throw new InsightError("key inside ORDER is wrong");
-			}
 			checkColumns.push(MSFieldHelper(msKey));
 		}
 		let finalArr = [];
