@@ -1,11 +1,5 @@
-import {
-	IInsightFacade,
-	InsightDataset,
-	InsightDatasetKind,
-	InsightError,
-	NotFoundError,
-	ResultTooLargeError
-} from "./IInsightFacade";
+import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError,
+	NotFoundError, ResultTooLargeError} from "./IInsightFacade";
 import JSZip from "jszip";
 import fs from "fs-extra";
 import {persistDir} from "../../test/TestUtil";
@@ -159,6 +153,8 @@ export default class InsightFacade implements IInsightFacade {
 				|| section[Field.year] == null) {
 				continue;
 			}
+			// Change UUID to string
+			section[Field.uuid] = section[Field.uuid].toString();
 			result.push(section);
 		}
 		return result;
