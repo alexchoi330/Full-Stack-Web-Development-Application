@@ -139,7 +139,7 @@ function is(data: Map<string, any[]>, comparator: string, compare_value: string)
 		let course = JSON.parse(JSON.stringify(value));
 		for (let currSection of course) {
 			let currValue = currSection[comparator];
-			if(currValue === compare_value) {
+			if(isEqualString(compare_value, currValue)) {
 				let sections = result.get(key) as any[];
 				if(sections !== undefined) {
 					sections.push(currSection);
@@ -188,6 +188,15 @@ function not(overall: Map<string, any[]>, notMAP: Map<string, any[]>): Map<strin
 		}
 	});
 	return result;
+}
+
+function isEqualString(compare: string, compareTo: string): boolean {
+	if(compare.includes("*")) {
+		let noAsterisks = compare.replace(/\*/g, "");
+		return (compareTo.includes(noAsterisks));
+	} else {
+		return compare === compareTo;
+	}
 }
 
 export{greaterThan, lessThan, equalTo, and, or, is, not};
