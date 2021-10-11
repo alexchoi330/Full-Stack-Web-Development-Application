@@ -11,8 +11,10 @@ import fs from "fs-extra";
 import {persistDir} from "../../test/TestUtil";
 // import {parseQuery} from "../performQuery/parseQuery";
 import {is, and, or, lessThan, greaterThan, equalTo, not} from "../performQuery/logic";
-import {Field, MSFieldHelper, MSFieldHelperReverse, selectionSortS,
-	selectionSortN, skeyCheck, mkeyCheck} from "../performQuery/parseQuery";
+import {
+	Field, MSFieldHelper, MSFieldHelperReverse, selectionSortS,
+	selectionSortN, skeyCheck, mkeyCheck, courseIDCheck
+} from "../performQuery/parseQuery";
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
@@ -179,7 +181,6 @@ export default class InsightFacade implements IInsightFacade {
 			return this.logicComparisonHelper(Object.keys(query)[0], orderArr);
 		} else if (Object.keys(query)[0] === "NOT"){
 			console.log("in not");
-			// console.log(Object.values(query));
 			console.log(Object.values(query)[0]);
 			return not(this.datasetContents.get(this.currentDatasetID) as Map<string, any[]>,
 				this.recursiveAppend(Object.values(query)[0]));
@@ -197,7 +198,9 @@ export default class InsightFacade implements IInsightFacade {
 		let dsID = Object.keys(temp)[0] as string;
 		let courseID = dsID.split("_", 1)[0];
 		this.currentDatasetID = courseID;
-		// TODO: check course ID exists using currentDatasetID, also check they aren't two different course ids
+		if (!courseIDCheck(this.datasetContents, courseID, this.currentDatasetID)) {
+			throw new InsightError("Wrong courseID in base case");
+		}
 		let msKey = dsID.split("_", 2)[1];
 		msKey = MSFieldHelper(msKey);
 		if (key === "GT" || key === "EQ" || key === "LT") {
@@ -240,12 +243,17 @@ export default class InsightFacade implements IInsightFacade {
 		} else if (Object.prototype.hasOwnProperty.call(query, "ORDER")) {
 			orderBool = true;
 		}
+		if (Object.keys(query).length > 1 && !orderBool) {
+			throw new InsightError("invalid key in OPTIONS");
+		}
 		let columns = query["COLUMNS"] as string[];
 		let order = query["ORDER"] as string;
 		let checkColumns = [];
 		for (const column in columns) {
 			let courseID = columns[column].split("_", 1)[0];
-			// TODO: check courseID is valid and is the same as the rest
+			if (!courseIDCheck(this.datasetContents, courseID, this.currentDatasetID)) {
+				throw new InsightError("Wrong courseID in OPTIONS");
+			}
 			let msKey = columns[column].split("_", 2)[1];
 			if (!(skeyCheck(msKey) || mkeyCheck(msKey))) {
 				throw new InsightError("key inside ORDER is wrong");
@@ -276,7 +284,7 @@ export default class InsightFacade implements IInsightFacade {
 
 	private orderHelper (query: string, data: any[]): any[] {
 		let courseID = query.split("_", 1)[0];
-		if (!(this.currentDatasetID === courseID)) {
+		if (!courseIDCheck(this.datasetContents, courseID, this.currentDatasetID)) {
 			throw new InsightError("courseID in order doesn't match");
 		}
 		if (typeof data[0][query] === "number") {

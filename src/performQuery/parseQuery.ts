@@ -121,3 +121,11 @@ export function mkeyCheck(mkey: string): boolean{
 	let validKeys = ["avg", "pass", "fail", "audit", "year"];
 	return validKeys.includes(mkey);
 }
+
+export function courseIDCheck(datasets: Map<string, Map<string,any[]>>, id: string, currentID: string): boolean {
+	if (!(datasets.has(id) && id === currentID)) {
+		return false;
+	} else {
+		return true;
+	}
+}
