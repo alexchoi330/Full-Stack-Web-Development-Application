@@ -133,7 +133,7 @@ function orTwo(data_1: Map<string, any[]>, data_2: Map<string, any[]>): Map<stri
 	return result;
 }
 
-function is(data: Map<string, any[]>, comparator: string, compare_value: string): Map<string, any[]> {
+function is(data: Map<string, any[]>, comparator: string, compare_value: string | number): Map<string, any[]> {
 	let result = new Map<string, any[]>();
 	data.forEach((value: any[], key: string) => {
 		let course = JSON.parse(JSON.stringify(value));
