@@ -1,0 +1,23 @@
+{
+	"title": "SELECT dept, avg, uuid WHERE is NOT avg > 30",
+	"input": {
+		"WHERE": {
+			"NOT": {
+				"GT": {
+					"courses_avg": 30
+				}
+			}
+		},
+		"OPTIONS":{
+			"COLUMNS":[
+				"courses_dept",
+				"courses_avg",
+				"courses_uuid"
+			],
+			"ORDER":"courses_avg"
+		}
+	},
+	"errorExpected": false,
+"with": [{"courses_dept":"lfs","courses_avg":0,"courses_uuid":"56403"},{"courses_dept":"lfs","courses_avg":0,"courses_uuid":"56402"},{"courses_dept":"frst","courses_avg":0,"courses_uuid":"89536"},{"courses_dept":"wood","courses_avg":1,"courses_uuid":"49835"},{"courses_dept":"busi","courses_avg":4,"courses_uuid":"16428"},{"courses_dept":"busi","courses_avg":4,"courses_uuid":"16427"},{"courses_dept":"fopr","courses_avg":4.5,"courses_uuid":"84769"}]
+}
+

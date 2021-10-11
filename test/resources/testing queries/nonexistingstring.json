@@ -1,0 +1,23 @@
+{
+	"title": "SELECT dept, avg WHERE is NOT avg > 30, course_avg instead of courses_avg error",
+	"input": {
+		"WHERE": {
+			"NOT": {
+				"GT": {
+					"course_avg": 30
+				}
+			}
+		},
+		"OPTIONS":{
+			"COLUMNS":[
+				"courses_dept",
+				"courses_avg",
+				"courses_uuid"
+			],
+			"ORDER":"courses_avg"
+		}
+	},
+	"errorExpected": true,
+"with": "InsightError"
+}
+
