@@ -154,24 +154,16 @@ export default class InsightFacade implements IInsightFacade {
 
 	private recursiveAppend (query: any): Map<string, any[]> {
 		let orderArr = [];
-		// console.log("object keys:");
-		// console.log (Object.keys(query));
 		// TODO: if two keys are the same then the latest one is taken, right now i think the first one is taken
 		if (Object.keys(query)[0] === "IS"
 			|| Object.keys(query)[0] === "GT"
 			|| Object.keys(query)[0] === "LT"
 			|| Object.keys(query)[0] === "EQ"){
-			// console.log(" in IS EQ GT LT");
-			// console.log(this.MSComparisonHelper(Object.keys(query)[0], query));
 			return this.MSComparisonHelper(Object.keys(query)[0], query);
 		} else if (Object.keys(query)[0] === "OR"
 			|| Object.keys(query)[0] === "AND") {
-			// console.log("in or and");
-			// console.log(Object.values(query));
-			// console.log(Object.values(query)[0]);
 			let values = Object.values(query)[0] as any[];
 			for (let item of values) {
-				// console.log(item);
 				orderArr.push(this.recursiveAppend(item));
 			}
 			return this.logicComparisonHelper(Object.keys(query)[0], orderArr);
@@ -186,7 +178,6 @@ export default class InsightFacade implements IInsightFacade {
 			// TODO: check that Object.keys(query)[0] is empty, if it is return all dataset contents
 			throw new InsightError("Unrecognizable key in WHERE");
 		}
-		// console.log(orderArr);
 		throw new InsightError("Not fully implemented");
 	}
 
@@ -205,11 +196,7 @@ export default class InsightFacade implements IInsightFacade {
 		if (key === "IS") {
 			return is(this.datasetContents.get(courseID) as Map<string, any[]>,
 				msKey, Object.values(temp)[0] as string);
-			// return Promise.resolve(is(this.datasetContents.get(courseID), msKey, Object.values(temp)[0] as string));
 		} else if (key === "GT") {
-			// console.log(this.datasetContents.get(courseID));
-			// console.log(msKey);
-			// console.log(Object.values(temp)[0]);
 			return greaterThan(this.datasetContents.get(courseID) as Map<string, any[]>,
 				msKey, Object.values(temp)[0] as number);
 		} else if (key === "LT") {
@@ -243,21 +230,17 @@ export default class InsightFacade implements IInsightFacade {
 		console.log(order);
 		let checkColumns = [];
 		for (const column in columns) {
-			// console.log(columns[column]);
 			let courseID = columns[column].split("_", 1)[0];
 			// TODO: check courseID is valid and is the same as the rest
 			let msKey = columns[column].split("_", 2)[1];
 			// TODO: check msKey is valid
-			// console.log(msKey);
 			checkColumns.push(MSFieldHelper(msKey));
 		}
 		console.log(checkColumns);
 		let finalArr = [];
 		for (let value of data.values()) {
 			for (let item of value) {
-				// console.log(item);
 				for (let key of Object.keys(item)) {
-					// console.log(key);
 					if (!(checkColumns.indexOf(key) > -1)) {
 						delete item[key];
 					} else {
@@ -265,8 +248,6 @@ export default class InsightFacade implements IInsightFacade {
 							{[this.currentDatasetID + "_" + MSFieldHelperReverse(key)]: item[key] })[key];
 					}
 				}
-				// console.log("after");
-				// console.log(item);
 				finalArr.push(item);
 			}
 		}
@@ -274,7 +255,6 @@ export default class InsightFacade implements IInsightFacade {
 			console.log (finalArr);
 			return finalArr;
 		} else {
-			// console.log("OPTIONS!!!!!!!!!");
 			return this.orderHelper(order, finalArr);
 		}
 	}
@@ -284,7 +264,6 @@ export default class InsightFacade implements IInsightFacade {
 		if (!(this.currentDatasetID === courseID)) {
 			throw new InsightError("courseID in order doesn't match");
 		}
-		// console.log(data);
 		if (typeof data[0][query] === "number") {
 			console.log(selectionSortN(data, query, data.length));
 			return selectionSortN(data, query, data.length);
