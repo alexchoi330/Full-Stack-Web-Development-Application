@@ -1,10 +1,18 @@
-import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "./IInsightFacade";
+import {
+	IInsightFacade,
+	InsightDataset,
+	InsightDatasetKind,
+	InsightError,
+	NotFoundError,
+	ResultTooLargeError
+} from "./IInsightFacade";
 import JSZip from "jszip";
 import fs from "fs-extra";
 import {persistDir} from "../../test/TestUtil";
 // import {parseQuery} from "../performQuery/parseQuery";
 import {is, and, or, lessThan, greaterThan, equalTo, not} from "../performQuery/logic";
-import {Field, MSFieldHelper, MSFieldHelperReverse, selectionSortS, selectionSortN} from "../performQuery/parseQuery";
+import {Field, MSFieldHelper, MSFieldHelperReverse, selectionSortS,
+	selectionSortN, skeyCheck, mkeyCheck} from "../performQuery/parseQuery";
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
@@ -83,25 +91,27 @@ export default class InsightFacade implements IInsightFacade {
 			&& Object.prototype.hasOwnProperty.call(query, "OPTIONS"))) {
 			return Promise.reject(new InsightError("WHERE or OPTIONS not correct"));
 		}
-		console.log("made past first check");
 		const whereObj = query["WHERE"];
 		const optionObj = query["OPTIONS"];
+		let whereReturn;
 		console.log(whereObj, optionObj);
 		if (Object.keys(whereObj).length === 0) {
-			return Promise.resolve([]);
+			this.currentDatasetID = optionObj["COLUMNS"][0].split("_", 1)[0];
+			whereReturn = this.datasetContents.get(this.currentDatasetID) as Map<string, any[]>;
 		} else if (Object.keys(whereObj).length > 1) {
 			return Promise.reject(new InsightError("Too many objects in WHERE"));
+		} else {
+			whereReturn = this.recursiveAppend(whereObj);
 		}
-		let whereReturn = this.recursiveAppend(whereObj);
-		// TODO: call option function on whereReturn;
-		// console.log(optionObj);
-		// console.log (whereReturn);
+		let totalReturn = 0;
+		for (let item of whereReturn.values()) {
+			totalReturn = totalReturn + item.length;
+		}
+		if (totalReturn > 5000) {
+			throw new ResultTooLargeError("The query returns over 5000 results");
+		}
 		let optionsReturn = this.optionsSort(optionObj, whereReturn);
-		// console.log("return: ");
-		// console.log(optionsReturn);
 		return Promise.resolve(optionsReturn);
-		// return parseQuery(query);
-		// return Promise.reject("Not implemented.");
 	}
 
 	public listDatasets(): Promise<InsightDataset[]> {
@@ -173,9 +183,7 @@ export default class InsightFacade implements IInsightFacade {
 			console.log(Object.values(query)[0]);
 			return not(this.datasetContents.get(this.currentDatasetID) as Map<string, any[]>,
 				this.recursiveAppend(Object.values(query)[0]));
-			// TODO: update currentDatasetID with the current dataset ID in MSComparisonHelper
 		} else {
-			// TODO: check that Object.keys(query)[0] is empty, if it is return all dataset contents
 			throw new InsightError("Unrecognizable key in WHERE");
 		}
 		throw new InsightError("Not fully implemented");
@@ -192,8 +200,15 @@ export default class InsightFacade implements IInsightFacade {
 		// TODO: check course ID exists using currentDatasetID, also check they aren't two different course ids
 		let msKey = dsID.split("_", 2)[1];
 		msKey = MSFieldHelper(msKey);
-		// TODO: check mskey is legitimate mkey or skey
+		if (key === "GT" || key === "EQ" || key === "LT") {
+			if (!mkeyCheck(MSFieldHelperReverse(msKey))) {
+				throw new InsightError("mkey incorrect in GT EQ LT");
+			}
+		}
 		if (key === "IS") {
+			if (!skeyCheck(MSFieldHelperReverse(msKey))) {
+				throw new InsightError("skey incorrect in IS");
+			}
 			return is(this.datasetContents.get(courseID) as Map<string, any[]>,
 				msKey, Object.values(temp)[0] as string);
 		} else if (key === "GT") {
@@ -227,16 +242,16 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		let columns = query["COLUMNS"] as string[];
 		let order = query["ORDER"] as string;
-		console.log(order);
 		let checkColumns = [];
 		for (const column in columns) {
 			let courseID = columns[column].split("_", 1)[0];
 			// TODO: check courseID is valid and is the same as the rest
 			let msKey = columns[column].split("_", 2)[1];
-			// TODO: check msKey is valid
+			if (!(skeyCheck(msKey) || mkeyCheck(msKey))) {
+				throw new InsightError("key inside ORDER is wrong");
+			}
 			checkColumns.push(MSFieldHelper(msKey));
 		}
-		console.log(checkColumns);
 		let finalArr = [];
 		for (let value of data.values()) {
 			for (let item of value) {

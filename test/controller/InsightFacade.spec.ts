@@ -422,8 +422,8 @@ describe("InsightFacade", function () {
 					.then(() => {
 						return facade.performQuery({
 							WHERE:{
-								GT:{
-									courses_avg:0
+								GT: {
+									courses_avg: 0
 								}
 							},
 							OPTIONS:{
