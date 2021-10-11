@@ -212,9 +212,9 @@ export default class InsightFacade implements IInsightFacade {
 				throw new InsightError("skey incorrect in IS");
 			}
 			console.log(is(this.datasetContents.get(courseID) as Map<string, any[]>,
-				msKey, Object.values(temp)[0] as string | number));
+				msKey, Object.values(temp)[0] as string));
 			return is(this.datasetContents.get(courseID) as Map<string, any[]>,
-				msKey, Object.values(temp)[0] as string | number);
+				msKey, Object.values(temp)[0] as string);
 		} else if (key === "GT") {
 			return greaterThan(this.datasetContents.get(courseID) as Map<string, any[]>,
 				msKey, Object.values(temp)[0] as number);
