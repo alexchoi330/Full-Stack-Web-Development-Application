@@ -197,17 +197,15 @@ function isEqualString(compare: string, compareTo: string): boolean {
 			let noAsterisks = compare.replace(/\*/g, "");
 			return (compareTo.includes(noAsterisks));
 		} else if(compare.charAt(0) === "*") { 		// If wildcard contains * at front
-			let noAsterisks = compare.replace(/\*/g, "");
-			for(let i = 0; i < noAsterisks.length; i++) {
-				if(noAsterisks.charAt(noAsterisks.length - 1 - i) !== compareTo.charAt(compareTo.length - 1 - i)) {
+			for(let i = 1; i < compare.length; i++) {
+				if(compare.charAt(compare.length - 1 - i) !== compareTo.charAt(compareTo.length - 1 - i)) {
 					return false;
 				}
 			}
 			return true;
 		} else if(compare.charAt(compare.length - 1) === "*") { 	// If wildcard contains * at end
-			let noAsterisks = compare.replace(/\*/g, "");
-			for(let i = 0; i < noAsterisks.length; i++) {
-				if(noAsterisks.charAt(i) !== compareTo.charAt(i)) {
+			for(let i = 1; i < compare.length; i++) {
+				if(compare.charAt(i) !== compareTo.charAt(i)) {
 					return false;
 				}
 			}
