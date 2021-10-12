@@ -11,6 +11,6 @@
 		}
 	},
 	"errorExpected": true,
-"with": "InsightError"
+"with": "ResultTooLargeError"
 }
 
