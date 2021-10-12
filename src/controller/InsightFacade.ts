@@ -94,7 +94,7 @@ export default class InsightFacade implements IInsightFacade {
 		console.log(whereObj, optionObj);
 		if (Object.keys(whereObj).length === 0) {
 			this.currentDatasetID = optionObj["COLUMNS"][0].split("_", 1)[0];
-			whereReturn = this.datasetContents.get(this.currentDatasetID) as Map<string, any[]>;
+			whereReturn = new Map(this.datasetContents.get(this.currentDatasetID) as Map<string, any[]>);
 		} else if (Object.keys(whereObj).length > 1) {
 			return Promise.reject(new InsightError("Too many objects in WHERE"));
 		} else {
@@ -172,15 +172,11 @@ export default class InsightFacade implements IInsightFacade {
 		} else if (Object.keys(query)[0] === "OR"
 			|| Object.keys(query)[0] === "AND") {
 			let values = Object.values(query)[0] as any[];
-			console.log(values);
 			for (let item of values) {
 				orderArr.push(this.recursiveAppend(item));
 			}
-			console.log(orderArr);
 			return logicComparisonHelper(Object.keys(query)[0], orderArr);
 		} else if (Object.keys(query)[0] === "NOT"){
-			console.log("in not");
-			console.log(Object.values(query)[0]);
 			let notMap = this.recursiveAppend(Object.values(query)[0]);
 			return not(this.datasetContents.get(this.currentDatasetID) as Map<string, any[]>, notMap);
 		} else {
@@ -207,12 +203,9 @@ export default class InsightFacade implements IInsightFacade {
 			}
 		}
 		if (key === "IS") {
-			console.log("in IS");
 			if (!skeyCheck(MSFieldHelperReverse(msKey))) {
 				throw new InsightError("skey incorrect in IS");
 			}
-			console.log(is(this.datasetContents.get(courseID) as Map<string, any[]>,
-				msKey, Object.values(temp)[0] as string));
 			return is(this.datasetContents.get(courseID) as Map<string, any[]>,
 				msKey, Object.values(temp)[0] as string);
 		} else if (key === "GT") {
@@ -240,22 +233,29 @@ export default class InsightFacade implements IInsightFacade {
 			let msKey = columns[column].split("_", 2)[1];
 			checkColumns.push(MSFieldHelper(msKey));
 		}
+		let tempData = new Map(data);
 		let finalArr = [];
-		for (let value of data.values()) {
+		for (let value of tempData.values()) {
 			for (let item of value) {
+				let obj = {} as any;
 				for (let key of Object.keys(item)) {
 					if (!(checkColumns.indexOf(key) > -1)) {
-						delete item[key];
+						// delete item[key];
 					} else {
-						delete Object.assign(item,
-							{[this.currentDatasetID + "_" + MSFieldHelperReverse(key)]: item[key] })[key];
+						// delete Object.assign(item,
+							// {[this.currentDatasetID + "_" + MSFieldHelperReverse(key)]: item[key] })[key];
+						let id = this.currentDatasetID + "_" + MSFieldHelperReverse(key);
+						let val = item[key];
+						obj[id] = val;
+						finalArr.push();
 					}
 				}
-				finalArr.push(item);
+				// finalArr.push(item);
+				finalArr.push(obj);
 			}
 		}
 		if (!orderBool) {
-			console.log (finalArr);
+			// console.log (finalArr);
 			return finalArr;
 		} else {
 			return this.orderHelper(order, finalArr);
