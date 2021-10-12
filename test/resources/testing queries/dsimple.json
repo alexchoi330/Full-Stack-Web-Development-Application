@@ -1,0 +1,35 @@
+{
+	"title": "sort UUID test",
+	"input": {
+		"WHERE": {
+			"OR": [
+				{
+					"IS": {
+						"courses_instructor": "*oria, *"
+					}
+				},
+				{
+					"IS": {
+						"courses_instructor": "barr, a*"
+					}
+				},
+				{
+					"IS": {
+						"courses_instructor": "*ervin"
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_instructor",
+				"courses_avg",
+				"courses_uuid"
+			],
+			"ORDER": "courses_uuid"
+		}
+	},
+	"with": [
+		{"courses_instructor":"coria, lino","courses_avg":98.75,"courses_uuid":"10235"},{"courses_instructor":"teymouri, shervin","courses_avg":77.86,"courses_uuid":"12558"},{"courses_instructor":"teymouri, shervin","courses_avg":79.82,"courses_uuid":"1436"},{"courses_instructor":"barr, alasdair;bernatchez, pascal;horne, andrew","courses_avg":84.4,"courses_uuid":"15195"},{"courses_instructor":"barr, alasdair;bernatchez, pascal;horne, andrew;kurata, harley;walker, michael j a","courses_avg":85.29,"courses_uuid":"33148"},{"courses_instructor":"teymouri, shervin","courses_avg":74.11,"courses_uuid":"89438"}
+	]
+}

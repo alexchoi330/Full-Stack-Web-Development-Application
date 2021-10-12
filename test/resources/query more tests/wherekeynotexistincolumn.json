@@ -1,0 +1,19 @@
+{
+	"title": "SELECT dept, avg WHERE avg > 99",
+	"input": {
+		"WHERE": {
+			"GT": {
+				"courses_avg": 99
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"courses_id"
+			],
+			"ORDER": "courses_id"
+		}
+	},
+	"errorExpected": false,
+	"with": [{"courses_dept":"math","courses_id":"527"},{"courses_dept":"math","courses_id":"527"},{"courses_dept":"cnps","courses_id":"574"}]
+}

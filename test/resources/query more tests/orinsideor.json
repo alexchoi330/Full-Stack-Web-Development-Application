@@ -1,0 +1,43 @@
+{
+	"title": "SELECT dept, id, avg WHERE > 99 OR LT OR avg = 55 OR dept is swed",
+	"input": {
+		"WHERE": {
+			"OR": [
+				{
+					"GT": {
+						"courses_avg": 99
+					}
+				},
+				{
+					"LT": {
+						"courses_avg": 1
+					}
+				},
+				{
+					"OR": [
+						{
+							"EQ": {
+								"courses_avg": 55
+							}
+						},
+						{
+							"IS": {
+								"courses_dept": "swed"
+							}
+						}
+					]
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"courses_id",
+				"courses_avg"
+			],
+			"ORDER": "courses_id"
+		}
+	},
+	"errorExpected": false,
+	"with": [{"courses_dept":"swed","courses_id":"100","courses_avg":81.24},{"courses_dept":"swed","courses_id":"100","courses_avg":81.93},{"courses_dept":"swed","courses_id":"100","courses_avg":80.55},{"courses_dept":"swed","courses_id":"100","courses_avg":83.85},{"courses_dept":"swed","courses_id":"100","courses_avg":84.35},{"courses_dept":"swed","courses_id":"100","courses_avg":83.39},{"courses_dept":"swed","courses_id":"100","courses_avg":79.71},{"courses_dept":"swed","courses_id":"100","courses_avg":79},{"courses_dept":"swed","courses_id":"100","courses_avg":80.34},{"courses_dept":"lfs","courses_id":"100","courses_avg":0},{"courses_dept":"lfs","courses_id":"100","courses_avg":0},{"courses_dept":"swed","courses_id":"110","courses_avg":82.3},{"courses_dept":"swed","courses_id":"110","courses_avg":82.3},{"courses_dept":"swed","courses_id":"110","courses_avg":82.37},{"courses_dept":"swed","courses_id":"110","courses_avg":82.37},{"courses_dept":"swed","courses_id":"110","courses_avg":80.96},{"courses_dept":"swed","courses_id":"110","courses_avg":80.96},{"courses_dept":"swed","courses_id":"200","courses_avg":80.89},{"courses_dept":"swed","courses_id":"200","courses_avg":80.89},{"courses_dept":"swed","courses_id":"200","courses_avg":81.31},{"courses_dept":"swed","courses_id":"200","courses_avg":81.31},{"courses_dept":"swed","courses_id":"200","courses_avg":77.88},{"courses_dept":"swed","courses_id":"200","courses_avg":77.88},{"courses_dept":"frst","courses_id":"202","courses_avg":0},{"courses_dept":"swed","courses_id":"210","courses_avg":82.16},{"courses_dept":"swed","courses_id":"210","courses_avg":82.16},{"courses_dept":"swed","courses_id":"210","courses_avg":81.17},{"courses_dept":"swed","courses_id":"210","courses_avg":81.17},{"courses_dept":"swed","courses_id":"210","courses_avg":84.92},{"courses_dept":"swed","courses_id":"210","courses_avg":84.92},{"courses_dept":"phar","courses_id":"435","courses_avg":55},{"courses_dept":"math","courses_id":"527","courses_avg":99.78},{"courses_dept":"math","courses_id":"527","courses_avg":99.78},{"courses_dept":"cnps","courses_id":"574","courses_avg":99.19}]
+}
