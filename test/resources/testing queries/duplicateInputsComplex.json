@@ -1,0 +1,57 @@
+{
+	"title": "SELECT dept, avg WHERE avg > 99",
+	"input": {
+		"WHERE": {
+			"OR": [
+				{
+					"IS": {
+						"courses_uuid": "9329"
+					}
+				},
+
+				{
+					"IS": {
+						"courses_uuid": "70436"
+					}
+				},
+				{
+					"IS": {
+						"courses_uuid": "92131"
+					}
+				}
+			],
+			"OR": [
+				{
+					"IS": {
+						"courses_uuid": "26777"
+					}
+				},
+
+				{
+					"IS": {
+						"courses_uuid": "5373"
+					}
+				},
+				{
+					"IS": {
+						"courses_uuid": "5374"
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"courses_id"
+			],
+			"COLUMNS": [
+				"courses_avg",
+				"courses_uuid"
+			],
+			"ORDER": "courses_avg"
+		}
+	},
+	"with": [
+		{"courses_avg":99.19,"courses_uuid":"26777"},{"courses_avg":99.78,"courses_uuid":"5373"},{"courses_avg":99.78,"courses_uuid":"5374"}
+	]
+}
