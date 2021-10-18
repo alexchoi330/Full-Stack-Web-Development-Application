@@ -6,7 +6,7 @@ import {persistDir} from "../../test/TestUtil";
 // import {parseQuery} from "../performQuery/parseQuery";
 import {is, and, or, lessThan, greaterThan, equalTo, not} from "../performQuery/logic";
 import {
-	Field, MSFieldHelper, MSFieldHelperReverse, selectionSortS,
+	Field, MSFieldHelper, MSFieldHelperReverse, selectionSortS, MSComparisonHelper,
 	selectionSortN, skeyCheck, mkeyCheck, courseIDCheck, logicComparisonHelper, parseOptions, numberCheck, orderHelper
 } from "../performQuery/parseQuery";
 /**
@@ -101,7 +101,7 @@ export default class InsightFacade implements IInsightFacade {
 		} else if (Object.keys(whereObj).length > 1) {
 			return Promise.reject(new InsightError("Too many objects in WHERE"));
 		} else {
-			whereReturn = this.recursiveAppend(whereObj);
+			whereReturn = this.whereParse(whereObj);
 		}
 		let totalReturn = 0;
 		for (let item of whereReturn.values()) {
@@ -188,64 +188,26 @@ export default class InsightFacade implements IInsightFacade {
 		return result;
 	}
 
-	private recursiveAppend (query: any): Map<string, any[]> {
+	private whereParse (query: any): Map<string, any[]> {
 		let orderArr = [];
 		if (Object.keys(query)[0] === "IS"
 			|| Object.keys(query)[0] === "GT"
 			|| Object.keys(query)[0] === "LT"
 			|| Object.keys(query)[0] === "EQ"){
-			return this.MSComparisonHelper(Object.keys(query)[0], query);
+			return MSComparisonHelper(this.datasetContents, this.currentDatasetID, Object.keys(query)[0], query);
 		} else if (Object.keys(query)[0] === "OR"
 			|| Object.keys(query)[0] === "AND") {
 			let values = Object.values(query)[0] as any[];
 			for (let item of values) {
-				orderArr.push(this.recursiveAppend(item));
+				orderArr.push(this.whereParse(item));
 			}
 			return logicComparisonHelper(Object.keys(query)[0], orderArr);
 		} else if (Object.keys(query)[0] === "NOT"){
-			let notMap = this.recursiveAppend(Object.values(query)[0]);
+			let notMap = this.whereParse(Object.values(query)[0]);
 			return not(this.datasetContents.get(this.currentDatasetID) as Map<string, any[]>, notMap);
 		} else {
 			throw new InsightError("Unrecognizable key in WHERE");
 		}
-	}
-
-	private MSComparisonHelper (key: string, query: any): Map<string, any[]> {
-		let comparisonValue = Object.values(query)[0] as any;
-		if (!(Object.keys(comparisonValue).length === 1)){
-			throw new InsightError("Too many keys inside " + key);
-		}
-		let dsID = Object.keys(comparisonValue)[0] as string;
-		let courseID = dsID.split("_", 1)[0];
-		// this.currentDatasetID = courseID;
-		if (!courseIDCheck(this.datasetContents, courseID, this.currentDatasetID)) {
-			throw new InsightError("Wrong courseID in base case");
-		}
-		let msKey = dsID.split("_", 2)[1];
-		numberCheck(msKey, comparisonValue[dsID]);
-		msKey = MSFieldHelper(msKey);
-		if (key === "GT" || key === "EQ" || key === "LT") {
-			if (!mkeyCheck(MSFieldHelperReverse(msKey))) {
-				throw new InsightError("mkey incorrect in GT EQ LT");
-			}
-		}
-		if (key === "IS") {
-			if (!skeyCheck(MSFieldHelperReverse(msKey))) {
-				throw new InsightError("skey incorrect in IS");
-			}
-			return is(this.datasetContents.get(courseID) as Map<string, any[]>,
-				msKey, Object.values(comparisonValue)[0] as string);
-		} else if (key === "GT") {
-			return greaterThan(this.datasetContents.get(courseID) as Map<string, any[]>,
-				msKey, Object.values(comparisonValue)[0] as number);
-		} else if (key === "LT") {
-			return lessThan(this.datasetContents.get(courseID) as Map<string, any[]>,
-				msKey, Object.values(comparisonValue)[0] as number);
-		} else if (key === "EQ") {
-			return equalTo(this.datasetContents.get(courseID) as Map<string, any[]>,
-				msKey, Object.values(comparisonValue)[0] as number);
-		}
-		throw new InsightError("should not be here");
 	}
 
 	private optionsSort (query: any, data: Map<string,any[]>): any[] {

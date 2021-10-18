@@ -21,6 +21,7 @@ export enum Field {
 	Course = "id",
 	Professor = "instructor",
 	Title = "title",
+	// idTwo is bad don't use
 	idTwo = "uuid",
 	Section = "Section"
 }
@@ -143,6 +144,44 @@ export function logicComparisonHelper (key: string, queryList: Array<Map<string,
 		return and(queryList);
 	} else if (key === "OR") {
 		return or(queryList);
+	}
+	throw new InsightError("should not be here");
+}
+
+export function MSComparisonHelper (datasetContents: any, datasetID: any, key: string, query: any): Map<string, any[]> {
+	let comparisonValue = Object.values(query)[0] as any;
+	if (!(Object.keys(comparisonValue).length === 1)){
+		throw new InsightError("Too many keys inside " + key);
+	}
+	let dsID = Object.keys(comparisonValue)[0] as string;
+	let courseID = dsID.split("_", 1)[0];
+	// this.currentDatasetID = courseID;
+	if (!courseIDCheck(datasetContents, courseID, datasetID)) {
+		throw new InsightError("Wrong courseID in base case");
+	}
+	let msKey = dsID.split("_", 2)[1];
+	numberCheck(msKey, comparisonValue[dsID]);
+	msKey = MSFieldHelper(msKey);
+	if (key === "GT" || key === "EQ" || key === "LT") {
+		if (!mkeyCheck(MSFieldHelperReverse(msKey))) {
+			throw new InsightError("mkey incorrect in GT EQ LT");
+		}
+	}
+	if (key === "IS") {
+		if (!skeyCheck(MSFieldHelperReverse(msKey))) {
+			throw new InsightError("skey incorrect in IS");
+		}
+		return is(datasetContents.get(courseID) as Map<string, any[]>,
+			msKey, Object.values(comparisonValue)[0] as string);
+	} else if (key === "GT") {
+		return greaterThan(datasetContents.get(courseID) as Map<string, any[]>,
+			msKey, Object.values(comparisonValue)[0] as number);
+	} else if (key === "LT") {
+		return lessThan(datasetContents.get(courseID) as Map<string, any[]>,
+			msKey, Object.values(comparisonValue)[0] as number);
+	} else if (key === "EQ") {
+		return equalTo(datasetContents.get(courseID) as Map<string, any[]>,
+			msKey, Object.values(comparisonValue)[0] as number);
 	}
 	throw new InsightError("should not be here");
 }
