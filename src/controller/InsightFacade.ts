@@ -1,14 +1,26 @@
-import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError,
-	NotFoundError, ResultTooLargeError} from "./IInsightFacade";
+import {
+	IInsightFacade,
+	InsightDataset,
+	InsightDatasetKind,
+	InsightError,
+	NotFoundError,
+	ResultTooLargeError
+} from "./IInsightFacade";
 import JSZip from "jszip";
 import fs from "fs-extra";
 import {persistDir} from "../../test/TestUtil";
 // import {parseQuery} from "../performQuery/parseQuery";
-import {is, and, or, lessThan, greaterThan, equalTo, not} from "../performQuery/logic";
+import {not} from "../performQuery/logic";
 import {
-	Field, MSFieldHelper, MSFieldHelperReverse, selectionSortS, MSComparisonHelper,
-	selectionSortN, skeyCheck, mkeyCheck, courseIDCheck, logicComparisonHelper, parseOptions, numberCheck, orderHelper
+	Field,
+	logicComparisonHelper,
+	MSComparisonHelper,
+	MSFieldHelper,
+	MSFieldHelperReverse,
+	orderHelper,
+	parseOptions
 } from "../performQuery/parseQuery";
+
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
@@ -39,6 +51,16 @@ export default class InsightFacade implements IInsightFacade {
 			return Promise.reject(
 				new InsightError("id is invalid, contains underscore, is all spaces or has already been added"));
 		}
+		if(kind === InsightDatasetKind.Courses) {
+			await this.addCourse(id, content);
+		}
+		// add dataset to hard disk
+		InsightFacade.saveToDisk(this.datasetContents.get(id) as Map<string, any[]>,
+			this.persistDir + "/" + kind + "/" + id + "/");
+		return Promise.resolve(Array.from(this.datasetContents.keys()));
+	}
+
+	private async addCourse(id: string, content: string): Promise<void>{
 		const jsZip = new JSZip();
 		let courses = new Map<string, any[]>();
 		let size = 0;
@@ -61,12 +83,8 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		// add dataset to our internal data structures
 		this.datasetContents.set(id, courses);
-		this.datasetKind.set(id, kind);
+		this.datasetKind.set(id, InsightDatasetKind.Courses);
 		this.datasetSize.set(id, size);
-		// add dataset to hard disk
-		InsightFacade.saveToDisk(this.datasetContents.get(id) as Map<string, any[]>,
-			this.persistDir + "/" + kind + "/" + id + "/");
-		return Promise.resolve(Array.from(this.datasetContents.keys()));
 	}
 
 	public removeDataset(id: string): Promise<string> {

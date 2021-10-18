@@ -17,6 +17,7 @@ describe("InsightFacade", function () {
 	this.timeout(10000);
 	let insightFacade: InsightFacade;
 	const persistDir = "./data";
+	const size = 64612;
 	const datasetContents = new Map<string, string>();
 
 	// Reference any datasets you've added to test/resources/archives here and they will
@@ -95,7 +96,7 @@ describe("InsightFacade", function () {
 						expect(insightDatasets).to.deep.equal([{
 							id: "courses",
 							kind: InsightDatasetKind.Courses,
-							numRows: 64612,
+							numRows: size,
 						}]);
 						expect(insightDatasets).to.be.an.instanceof(Array);
 						expect(insightDatasets).to.have.length(1);
@@ -123,11 +124,11 @@ describe("InsightFacade", function () {
 						expect(insightDatasets).to.deep.equal([{
 							id: "courses",
 							kind: InsightDatasetKind.Courses,
-							numRows: 64612,
+							numRows: size,
 						}, {
 							id: "courses-2",
 							kind: InsightDatasetKind.Courses,
-							numRows: 64612,
+							numRows: size,
 						}]);
 					});
 			});
@@ -195,7 +196,7 @@ describe("InsightFacade", function () {
 						expect(insightDatasets).to.deep.equal([{
 							id: "courses",
 							kind: InsightDatasetKind.Courses,
-							numRows: 64612,
+							numRows: size,
 						}]);
 					});
 			});
