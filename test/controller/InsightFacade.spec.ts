@@ -363,10 +363,10 @@ describe("InsightFacade", function () {
 					const orderKey = input.OPTIONS.ORDER;
 					expect(actual).to.be.instanceof(Array);
 					expect(actual).to.have.length(expected.length);
-					expect(actual).to.eql(expected);
+					expect(actual).to.have.deep.members(expected);
 					if (orderKey !== undefined) {
 						for (let i = 1; i < actual.length; i = i + 1) {
-							expect(actual[i - 1]).to.deep.include(expected[i - 1]);
+							expect(actual[i - 1][orderKey]).to.deep.equal(expected[i - 1][orderKey]);
 							// need more thought about this one
 						}
 					}
@@ -553,6 +553,50 @@ describe("InsightFacade", function () {
 								ORDER:"courses2_avg"
 							}
 						} );
+					}).then((res) => {
+						throw new Error(`Resolved with: ${res}`);
+					}).catch((err) => {
+						expect(err).to.be.instanceof(InsightError);
+					});
+			});
+			it("query valid tests", function() {
+				const id: string = "courses";
+				const content: string = datasetContents.get("courses") ?? "";
+				return facade.addDataset(id, content, InsightDatasetKind.Courses)
+					.then(() => {
+						return facade.performQuery({
+							WHERE: {
+								OR: [
+									{
+										AND: [
+											{
+												GT: {
+													courses_avg: "90"
+												}
+											},
+											{
+												IS: {
+													courses_dept: "adhe"
+												}
+											}
+										]
+									},
+									{
+										EQ: {
+											courses_avg: 95
+										}
+									}
+								]
+							},
+							OPTIONS: {
+								COLUMNS: [
+									"courses_dept",
+									"courses_id",
+									"courses_avg"
+								],
+								ORDER: "courses_avg"
+							}
+						});
 					}).then((res) => {
 						throw new Error(`Resolved with: ${res}`);
 					}).catch((err) => {

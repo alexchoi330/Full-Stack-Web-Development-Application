@@ -6,8 +6,8 @@ import {persistDir} from "../../test/TestUtil";
 // import {parseQuery} from "../performQuery/parseQuery";
 import {is, and, or, lessThan, greaterThan, equalTo, not} from "../performQuery/logic";
 import {
-	Field, MSFieldHelper, MSFieldHelperReverse, selectionSortS,
-	selectionSortN, skeyCheck, mkeyCheck, courseIDCheck, logicComparisonHelper, parseOptions
+	Field, MSFieldHelper, MSFieldHelperReverse, selectionSortS, MSComparisonHelper,
+	selectionSortN, skeyCheck, mkeyCheck, courseIDCheck, logicComparisonHelper, parseOptions, numberCheck, orderHelper
 } from "../performQuery/parseQuery";
 /**
  * This is the main programmatic entry point for the project.
@@ -26,7 +26,9 @@ export default class InsightFacade implements IInsightFacade {
 		this.datasetContents =  new Map<string, Map<string, any[]>>();
 		this.datasetKind = new Map<string, InsightDatasetKind>();
 		this.datasetSize = new Map<string, number>();
-		// console.trace("InsightFacadeImpl::init()");
+		if(fs.existsSync(persistDir + "/" + InsightDatasetKind.Courses)) {
+			this.loadFromDisk(InsightDatasetKind.Courses);
+		}
 		this.currentDatasetID = "";
 	}
 
@@ -34,7 +36,8 @@ export default class InsightFacade implements IInsightFacade {
 		if(id.includes("_")
 			|| this.datasetContents.has(id)
 			|| !id.replace(/\s/g, "").length) {
-			return Promise.reject(new InsightError("id contains an underscore"));
+			return Promise.reject(
+				new InsightError("id is invalid, contains underscore, is all spaces or has already been added"));
 		}
 		const jsZip = new JSZip();
 		let courses = new Map<string, any[]>();
@@ -61,7 +64,8 @@ export default class InsightFacade implements IInsightFacade {
 		this.datasetKind.set(id, kind);
 		this.datasetSize.set(id, size);
 		// add dataset to hard disk
-		InsightFacade.saveToDisk(this.datasetContents.get(id) as Map<string, any[]>, this.persistDir + "/" + id + "/");
+		InsightFacade.saveToDisk(this.datasetContents.get(id) as Map<string, any[]>,
+			this.persistDir + "/" + kind + "/" + id + "/");
 		return Promise.resolve(Array.from(this.datasetContents.keys()));
 	}
 
@@ -98,7 +102,7 @@ export default class InsightFacade implements IInsightFacade {
 		} else if (Object.keys(whereObj).length > 1) {
 			return Promise.reject(new InsightError("Too many objects in WHERE"));
 		} else {
-			whereReturn = this.recursiveAppend(whereObj);
+			whereReturn = this.whereParse(whereObj);
 		}
 		let totalReturn = 0;
 		for (let item of whereReturn.values()) {
@@ -136,6 +140,30 @@ export default class InsightFacade implements IInsightFacade {
 		return;
 	}
 
+	private loadFromDisk(kind: InsightDatasetKind): void {
+		try {
+			fs.readdir(persistDir + "/" + kind, (err, courseIDs) => {
+				courseIDs.forEach(async (courseID, index) => {
+					let size = 0;
+					let courses = new Map<string, any[]>();
+					let coursesNames = await fs.readdir(persistDir + "/" + kind + "/" + courseID);
+					for (let courseName of coursesNames) {
+						let courseJson = await fs.readJson(persistDir + "/" + kind + "/" + courseID + "/" + courseName);
+						courses.set(courseName.split(".").slice(0, -1).join("."), courseJson);
+						size += courseJson.length;
+					}
+					// add dataset to our internal data structures
+					this.datasetContents.set(courseID, courses);
+					this.datasetSize.set(courseID, size);
+					this.datasetKind.set(courseID, kind);
+				});
+			});
+		} catch (e) {
+			console.log("Something happened when reading the disk");
+		}
+		return;
+	}
+
 	private static parseCourses(course: any[]): any[] {
 		let result = [];
 		if(course.length === 0) {
@@ -161,64 +189,26 @@ export default class InsightFacade implements IInsightFacade {
 		return result;
 	}
 
-	private recursiveAppend (query: any): Map<string, any[]> {
+	private whereParse (query: any): Map<string, any[]> {
 		let orderArr = [];
-		// TODO: if two keys are the same then the latest one is taken, right now i think the first one is taken
 		if (Object.keys(query)[0] === "IS"
 			|| Object.keys(query)[0] === "GT"
 			|| Object.keys(query)[0] === "LT"
 			|| Object.keys(query)[0] === "EQ"){
-			return this.MSComparisonHelper(Object.keys(query)[0], query);
+			return MSComparisonHelper(this.datasetContents, this.currentDatasetID, Object.keys(query)[0], query);
 		} else if (Object.keys(query)[0] === "OR"
 			|| Object.keys(query)[0] === "AND") {
 			let values = Object.values(query)[0] as any[];
 			for (let item of values) {
-				orderArr.push(this.recursiveAppend(item));
+				orderArr.push(this.whereParse(item));
 			}
 			return logicComparisonHelper(Object.keys(query)[0], orderArr);
 		} else if (Object.keys(query)[0] === "NOT"){
-			let notMap = this.recursiveAppend(Object.values(query)[0]);
+			let notMap = this.whereParse(Object.values(query)[0]);
 			return not(this.datasetContents.get(this.currentDatasetID) as Map<string, any[]>, notMap);
 		} else {
 			throw new InsightError("Unrecognizable key in WHERE");
 		}
-	}
-
-	private MSComparisonHelper (key: string, query: any): Map<string, any[]> {
-		let temp = Object.values(query)[0] as any;
-		if (!(Object.keys(temp).length === 1)){
-			throw new InsightError("Too many keys inside " + key);
-		}
-		let dsID = Object.keys(temp)[0] as string;
-		let courseID = dsID.split("_", 1)[0];
-		// this.currentDatasetID = courseID;
-		if (!courseIDCheck(this.datasetContents, courseID, this.currentDatasetID)) {
-			throw new InsightError("Wrong courseID in base case");
-		}
-		let msKey = dsID.split("_", 2)[1];
-		msKey = MSFieldHelper(msKey);
-		if (key === "GT" || key === "EQ" || key === "LT") {
-			if (!mkeyCheck(MSFieldHelperReverse(msKey))) {
-				throw new InsightError("mkey incorrect in GT EQ LT");
-			}
-		}
-		if (key === "IS") {
-			if (!skeyCheck(MSFieldHelperReverse(msKey))) {
-				throw new InsightError("skey incorrect in IS");
-			}
-			return is(this.datasetContents.get(courseID) as Map<string, any[]>,
-				msKey, Object.values(temp)[0] as string);
-		} else if (key === "GT") {
-			return greaterThan(this.datasetContents.get(courseID) as Map<string, any[]>,
-				msKey, Object.values(temp)[0] as number);
-		} else if (key === "LT") {
-			return lessThan(this.datasetContents.get(courseID) as Map<string, any[]>,
-				msKey, Object.values(temp)[0] as number);
-		} else if (key === "EQ") {
-			return equalTo(this.datasetContents.get(courseID) as Map<string, any[]>,
-				msKey, Object.values(temp)[0] as number);
-		}
-		throw new InsightError("should not be here");
 	}
 
 	private optionsSort (query: any, data: Map<string,any[]>): any[] {
@@ -239,18 +229,12 @@ export default class InsightFacade implements IInsightFacade {
 			for (let item of value) {
 				let obj = {} as any;
 				for (let key of Object.keys(item)) {
-					if (!(checkColumns.indexOf(key) > -1)) {
-						// delete item[key];
-					} else {
-						// delete Object.assign(item,
-							// {[this.currentDatasetID + "_" + MSFieldHelperReverse(key)]: item[key] })[key];
+					if (checkColumns.indexOf(key) > -1) {
 						let id = this.currentDatasetID + "_" + MSFieldHelperReverse(key);
 						let val = item[key];
 						obj[id] = val;
-						finalArr.push();
 					}
 				}
-				// finalArr.push(item);
 				finalArr.push(obj);
 			}
 		}
@@ -258,23 +242,7 @@ export default class InsightFacade implements IInsightFacade {
 			// console.log (finalArr);
 			return finalArr;
 		} else {
-			return this.orderHelper(order, finalArr);
-		}
-	}
-
-	private orderHelper (query: string, data: any[]): any[] {
-		let courseID = query.split("_", 1)[0];
-		if (!courseIDCheck(this.datasetContents, courseID, this.currentDatasetID)) {
-			throw new InsightError("courseID in order doesn't match");
-		}
-		if (typeof data[0][query] === "number") {
-			console.log(selectionSortN(data, query, data.length));
-			return selectionSortN(data, query, data.length);
-		} else if (typeof  data[0][query] === "string") {
-			console.log(selectionSortS(data, query, data.length));
-			return selectionSortS(data, query, data.length);
-		} else {
-			throw new InsightError("Order data doesn't make sense");
+			return orderHelper(this.datasetContents, this.currentDatasetID, order, finalArr);
 		}
 	}
 }

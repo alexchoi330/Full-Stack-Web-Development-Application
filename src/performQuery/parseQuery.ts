@@ -21,6 +21,7 @@ export enum Field {
 	Course = "id",
 	Professor = "instructor",
 	Title = "title",
+	// idTwo is bad don't use
 	idTwo = "uuid",
 	Section = "Section"
 }
@@ -74,6 +75,14 @@ export function MSFieldHelperReverse (field: string): string {
 		return "uuid";
 	} else {
 		return "BAD ID";
+	}
+}
+
+export function numberCheck(id: string, field: any): void {
+	if (id === "avg" || id === "pass" || id === "fail" || id === "audit" || id === "year") {
+		if (!(typeof field === "number")) {
+			throw new InsightError("field is not a number when it should be");
+		}
 	}
 }
 
@@ -139,6 +148,44 @@ export function logicComparisonHelper (key: string, queryList: Array<Map<string,
 	throw new InsightError("should not be here");
 }
 
+export function MSComparisonHelper (datasetContents: any, datasetID: any, key: string, query: any): Map<string, any[]> {
+	let comparisonValue = Object.values(query)[0] as any;
+	if (!(Object.keys(comparisonValue).length === 1)){
+		throw new InsightError("Too many keys inside " + key);
+	}
+	let dsID = Object.keys(comparisonValue)[0] as string;
+	let courseID = dsID.split("_", 1)[0];
+	// this.currentDatasetID = courseID;
+	if (!courseIDCheck(datasetContents, courseID, datasetID)) {
+		throw new InsightError("Wrong courseID in base case");
+	}
+	let msKey = dsID.split("_", 2)[1];
+	numberCheck(msKey, comparisonValue[dsID]);
+	msKey = MSFieldHelper(msKey);
+	if (key === "GT" || key === "EQ" || key === "LT") {
+		if (!mkeyCheck(MSFieldHelperReverse(msKey))) {
+			throw new InsightError("mkey incorrect in GT EQ LT");
+		}
+	}
+	if (key === "IS") {
+		if (!skeyCheck(MSFieldHelperReverse(msKey))) {
+			throw new InsightError("skey incorrect in IS");
+		}
+		return is(datasetContents.get(courseID) as Map<string, any[]>,
+			msKey, Object.values(comparisonValue)[0] as string);
+	} else if (key === "GT") {
+		return greaterThan(datasetContents.get(courseID) as Map<string, any[]>,
+			msKey, Object.values(comparisonValue)[0] as number);
+	} else if (key === "LT") {
+		return lessThan(datasetContents.get(courseID) as Map<string, any[]>,
+			msKey, Object.values(comparisonValue)[0] as number);
+	} else if (key === "EQ") {
+		return equalTo(datasetContents.get(courseID) as Map<string, any[]>,
+			msKey, Object.values(comparisonValue)[0] as number);
+	}
+	throw new InsightError("should not be here");
+}
+
 export function parseOptions (query: any): string {
 	let orderBool = false;
 	if (!(Object.prototype.hasOwnProperty.call(query, "COLUMNS"))) {
@@ -166,3 +213,20 @@ export function parseOptions (query: any): string {
 	}
 	return courseID;
 }
+
+export function orderHelper (datasetContents: any, datasetID: any, query: string, data: any[]): any[] {
+	let courseID = query.split("_", 1)[0];
+	if (!courseIDCheck(datasetContents, courseID, datasetID)) {
+		throw new InsightError("courseID in order doesn't match");
+	}
+	if (typeof data[0][query] === "number") {
+		console.log(selectionSortN(data, query, data.length));
+		return selectionSortN(data, query, data.length);
+	} else if (typeof  data[0][query] === "string") {
+		console.log(selectionSortS(data, query, data.length));
+		return selectionSortS(data, query, data.length);
+	} else {
+		throw new InsightError("Order data doesn't make sense");
+	}
+}
+

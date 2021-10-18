@@ -1,0 +1,28 @@
+{
+	"title": "SELECT dept, avg WHERE avg > 99",
+	"input": {
+		"WHERE": {
+			"GT": {
+				"courses_avg": 97
+			},
+			"GT": {
+				"courses_avg": 98,
+				"courses_avg": 99
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"courses_id"
+			],
+			"COLUMNS": [
+				"courses_avg",
+				"courses_uuid"
+			],
+			"ORDER": "courses_avg"
+		}
+	},
+	"with": [
+		{"courses_avg":99.19,"courses_uuid":"26777"},{"courses_avg":99.78,"courses_uuid":"5373"},{"courses_avg":99.78,"courses_uuid":"5374"}
+	]
+}
