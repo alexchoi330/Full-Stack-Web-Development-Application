@@ -3,9 +3,10 @@
 	"input": {
 		"WHERE": {
 			"GT": {
-				"courses_avg": 98
+				"courses_avg": 97
 			},
 			"GT": {
+				"courses_avg": 98,
 				"courses_avg": 99
 			}
 		},

@@ -77,6 +77,14 @@ export function MSFieldHelperReverse (field: string): string {
 	}
 }
 
+export function numberCheck(id: string, field: any): void {
+	if (id === "avg" || id === "pass" || id === "fail" || id === "audit" || id === "year") {
+		if (!(typeof field === "number")) {
+			throw new InsightError("field is not a number when it should be");
+		}
+	}
+}
+
 export function swap (arr: any[],objOne: number, objTwo: number): any[] {
 	let temp = arr[objOne];
 	arr[objOne] = arr[objTwo];

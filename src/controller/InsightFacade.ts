@@ -7,7 +7,7 @@ import {persistDir} from "../../test/TestUtil";
 import {is, and, or, lessThan, greaterThan, equalTo, not} from "../performQuery/logic";
 import {
 	Field, MSFieldHelper, MSFieldHelperReverse, selectionSortS,
-	selectionSortN, skeyCheck, mkeyCheck, courseIDCheck, logicComparisonHelper, parseOptions
+	selectionSortN, skeyCheck, mkeyCheck, courseIDCheck, logicComparisonHelper, parseOptions, numberCheck
 } from "../performQuery/parseQuery";
 /**
  * This is the main programmatic entry point for the project.
@@ -163,7 +163,6 @@ export default class InsightFacade implements IInsightFacade {
 
 	private recursiveAppend (query: any): Map<string, any[]> {
 		let orderArr = [];
-		// TODO: if two keys are the same then the latest one is taken, right now i think the first one is taken
 		if (Object.keys(query)[0] === "IS"
 			|| Object.keys(query)[0] === "GT"
 			|| Object.keys(query)[0] === "LT"
@@ -185,17 +184,18 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	private MSComparisonHelper (key: string, query: any): Map<string, any[]> {
-		let temp = Object.values(query)[0] as any;
-		if (!(Object.keys(temp).length === 1)){
+		let comparisonValue = Object.values(query)[0] as any;
+		if (!(Object.keys(comparisonValue).length === 1)){
 			throw new InsightError("Too many keys inside " + key);
 		}
-		let dsID = Object.keys(temp)[0] as string;
+		let dsID = Object.keys(comparisonValue)[0] as string;
 		let courseID = dsID.split("_", 1)[0];
 		// this.currentDatasetID = courseID;
 		if (!courseIDCheck(this.datasetContents, courseID, this.currentDatasetID)) {
 			throw new InsightError("Wrong courseID in base case");
 		}
 		let msKey = dsID.split("_", 2)[1];
+		numberCheck(msKey, comparisonValue[dsID]);
 		msKey = MSFieldHelper(msKey);
 		if (key === "GT" || key === "EQ" || key === "LT") {
 			if (!mkeyCheck(MSFieldHelperReverse(msKey))) {
@@ -207,16 +207,16 @@ export default class InsightFacade implements IInsightFacade {
 				throw new InsightError("skey incorrect in IS");
 			}
 			return is(this.datasetContents.get(courseID) as Map<string, any[]>,
-				msKey, Object.values(temp)[0] as string);
+				msKey, Object.values(comparisonValue)[0] as string);
 		} else if (key === "GT") {
 			return greaterThan(this.datasetContents.get(courseID) as Map<string, any[]>,
-				msKey, Object.values(temp)[0] as number);
+				msKey, Object.values(comparisonValue)[0] as number);
 		} else if (key === "LT") {
 			return lessThan(this.datasetContents.get(courseID) as Map<string, any[]>,
-				msKey, Object.values(temp)[0] as number);
+				msKey, Object.values(comparisonValue)[0] as number);
 		} else if (key === "EQ") {
 			return equalTo(this.datasetContents.get(courseID) as Map<string, any[]>,
-				msKey, Object.values(temp)[0] as number);
+				msKey, Object.values(comparisonValue)[0] as number);
 		}
 		throw new InsightError("should not be here");
 	}
@@ -239,18 +239,12 @@ export default class InsightFacade implements IInsightFacade {
 			for (let item of value) {
 				let obj = {} as any;
 				for (let key of Object.keys(item)) {
-					if (!(checkColumns.indexOf(key) > -1)) {
-						// delete item[key];
-					} else {
-						// delete Object.assign(item,
-							// {[this.currentDatasetID + "_" + MSFieldHelperReverse(key)]: item[key] })[key];
+					if (checkColumns.indexOf(key) > -1) {
 						let id = this.currentDatasetID + "_" + MSFieldHelperReverse(key);
 						let val = item[key];
 						obj[id] = val;
-						finalArr.push();
 					}
 				}
-				// finalArr.push(item);
 				finalArr.push(obj);
 			}
 		}
