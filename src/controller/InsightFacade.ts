@@ -53,6 +53,10 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		if(kind === InsightDatasetKind.Courses) {
 			await this.addCourse(id, content);
+		} else if(kind === InsightDatasetKind.Rooms) {
+			await this.addRoom(id, content);
+		} else {
+			return Promise.reject(new InsightError("Kind is not courses or rooms"));
 		}
 		// add dataset to hard disk
 		InsightFacade.saveToDisk(this.datasetContents.get(id) as Map<string, any[]>,
@@ -85,6 +89,10 @@ export default class InsightFacade implements IInsightFacade {
 		this.datasetContents.set(id, courses);
 		this.datasetKind.set(id, InsightDatasetKind.Courses);
 		this.datasetSize.set(id, size);
+	}
+
+	private async addRoom(id: string, content: string): Promise<void>{
+		return;
 	}
 
 	public removeDataset(id: string): Promise<string> {

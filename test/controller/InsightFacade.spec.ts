@@ -24,7 +24,8 @@ describe("InsightFacade", function () {
 	// automatically be loaded in the 'before' hook.
 	const datasetsToLoad: {[key: string]: string} = {
 		courses: "./test/resources/archives/courses.zip",
-		coursesInvalidJSON: "./test/resources/archives/coursesInvalidJSON.zip"
+		coursesInvalidJSON: "./test/resources/archives/coursesInvalidJSON.zip",
+		rooms: "./test/resources/archives/rooms.zip"
 	};
 
 	before(function () {
@@ -62,12 +63,22 @@ describe("InsightFacade", function () {
 		});
 
 		// This is a unit test. You should create more like this!
-		it("Should add a valid dataset", function () {
+		it("Should add a valid course dataset", function () {
 
 			const id: string = "courses";
 			const content: string = datasetContents.get("courses") ?? "";
 			const expected: string[] = [id];
 			return insightFacade.addDataset(id, content, InsightDatasetKind.Courses).then((result: string[]) => {
+				expect(result).to.deep.equal(expected);
+			});
+		});
+
+		it("Should add a valid rooms dataset", function () {
+
+			const id: string = "rooms";
+			const content: string = datasetContents.get("rooms") ?? "";
+			const expected: string[] = [id];
+			return insightFacade.addDataset(id, content, InsightDatasetKind.Rooms).then((result: string[]) => {
 				expect(result).to.deep.equal(expected);
 			});
 		});
