@@ -36,7 +36,8 @@ export default class InsightFacade implements IInsightFacade {
 		if(id.includes("_")
 			|| this.datasetContents.has(id)
 			|| !id.replace(/\s/g, "").length) {
-			return Promise.reject(new InsightError("id contains an underscore"));
+			return Promise.reject(
+				new InsightError("id is invalid, contains underscore, is all spaces or has already been added"));
 		}
 		const jsZip = new JSZip();
 		let courses = new Map<string, any[]>();
