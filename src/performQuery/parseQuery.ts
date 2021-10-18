@@ -174,3 +174,20 @@ export function parseOptions (query: any): string {
 	}
 	return courseID;
 }
+
+export function orderHelper (datasetContents: any, datasetID: any, query: string, data: any[]): any[] {
+	let courseID = query.split("_", 1)[0];
+	if (!courseIDCheck(datasetContents, courseID, datasetID)) {
+		throw new InsightError("courseID in order doesn't match");
+	}
+	if (typeof data[0][query] === "number") {
+		console.log(selectionSortN(data, query, data.length));
+		return selectionSortN(data, query, data.length);
+	} else if (typeof  data[0][query] === "string") {
+		console.log(selectionSortS(data, query, data.length));
+		return selectionSortS(data, query, data.length);
+	} else {
+		throw new InsightError("Order data doesn't make sense");
+	}
+}
+

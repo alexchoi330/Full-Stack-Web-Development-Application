@@ -7,7 +7,7 @@ import {persistDir} from "../../test/TestUtil";
 import {is, and, or, lessThan, greaterThan, equalTo, not} from "../performQuery/logic";
 import {
 	Field, MSFieldHelper, MSFieldHelperReverse, selectionSortS,
-	selectionSortN, skeyCheck, mkeyCheck, courseIDCheck, logicComparisonHelper, parseOptions, numberCheck
+	selectionSortN, skeyCheck, mkeyCheck, courseIDCheck, logicComparisonHelper, parseOptions, numberCheck, orderHelper
 } from "../performQuery/parseQuery";
 /**
  * This is the main programmatic entry point for the project.
@@ -252,23 +252,7 @@ export default class InsightFacade implements IInsightFacade {
 			// console.log (finalArr);
 			return finalArr;
 		} else {
-			return this.orderHelper(order, finalArr);
-		}
-	}
-
-	private orderHelper (query: string, data: any[]): any[] {
-		let courseID = query.split("_", 1)[0];
-		if (!courseIDCheck(this.datasetContents, courseID, this.currentDatasetID)) {
-			throw new InsightError("courseID in order doesn't match");
-		}
-		if (typeof data[0][query] === "number") {
-			console.log(selectionSortN(data, query, data.length));
-			return selectionSortN(data, query, data.length);
-		} else if (typeof  data[0][query] === "string") {
-			console.log(selectionSortS(data, query, data.length));
-			return selectionSortS(data, query, data.length);
-		} else {
-			throw new InsightError("Order data doesn't make sense");
+			return orderHelper(this.datasetContents, this.currentDatasetID, order, finalArr);
 		}
 	}
 }
