@@ -6,8 +6,8 @@ import {persistDir} from "../../test/TestUtil";
 // import {parseQuery} from "../performQuery/parseQuery";
 import {is, and, or, lessThan, greaterThan, equalTo, not} from "../performQuery/logic";
 import {
-	Field, MSFieldHelper, MSFieldHelperReverse, selectionSortS, MSComparisonHelper,
-	selectionSortN, skeyCheck, mkeyCheck, courseIDCheck, logicComparisonHelper, parseOptions, numberCheck, orderHelper
+	Field, MSFieldHelper, MSFieldHelperReverse, MSComparisonHelper,
+	skeyCheck, mkeyCheck, courseIDCheck, logicComparisonHelper, parseOptions, numberCheck, orderHelper
 } from "../performQuery/parseQuery";
 /**
  * This is the main programmatic entry point for the project.
