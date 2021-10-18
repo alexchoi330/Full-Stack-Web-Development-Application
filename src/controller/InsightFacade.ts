@@ -26,7 +26,9 @@ export default class InsightFacade implements IInsightFacade {
 		this.datasetContents =  new Map<string, Map<string, any[]>>();
 		this.datasetKind = new Map<string, InsightDatasetKind>();
 		this.datasetSize = new Map<string, number>();
-		// console.trace("InsightFacadeImpl::init()");
+		if(fs.existsSync(persistDir + "/" + InsightDatasetKind.Courses)) {
+			this.loadFromDisk(InsightDatasetKind.Courses);
+		}
 		this.currentDatasetID = "";
 	}
 
@@ -61,7 +63,8 @@ export default class InsightFacade implements IInsightFacade {
 		this.datasetKind.set(id, kind);
 		this.datasetSize.set(id, size);
 		// add dataset to hard disk
-		InsightFacade.saveToDisk(this.datasetContents.get(id) as Map<string, any[]>, this.persistDir + "/" + id + "/");
+		InsightFacade.saveToDisk(this.datasetContents.get(id) as Map<string, any[]>,
+			this.persistDir + "/" + kind + "/" + id + "/");
 		return Promise.resolve(Array.from(this.datasetContents.keys()));
 	}
 
@@ -132,6 +135,30 @@ export default class InsightFacade implements IInsightFacade {
 				}
 				// console.log("JSON data is saved."); // commented out to run tests
 			});
+		}
+		return;
+	}
+
+	private loadFromDisk(kind: InsightDatasetKind): void {
+		try {
+			fs.readdir(persistDir + "/" + kind, (err, courseIDs) => {
+				courseIDs.forEach(async (courseID, index) => {
+					let size = 0;
+					let courses = new Map<string, any[]>();
+					let coursesNames = await fs.readdir(persistDir + "/" + kind + "/" + courseID);
+					for (let courseName of coursesNames) {
+						let courseJson = await fs.readJson(persistDir + "/" + kind + "/" + courseID + "/" + courseName);
+						courses.set(courseName.split(".").slice(0, -1).join("."), courseJson);
+						size += courseJson.length;
+					}
+					// add dataset to our internal data structures
+					this.datasetContents.set(courseID, courses);
+					this.datasetSize.set(courseID, size);
+					this.datasetKind.set(courseID, kind);
+				});
+			});
+		} catch (e) {
+			console.log("Something happened when reading the disk");
 		}
 		return;
 	}
