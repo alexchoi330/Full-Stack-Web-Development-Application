@@ -375,6 +375,7 @@ describe("InsightFacade", function () {
 					if (expected === "ResultTooLargeError") {
 						expect(actual).to.be.instanceof(ResultTooLargeError);
 					} else {
+						console.log(actual);
 						expect(actual).to.be.instanceof(InsightError);
 					}
 				},
