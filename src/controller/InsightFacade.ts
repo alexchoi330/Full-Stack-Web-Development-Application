@@ -10,7 +10,9 @@ import JSZip from "jszip";
 import fs from "fs-extra";
 import parse5, {Document} from "parse5";
 import {persistDir} from "../../test/TestUtil";
-import {DFS, saveToDisk, parseCourses, parseOutBuildingCodeTd, parseOutBuildingCodeFromTd} from "../addDataset/addDatasetHelpers";
+import {
+	DFS, saveToDisk, parseCourses, parseOutBuildingCodeTd, parseOutBuildingCodeFromTd
+} from "../addDataset/addDatasetHelpers";
 // import {parseQuery} from "../performQuery/parseQuery";
 import {not} from "../performQuery/logic";
 import {
