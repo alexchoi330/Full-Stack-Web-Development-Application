@@ -14,13 +14,8 @@ import {DFS, saveToDisk, parseCourses} from "../addDataset/addDatasetHelpers";
 // import {parseQuery} from "../performQuery/parseQuery";
 import {not} from "../performQuery/logic";
 import {
-	Field,
-	logicComparisonHelper,
-	MSComparisonHelper,
-	MSFieldHelper,
-	MSFieldHelperReverse,
-	orderHelper,
-	parseOptions
+	Field, MSFieldHelper, MSFieldHelperReverse, MSComparisonHelper,
+	skeyCheck, mkeyCheck, courseIDCheck, logicComparisonHelper, parseOptions, numberCheck, orderHelper
 } from "../performQuery/parseQuery";
 
 /**

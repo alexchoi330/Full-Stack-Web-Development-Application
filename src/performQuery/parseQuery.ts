@@ -86,40 +86,45 @@ export function numberCheck(id: string, field: any): void {
 	}
 }
 
-export function swap (arr: any[],objOne: number, objTwo: number): any[] {
+export function swapTwo (arr: any[],objOne: number, objTwo: number) {
 	let temp = arr[objOne];
 	arr[objOne] = arr[objTwo];
 	arr[objTwo] = temp;
-	return arr;
 }
 
-// using selection sort for numbers
-export function selectionSortN(arr: any[], query: string, n: number): any[] {
-	let temp = arr;
-	for (let i = 0; i < n - 1; i++) {
-		let index = i;
-		for (let j = i + 1; j < n; j++) {
-			if (temp[j][query] < temp[index][query]) {
-				index = j;
-			}
-		}
-		temp = swap(temp, index, i);
+// implement quicksort for both
+function quickSort(arr: any[], key: string, start: number, end: number) {
+	if (start < end) {
+		let mid = partition(arr, key, start, end);
+		quickSort(arr, key, start, mid - 1);
+		quickSort(arr, key, mid + 1, end);
 	}
-	return temp;
 }
 
-// using bubble sort for strings
-export function selectionSortS(arr: any[], query: string, n: number): any[] {
-	let temp = arr;
-	for (let i = 0; i < n - 1; i++) {
-		for (let j = 0; j < n - i - 1; j++) {
-			if (temp[j][query].localeCompare(temp[j + 1][query]) > -1) {
-				temp = swap(temp, j, j + 1);
+function partition(arr: any[], key: string, start: number, end: number): number {
+	// let msKey = key.split("_", 1)[0];
+	let msKey = key.split("_", 2)[1];
+	let pivot = arr[end][key];
+	let previous = start - 1;
+	for (let i = start; i < end; i++) {
+		if (mkeyCheck(msKey)) {
+			if (arr[i][key] < pivot) {
+				previous++;
+				swapTwo(arr, previous, i);
 			}
+		} else if (skeyCheck(msKey)) {
+			if (arr[i][key].localeCompare(pivot) <= -1) {
+				previous++;
+				swapTwo(arr, previous, i);
+			}
+		} else {
+			throw new InsightError("quick sort shouldn't be here");
 		}
 	}
-	return temp;
+	swapTwo(arr, previous + 1, end);
+	return (previous + 1);
 }
+
 
 export function skeyCheck(skey: string): boolean{
 	let validKeys = ["dept", "id", "instructor", "title", "uuid"];
@@ -214,19 +219,16 @@ export function parseOptions (query: any): string {
 	return courseID;
 }
 
-export function orderHelper (datasetContents: any, datasetID: any, query: string, data: any[]): any[] {
-	let courseID = query.split("_", 1)[0];
+export function orderHelper (datasetContents: any, datasetID: any, key: string, data: any[]): any[] {
+	let courseID = key.split("_", 1)[0];
 	if (!courseIDCheck(datasetContents, courseID, datasetID)) {
 		throw new InsightError("courseID in order doesn't match");
 	}
-	if (typeof data[0][query] === "number") {
-		console.log(selectionSortN(data, query, data.length));
-		return selectionSortN(data, query, data.length);
-	} else if (typeof  data[0][query] === "string") {
-		console.log(selectionSortS(data, query, data.length));
-		return selectionSortS(data, query, data.length);
-	} else {
+	if (!(typeof data[0][key] === "number" || typeof  data[0][key] === "string")) {
 		throw new InsightError("Order data doesn't make sense");
 	}
+	let temp = data;
+	quickSort(temp, key,0, temp.length - 1);
+	return temp;
 }
 
