@@ -1,14 +1,23 @@
-import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError,
-	NotFoundError, ResultTooLargeError} from "./IInsightFacade";
+import {
+	IInsightFacade,
+	InsightDataset,
+	InsightDatasetKind,
+	InsightError,
+	NotFoundError,
+	ResultTooLargeError
+} from "./IInsightFacade";
 import JSZip from "jszip";
 import fs from "fs-extra";
+import parse5, {Document} from "parse5";
 import {persistDir} from "../../test/TestUtil";
+import {DFS, saveToDisk, parseCourses} from "../addDataset/addDatasetHelpers";
 // import {parseQuery} from "../performQuery/parseQuery";
-import {is, and, or, lessThan, greaterThan, equalTo, not} from "../performQuery/logic";
+import {not} from "../performQuery/logic";
 import {
 	Field, MSFieldHelper, MSFieldHelperReverse, MSComparisonHelper,
 	skeyCheck, mkeyCheck, courseIDCheck, logicComparisonHelper, parseOptions, numberCheck, orderHelper
 } from "../performQuery/parseQuery";
+
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
@@ -39,6 +48,20 @@ export default class InsightFacade implements IInsightFacade {
 			return Promise.reject(
 				new InsightError("id is invalid, contains underscore, is all spaces or has already been added"));
 		}
+		if(kind === InsightDatasetKind.Courses) {
+			await this.addCourse(id, content);
+		} else if(kind === InsightDatasetKind.Rooms) {
+			await this.addRoom(id, content);
+		} else {
+			return Promise.reject(new InsightError("Kind is not courses or rooms"));
+		}
+		// add dataset to hard disk
+		saveToDisk(this.datasetContents.get(id) as Map<string, any[]>,
+			this.persistDir + "/" + kind + "/" + id + "/");
+		return Promise.resolve(Array.from(this.datasetContents.keys()));
+	}
+
+	private async addCourse(id: string, content: string): Promise<void>{
 		const jsZip = new JSZip();
 		let courses = new Map<string, any[]>();
 		let size = 0;
@@ -48,7 +71,7 @@ export default class InsightFacade implements IInsightFacade {
 			let fileData = await jsZip.files[filename].async("string");
 			try {
 				let data = JSON.parse(fileData);
-				let parsedData = InsightFacade.parseCourses(data.result);
+				let parsedData = parseCourses(data.result);
 				size += parsedData.length;
 				let coursePath = filename.split("/");
 				// A valid course has to contain at least one valid course section
@@ -61,12 +84,56 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		// add dataset to our internal data structures
 		this.datasetContents.set(id, courses);
-		this.datasetKind.set(id, kind);
+		this.datasetKind.set(id, InsightDatasetKind.Courses);
 		this.datasetSize.set(id, size);
-		// add dataset to hard disk
-		InsightFacade.saveToDisk(this.datasetContents.get(id) as Map<string, any[]>,
-			this.persistDir + "/" + kind + "/" + id + "/");
-		return Promise.resolve(Array.from(this.datasetContents.keys()));
+	}
+
+	private async addRoom(id: string, content: string): Promise<void>{
+		const jsZip = new JSZip();
+		let rooms = new Map<string, any[]>();
+		let size = 0;
+
+		// unzip the zip file and load the index.htm
+		await jsZip.loadAsync(content, {base64: true});
+		let indexPath = id + "/index.htm";
+		let fileData = await jsZip.files[indexPath].async("string");
+		let indexDocument: Document = parse5.parse(fileData);
+
+		// get all the td elements
+		let nodes: parse5.ChildNode[] = [];
+		DFS(indexDocument.childNodes, "td", nodes);
+
+		// parse out td for building code
+		let buildingCodeNodes: parse5.ChildNode[] = [];
+		for(let node of nodes) {
+			if ("attrs" in node) {
+				for(let attr of node.attrs) {
+					if(attr.value === "views-field views-field-field-building-code") {
+						buildingCodeNodes.push(node);
+					}
+				}
+			}
+		}
+
+		// parse out all building codes
+		let codes = [];
+		for(let node of buildingCodeNodes) {
+			if ("childNodes" in node) {
+				for(let child of node.childNodes) {
+					if(child.nodeName === "#text") {
+						if ("value" in child) {
+							codes.push(child.value.replace(/\s/g, ""));
+						}
+					}
+				}
+			}
+		}
+
+		// add dataset to our internal data structures
+		this.datasetContents.set(id, rooms);
+		this.datasetKind.set(id, InsightDatasetKind.Courses);
+		this.datasetSize.set(id, size);
+		return;
 	}
 
 	public removeDataset(id: string): Promise<string> {
@@ -128,18 +195,6 @@ export default class InsightFacade implements IInsightFacade {
 		return Promise.resolve(datasets as InsightDataset[]);
 	}
 
-	private static saveToDisk(data: Map<string, any[]>, path: string): void {
-		for (let [key, value] of data) {
-			fs.outputJson(path + key + ".json", value, (err) => {
-				if (err) {
-					throw err;
-				}
-				// console.log("JSON data is saved."); // commented out to run tests
-			});
-		}
-		return;
-	}
-
 	private loadFromDisk(kind: InsightDatasetKind): void {
 		try {
 			fs.readdir(persistDir + "/" + kind, (err, courseIDs) => {
@@ -162,31 +217,6 @@ export default class InsightFacade implements IInsightFacade {
 			console.log("Something happened when reading the disk");
 		}
 		return;
-	}
-
-	private static parseCourses(course: any[]): any[] {
-		let result = [];
-		if(course.length === 0) {
-			return [];
-		}
-		for (let section of course) {
-			// If the "Section" property in the source data is set to "overall", you should set the year for that section to 1900.
-			if(section[Field.Section] === "overall") {
-				section[Field.year] = 1900;
-			}
-			// If any of the property in the source data is not present at all, skip the section
-			if(section[Field.dept] == null || section[Field.id] == null || section[Field.avg] == null
-				|| section[Field.instructor] == null || section[Field.title] == null
-				|| section[Field.pass] == null || section[Field.fail] == null
-				|| section[Field.audit] == null || section[Field.uuid] == null
-				|| section[Field.year] == null) {
-				continue;
-			}
-			// Change UUID to string
-			section[Field.uuid] = section[Field.uuid].toString();
-			result.push(section);
-		}
-		return result;
 	}
 
 	private whereParse (query: any): Map<string, any[]> {
