@@ -1,5 +1,7 @@
 import {IInsightFacade, InsightError, NotFoundError} from "../controller/IInsightFacade";
-import {greaterThan, lessThan, is, or, and, equalTo} from "./logic";
+import {greaterThan, lessThan, is, or, and, equalTo, not} from "./logic";
+import {skeyCheck, mkeyCheck, courseIDCheck, numberCheck, quickSort,
+	MSFieldHelper, MSFieldHelperReverse} from "./parseQueryHelpers";
 
 export enum Field {
 	avg = "Avg",
@@ -26,131 +28,27 @@ export enum Field {
 	Section = "Section"
 }
 
-export function MSFieldHelper (field: string): string {
-	if (field === "avg") {
-		return "Avg";
-	} else if  (field === "pass") {
-		return "Pass";
-	} else if (field === "fail") {
-		return "Fail";
-	} else if (field === "audit") {
-		return "Audit";
-	} else if (field === "year") {
-		return "Year";
-	} else if (field === "dept") {
-		return "Subject";
-	} else if (field === "id") {
-		return "Course";
-	} else if (field === "instructor") {
-		return "Professor";
-	} else if (field === "title") {
-		return "Title";
-	} else if (field === "uuid") {
-		return "id";
-	} else {
-		return "BAD ID";
-	}
-}
 
-export function MSFieldHelperReverse (field: string): string {
-	if (field === "Avg") {
-		return "avg";
-	} else if  (field === "Pass") {
-		return "pass";
-	} else if (field === "Fail") {
-		return "fail";
-	} else if (field === "Audit") {
-		return "audit";
-	} else if (field === "Year") {
-		return "year";
-	} else if (field === "Subject") {
-		return "dept";
-	} else if (field === "Course") {
-		return "id";
-	} else if (field === "Professor") {
-		return "instructor";
-	} else if (field === "Title") {
-		return "title";
-	} else if (field === "id") {
-		return "uuid";
-	} else {
-		return "BAD ID";
-	}
-}
-
-export function numberCheck(id: string, field: any): void {
-	if (id === "avg" || id === "pass" || id === "fail" || id === "audit" || id === "year") {
-		if (!(typeof field === "number")) {
-			throw new InsightError("field is not a number when it should be");
+export function whereParse (datasetContents: any, datasetID: any, query: any): Map<string, any[]> {
+	let orderArr = [];
+	if (Object.keys(query)[0] === "IS"
+		|| Object.keys(query)[0] === "GT"
+		|| Object.keys(query)[0] === "LT"
+		|| Object.keys(query)[0] === "EQ"){
+		return MSComparisonHelper(datasetContents, datasetID, Object.keys(query)[0], query);
+	} else if (Object.keys(query)[0] === "OR"
+		|| Object.keys(query)[0] === "AND") {
+		let values = Object.values(query)[0] as any[];
+		for (let item of values) {
+			orderArr.push(whereParse(datasetContents, datasetID, item));
 		}
-	}
-}
-
-export function swapTwo (arr: any[],objOne: number, objTwo: number) {
-	let temp = arr[objOne];
-	arr[objOne] = arr[objTwo];
-	arr[objTwo] = temp;
-}
-
-// implement quicksort for both
-function quickSort(arr: any[], key: string, start: number, end: number) {
-	if (start < end) {
-		let mid = partition(arr, key, start, end);
-		quickSort(arr, key, start, mid - 1);
-		quickSort(arr, key, mid + 1, end);
-	}
-}
-
-function partition(arr: any[], key: string, start: number, end: number): number {
-	// let msKey = key.split("_", 1)[0];
-	let msKey = key.split("_", 2)[1];
-	let pivot = arr[end][key];
-	let previous = start - 1;
-	for (let i = start; i < end; i++) {
-		if (mkeyCheck(msKey)) {
-			if (arr[i][key] < pivot) {
-				previous++;
-				swapTwo(arr, previous, i);
-			}
-		} else if (skeyCheck(msKey)) {
-			if (arr[i][key].localeCompare(pivot) <= -1) {
-				previous++;
-				swapTwo(arr, previous, i);
-			}
-		} else {
-			throw new InsightError("quick sort shouldn't be here");
-		}
-	}
-	swapTwo(arr, previous + 1, end);
-	return (previous + 1);
-}
-
-
-export function skeyCheck(skey: string): boolean{
-	let validKeys = ["dept", "id", "instructor", "title", "uuid"];
-	return validKeys.includes(skey);
-}
-
-export function mkeyCheck(mkey: string): boolean{
-	let validKeys = ["avg", "pass", "fail", "audit", "year"];
-	return validKeys.includes(mkey);
-}
-
-export function courseIDCheck(datasets: Map<string, Map<string,any[]>>, id: string, currentID: string): boolean {
-	if (!(datasets.has(id) && id === currentID)) {
-		return false;
+		return logicComparisonHelper(Object.keys(query)[0], orderArr);
+	} else if (Object.keys(query)[0] === "NOT"){
+		let notMap = whereParse(datasetContents, datasetID, Object.values(query)[0]);
+		return not(datasetContents.get(datasetID) as Map<string, any[]>, notMap);
 	} else {
-		return true;
+		throw new InsightError("Unrecognizable key in WHERE");
 	}
-}
-
-export function logicComparisonHelper (key: string, queryList: Array<Map<string, any[]>>): Map<string, any[]> {
-	if (key === "AND") {
-		return and(queryList);
-	} else if (key === "OR") {
-		return or(queryList);
-	}
-	throw new InsightError("should not be here");
 }
 
 export function MSComparisonHelper (datasetContents: any, datasetID: any, key: string, query: any): Map<string, any[]> {
@@ -191,7 +89,16 @@ export function MSComparisonHelper (datasetContents: any, datasetID: any, key: s
 	throw new InsightError("should not be here");
 }
 
-export function parseOptions (query: any): string {
+export function logicComparisonHelper (key: string, queryList: Array<Map<string, any[]>>): Map<string, any[]> {
+	if (key === "AND") {
+		return and(queryList);
+	} else if (key === "OR") {
+		return or(queryList);
+	}
+	throw new InsightError("should not be here");
+}
+
+export function checkOptions (query: any): string {
 	let orderBool = false;
 	if (!(Object.prototype.hasOwnProperty.call(query, "COLUMNS"))) {
 		throw new InsightError("COLUMNS not correct");
@@ -219,6 +126,41 @@ export function parseOptions (query: any): string {
 	return courseID;
 }
 
+export function optionsSort (datasetContents: any, datasetID: any, query: any, data: Map<string,any[]>): any[] {
+	let orderBool = false;
+	if (Object.prototype.hasOwnProperty.call(query, "ORDER")) {
+		orderBool = true;
+	}
+	let columns = query["COLUMNS"] as string[];
+	let order = query["ORDER"] as string;
+	let checkColumns = [];
+	for (const column in columns) {
+		let msKey = columns[column].split("_", 2)[1];
+		checkColumns.push(MSFieldHelper(msKey));
+	}
+	let tempData = new Map(data);
+	let finalArr = [];
+	for (let value of tempData.values()) {
+		for (let item of value) {
+			let obj = {} as any;
+			for (let key of Object.keys(item)) {
+				if (checkColumns.indexOf(key) > -1) {
+					let id = datasetID + "_" + MSFieldHelperReverse(key);
+					let val = item[key];
+					obj[id] = val;
+				}
+			}
+			finalArr.push(obj);
+		}
+	}
+	if (!orderBool) {
+		// console.log (finalArr);
+		return finalArr;
+	} else {
+		return orderHelper(datasetContents, datasetID, order, finalArr);
+	}
+}
+
 export function orderHelper (datasetContents: any, datasetID: any, key: string, data: any[]): any[] {
 	let courseID = key.split("_", 1)[0];
 	if (!courseIDCheck(datasetContents, courseID, datasetID)) {
@@ -231,4 +173,5 @@ export function orderHelper (datasetContents: any, datasetID: any, key: string, 
 	quickSort(temp, key,0, temp.length - 1);
 	return temp;
 }
+
 
