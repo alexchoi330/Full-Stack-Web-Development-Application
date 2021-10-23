@@ -391,6 +391,10 @@ describe("InsightFacade", function () {
 								expect(actual[i - 1]).to.deep.equal(expected[i - 1]);
 							}
 						}
+					} else {
+						for (let i = 1; i < actual.length; i = i + 1) {
+							expect(actual[i - 1]).to.deep.include(expected[i - 1]);
+						}
 					}
 				},
 				assertOnError(expected, actual) {
