@@ -10,7 +10,7 @@ import JSZip from "jszip";
 import fs from "fs-extra";
 import parse5, {Document} from "parse5";
 import {persistDir} from "../../test/TestUtil";
-import {DFS, saveToDisk, parseCourses} from "../addDataset/addDatasetHelpers";
+import {DFS, saveToDisk, parseCourses, parseOutBuildingCodeTd, parseOutBuildingCodeFromTd} from "../addDataset/addDatasetHelpers";
 // import {parseQuery} from "../performQuery/parseQuery";
 import {not} from "../performQuery/logic";
 import {
@@ -104,30 +104,10 @@ export default class InsightFacade implements IInsightFacade {
 		DFS(indexDocument.childNodes, "td", nodes);
 
 		// parse out td for building code
-		let buildingCodeNodes: parse5.ChildNode[] = [];
-		for(let node of nodes) {
-			if ("attrs" in node) {
-				for(let attr of node.attrs) {
-					if(attr.value === "views-field views-field-field-building-code") {
-						buildingCodeNodes.push(node);
-					}
-				}
-			}
-		}
+		let buildingCodeNodes = parseOutBuildingCodeTd(nodes);
 
-		// parse out all building codes
-		let codes = [];
-		for(let node of buildingCodeNodes) {
-			if ("childNodes" in node) {
-				for(let child of node.childNodes) {
-					if(child.nodeName === "#text") {
-						if ("value" in child) {
-							codes.push(child.value.replace(/\s/g, ""));
-						}
-					}
-				}
-			}
-		}
+		// parse out all building codes from td
+		let codes = parseOutBuildingCodeFromTd(buildingCodeNodes);
 
 		// add dataset to our internal data structures
 		this.datasetContents.set(id, rooms);

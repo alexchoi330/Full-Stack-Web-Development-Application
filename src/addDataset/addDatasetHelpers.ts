@@ -50,4 +50,34 @@ function parseCourses(course: any[]): any[] {
 	return result;
 }
 
-export{DFS, saveToDisk, parseCourses};
+function parseOutBuildingCodeTd(nodes: parse5.ChildNode[]): parse5.ChildNode[] {
+	let buildingCodeNodes: parse5.ChildNode[] = [];
+	for(let node of nodes) {
+		if ("attrs" in node) {
+			for(let attr of node.attrs) {
+				if(attr.value === "views-field views-field-field-building-code") {
+					buildingCodeNodes.push(node);
+				}
+			}
+		}
+	}
+	return buildingCodeNodes;
+}
+
+function parseOutBuildingCodeFromTd(buildingCodeNodes: parse5.ChildNode[]): string[]{
+	let codes = [];
+	for(let node of buildingCodeNodes) {
+		if ("childNodes" in node) {
+			for(let child of node.childNodes) {
+				if(child.nodeName === "#text") {
+					if ("value" in child) {
+						codes.push(child.value.replace(/\s/g, ""));
+					}
+				}
+			}
+		}
+	}
+	return codes;
+}
+
+export{DFS, saveToDisk, parseCourses, parseOutBuildingCodeTd, parseOutBuildingCodeFromTd};
