@@ -23,7 +23,7 @@ describe("InsightFacade", function () {
 	// Reference any datasets you've added to test/resources/archives here and they will
 	// automatically be loaded in the 'before' hook.
 	const datasetsToLoad: {[key: string]: string} = {
-		courses: "./test/resources/archives/courses.zip",
+		courses: "./test/resources/archives/coursesSmall.zip",
 		coursesInvalidJSON: "./test/resources/archives/coursesInvalidJSON.zip",
 		rooms: "./test/resources/archives/rooms.zip"
 	};

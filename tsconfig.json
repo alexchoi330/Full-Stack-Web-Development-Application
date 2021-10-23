@@ -8,6 +8,9 @@
 		"sourceMap": true,
 		"typeRoots": [
 			"./node_modules/@types"
+		],
+		"lib": [
+			"dom"
 		]
 	},
 	"include": [
