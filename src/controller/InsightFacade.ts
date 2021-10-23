@@ -17,8 +17,7 @@ import {
 // import {parseQuery} from "../performQuery/parseQuery";
 import {not} from "../performQuery/logic";
 import {
-	Field, MSFieldHelper, MSFieldHelperReverse, MSComparisonHelper,
-	skeyCheck, mkeyCheck, courseIDCheck, logicComparisonHelper, parseOptions, numberCheck, orderHelper
+	checkOptions, optionsSort, whereParse
 } from "../performQuery/parseQuery";
 
 /**
@@ -165,7 +164,7 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		const whereObj = query["WHERE"];
 		const optionObj = query["OPTIONS"];
-		this.currentDatasetID = parseOptions(optionObj);
+		this.currentDatasetID = checkOptions(optionObj);
 		let whereReturn;
 		console.log(whereObj, optionObj);
 		if (Object.keys(whereObj).length === 0) {
@@ -174,7 +173,7 @@ export default class InsightFacade implements IInsightFacade {
 		} else if (Object.keys(whereObj).length > 1) {
 			return Promise.reject(new InsightError("Too many objects in WHERE"));
 		} else {
-			whereReturn = this.whereParse(whereObj);
+			whereReturn = whereParse(this.datasetContents, this.currentDatasetID, whereObj);
 		}
 		let totalReturn = 0;
 		for (let item of whereReturn.values()) {
@@ -183,7 +182,7 @@ export default class InsightFacade implements IInsightFacade {
 		if (totalReturn > 5000) {
 			throw new ResultTooLargeError("The query returns over 5000 results");
 		}
-		let optionsReturn = this.optionsSort(optionObj, whereReturn);
+		let optionsReturn = optionsSort(this.datasetContents, this.currentDatasetID, optionObj, whereReturn);
 		return Promise.resolve(optionsReturn);
 	}
 
@@ -224,60 +223,4 @@ export default class InsightFacade implements IInsightFacade {
 		return;
 	}
 
-	private whereParse (query: any): Map<string, any[]> {
-		let orderArr = [];
-		if (Object.keys(query)[0] === "IS"
-			|| Object.keys(query)[0] === "GT"
-			|| Object.keys(query)[0] === "LT"
-			|| Object.keys(query)[0] === "EQ"){
-			return MSComparisonHelper(this.datasetContents, this.currentDatasetID, Object.keys(query)[0], query);
-		} else if (Object.keys(query)[0] === "OR"
-			|| Object.keys(query)[0] === "AND") {
-			let values = Object.values(query)[0] as any[];
-			for (let item of values) {
-				orderArr.push(this.whereParse(item));
-			}
-			return logicComparisonHelper(Object.keys(query)[0], orderArr);
-		} else if (Object.keys(query)[0] === "NOT"){
-			let notMap = this.whereParse(Object.values(query)[0]);
-			return not(this.datasetContents.get(this.currentDatasetID) as Map<string, any[]>, notMap);
-		} else {
-			throw new InsightError("Unrecognizable key in WHERE");
-		}
-	}
-
-	private optionsSort (query: any, data: Map<string,any[]>): any[] {
-		let orderBool = false;
-		if (Object.prototype.hasOwnProperty.call(query, "ORDER")) {
-			orderBool = true;
-		}
-		let columns = query["COLUMNS"] as string[];
-		let order = query["ORDER"] as string;
-		let checkColumns = [];
-		for (const column in columns) {
-			let msKey = columns[column].split("_", 2)[1];
-			checkColumns.push(MSFieldHelper(msKey));
-		}
-		let tempData = new Map(data);
-		let finalArr = [];
-		for (let value of tempData.values()) {
-			for (let item of value) {
-				let obj = {} as any;
-				for (let key of Object.keys(item)) {
-					if (checkColumns.indexOf(key) > -1) {
-						let id = this.currentDatasetID + "_" + MSFieldHelperReverse(key);
-						let val = item[key];
-						obj[id] = val;
-					}
-				}
-				finalArr.push(obj);
-			}
-		}
-		if (!orderBool) {
-			// console.log (finalArr);
-			return finalArr;
-		} else {
-			return orderHelper(this.datasetContents, this.currentDatasetID, order, finalArr);
-		}
-	}
 }
