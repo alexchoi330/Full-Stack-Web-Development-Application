@@ -83,32 +83,48 @@ function swapTwo (arr: any[],objOne: number, objTwo: number) {
 }
 
 // implement quicksort for both
-export function quickSort(arr: any[], key: string, start: number, end: number) {
+export function quickSort(arr: any[], key: string, start: number, end: number, ascend: boolean) {
 	if (start < end) {
-		let mid = partition(arr, key, start, end);
-		quickSort(arr, key, start, mid - 1);
-		quickSort(arr, key, mid + 1, end);
+		let mid = partition(arr, key, start, end, ascend);
+		quickSort(arr, key, start, mid - 1, ascend);
+		quickSort(arr, key, mid + 1, end, ascend);
 	}
 }
 
-function partition(arr: any[], key: string, start: number, end: number): number {
+function partition(arr: any[], key: string, start: number, end: number, ascend: boolean): number {
 	// let msKey = key.split("_", 1)[0];
 	let msKey = key.split("_", 2)[1];
 	let pivot = arr[end][key];
 	let previous = start - 1;
 	for (let i = start; i < end; i++) {
-		if (mkeyCheck(msKey)) {
-			if (arr[i][key] < pivot) {
-				previous++;
-				swapTwo(arr, previous, i);
-			}
-		} else if (skeyCheck(msKey)) {
-			if (arr[i][key].localeCompare(pivot) <= -1) {
-				previous++;
-				swapTwo(arr, previous, i);
+		if (ascend) {
+			if (mkeyCheck(msKey)) {
+				if (arr[i][key] < pivot) {
+					previous++;
+					swapTwo(arr, previous, i);
+				}
+			} else if (skeyCheck(msKey)) {
+				if (arr[i][key].localeCompare(pivot) <= -1) {
+					previous++;
+					swapTwo(arr, previous, i);
+				}
+			} else {
+				throw new InsightError("quick sort shouldn't be here");
 			}
 		} else {
-			throw new InsightError("quick sort shouldn't be here");
+			if (mkeyCheck(msKey)) {
+				if (arr[i][key] > pivot) {
+					previous++;
+					swapTwo(arr, previous, i);
+				}
+			} else if (skeyCheck(msKey)) {
+				if (arr[i][key].localeCompare(pivot) > -1) {
+					previous++;
+					swapTwo(arr, previous, i);
+				}
+			} else {
+				throw new InsightError("quick sort shouldn't be here");
+			}
 		}
 	}
 	swapTwo(arr, previous + 1, end);
