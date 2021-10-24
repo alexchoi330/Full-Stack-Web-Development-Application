@@ -101,7 +101,8 @@ function parseOutDataFromHyperlink(buildingCodeNodes: parse5.ChildNode[]): strin
 	return data;
 }
 
-function parseRooms(buildingDocument: Document, BuildingShortName: string): JSON[] {
+function parseRooms(buildingDocument: Document, BuildingShortName: string): any[] {
+	let roomJsons = [];
 	let data: parse5.ChildNode[] = [];
 
 	// grab all the td elements from a building
@@ -123,7 +124,24 @@ function parseRooms(buildingDocument: Document, BuildingShortName: string): JSON
 	let roomTypesTD = parse_Out_Td_Based_Off_Attribute(data, "views-field views-field-field-room-type");
 	let roomTypes = parseOutDataFromText(roomTypesTD);
 
-	return [];
+	for(let i in roomsNumbers) {
+		let roomJSON = {
+			rooms_fullname:"",
+			rooms_shortname:BuildingShortName,
+			rooms_number:roomsNumbers[i],
+			rooms_name:"",
+			rooms_address:"",
+			rooms_lat:"",
+			rooms_lon:"",
+			rooms_seats:capacities[i], // need to add default value
+			rooms_type:roomTypes[i],
+			rooms_furniture:furnitureTypes[i],
+			rooms_href:"",
+		};
+		roomJsons.push(roomJSON);
+	}
+
+	return roomJsons;
 }
 
 export{DFS, saveToDisk, parseCourses, parse_Out_Td_Based_Off_Attribute, parseOutDataFromText, parseRooms};

@@ -116,6 +116,10 @@ export default class InsightFacade implements IInsightFacade {
 			let buildingData = await jsZip.files[buildingPath].async("string");
 			let buildingDocument: Document = parse5.parse(buildingData);
 			let buildingJSONs = parseRooms(buildingDocument, code);
+			for(let buildingJSON of buildingJSONs) {
+				let roomNumber = buildingJSON["rooms_number"];
+				rooms.set(code + roomNumber, buildingJSON);
+			}
 		}
 
 		// add dataset to our internal data structures
