@@ -1,0 +1,21 @@
+{
+	"title": "SELECT dept, avg WHERE room seats > 150 ,sort by rooms full name",
+	"input": {
+		"WHERE": {
+			"EQ": {
+				"rooms_seats": 50
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_lon",
+				"rooms_fullname",
+				"rooms_number",
+				"rooms_seats",
+				"rooms_address"
+			],
+			"ORDER": "rooms_lon"
+		}
+	},
+	"errorExpected": false,
+	"with": [{"rooms_lon":-123.25468,"rooms_fullname":"Buchanan","rooms_number":"D316","rooms_seats":50,"rooms_address":"1866 Main Mall"},{"rooms_lon":-123.25468,"rooms_fullname":"Buchanan","rooms_number":"D317","rooms_seats":50,"rooms_address":"1866 Main Mall"},{"rooms_lon":-123.25468,"rooms_fullname":"Buchanan","rooms_number":"D322","rooms_seats":50,"rooms_address":"1866 Main Mall"},{"rooms_lon":-123.25318,"rooms_fullname":"Allard Hall (LAW)","rooms_number":"121","rooms_seats":50,"rooms_address":"1822 East Mall"},{"rooms_lon":-123.2521,"rooms_fullname":"Irving K Barber Learning Centre","rooms_number":"155","rooms_seats":50,"rooms_address":"1961 East Mall V6T 1Z1"},{"rooms_lon":-123.25198,"rooms_fullname":"Earth and Ocean Sciences - Main","rooms_number":"135","rooms_seats":50,"rooms_address":"6339 Stores Road"},{"rooms_lon":-123.25042,"rooms_fullname":"Iona Building","rooms_number":"633","rooms_seats":50,"rooms_address":"6000 Iona Drive"}]}

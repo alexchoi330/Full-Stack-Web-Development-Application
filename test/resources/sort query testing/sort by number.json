@@ -1,0 +1,28 @@
+{
+	"title": "SELECT dept, avg WHERE avg > 98 sort by c_id",
+	"input": {
+		"WHERE": {
+			"AND": [ {
+				"GT":{
+					"rooms_seats": 150
+				}
+			},
+				{
+					"IS": {
+						"rooms_fullname": "West Mall Swing Space"
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_fullname",
+				"rooms_number",
+				"rooms_name",
+				"rooms_seats"
+			],
+			"ORDER": "rooms_number"
+		}
+	},
+	"errorExpected": false,
+	"with": [{"rooms_fullname":"West Mall Swing Space","rooms_number":"121","rooms_name":"SWNG_121","rooms_seats":187},{"rooms_fullname":"West Mall Swing Space","rooms_number":"122","rooms_name":"SWNG_122","rooms_seats":188},{"rooms_fullname":"West Mall Swing Space","rooms_number":"221","rooms_name":"SWNG_221","rooms_seats":190},{"rooms_fullname":"West Mall Swing Space","rooms_number":"222","rooms_name":"SWNG_222","rooms_seats":190}]}
