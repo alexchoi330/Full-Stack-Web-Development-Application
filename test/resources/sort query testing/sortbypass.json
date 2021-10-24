@@ -1,0 +1,33 @@
+{
+	"title": "SELECT dept, avg WHERE avg > 97 and is math dept, order by pass",
+	"input": {
+		"WHERE": {
+			"AND": [
+				{ "GT": {
+					"courses_avg": 97
+				}
+				},
+				{
+					"IS": {
+						"courses_dept": "math"
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"courses_avg",
+				"courses_id",
+				"courses_instructor",
+				"courses_title",
+				"courses_uuid",
+				"courses_pass",
+				"courses_fail",
+				"courses_audit"
+			],
+			"ORDER": "courses_pass"
+		}
+	},
+	"errorExpected": false,
+	"with": [{"courses_dept":"math","courses_avg":97.25,"courses_id":"525","courses_instructor":"fraser, ailana","courses_title":"diff geometry i","courses_uuid":"32014","courses_pass":4,"courses_fail":0,"courses_audit":1},{"courses_dept":"math","courses_avg":97.25,"courses_id":"525","courses_instructor":"","courses_title":"diff geometry i","courses_uuid":"32015","courses_pass":4,"courses_fail":0,"courses_audit":1},{"courses_dept":"math","courses_avg":99.78,"courses_id":"527","courses_instructor":"gomez, jose","courses_title":"algb topology i","courses_uuid":"5373","courses_pass":9,"courses_fail":0,"courses_audit":0},{"courses_dept":"math","courses_avg":99.78,"courses_id":"527","courses_instructor":"","courses_title":"algb topology i","courses_uuid":"5374","courses_pass":9,"courses_fail":0,"courses_audit":0},{"courses_dept":"math","courses_avg":97.09,"courses_id":"541","courses_instructor":"laba, izabella","courses_title":"harmonic anal i","courses_uuid":"73173","courses_pass":11,"courses_fail":0,"courses_audit":0},{"courses_dept":"math","courses_avg":97.09,"courses_id":"541","courses_instructor":"","courses_title":"harmonic anal i","courses_uuid":"73174","courses_pass":11,"courses_fail":0,"courses_audit":0},{"courses_dept":"math","courses_avg":97.48,"courses_id":"532","courses_instructor":"karu, kalle","courses_title":"algb geometry i","courses_uuid":"73165","courses_pass":21,"courses_fail":0,"courses_audit":0},{"courses_dept":"math","courses_avg":97.48,"courses_id":"532","courses_instructor":"","courses_title":"algb geometry i","courses_uuid":"73166","courses_pass":21,"courses_fail":0,"courses_audit":0}]}

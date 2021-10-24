@@ -1,0 +1,32 @@
+{
+	"title": "SELECT dept, avg WHERE dept is eece and course avg is > 92, order by title",
+	"input": {
+		"WHERE": {
+			"AND": [ {
+				"IS": {
+					"courses_dept": "eece"
+				}
+			},
+				{
+					"GT": {
+						"courses_avg": 92
+					}
+				}
+			] },
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"courses_avg",
+				"courses_id",
+				"courses_instructor",
+				"courses_title",
+				"courses_uuid",
+				"courses_pass",
+				"courses_fail",
+				"courses_audit"
+			],
+			"ORDER": "courses_title"
+		}
+	},
+	"errorExpected": false,
+	"with": [{"courses_dept":"eece","courses_avg":92.5,"courses_id":"579","courses_instructor":"quinton, bradley","courses_title":"ad top vlsi desg","courses_uuid":"18496","courses_pass":2,"courses_fail":0,"courses_audit":2},{"courses_dept":"eece","courses_avg":92.5,"courses_id":"579","courses_instructor":"","courses_title":"ad top vlsi desg","courses_uuid":"18497","courses_pass":2,"courses_fail":0,"courses_audit":2},{"courses_dept":"eece","courses_avg":92.6,"courses_id":"527","courses_instructor":"lis, mieszko","courses_title":"adv comp archtct","courses_uuid":"6223","courses_pass":5,"courses_fail":0,"courses_audit":0},{"courses_dept":"eece","courses_avg":92.6,"courses_id":"527","courses_instructor":"","courses_title":"adv comp archtct","courses_uuid":"6224","courses_pass":5,"courses_fail":0,"courses_audit":0},{"courses_dept":"eece","courses_avg":92.88,"courses_id":"583","courses_instructor":"wilton, steven","courses_title":"cad algrthm i cr","courses_uuid":"10281","courses_pass":8,"courses_fail":0,"courses_audit":0},{"courses_dept":"eece","courses_avg":92.88,"courses_id":"583","courses_instructor":"","courses_title":"cad algrthm i cr","courses_uuid":"10282","courses_pass":8,"courses_fail":0,"courses_audit":0},{"courses_dept":"eece","courses_avg":93.56,"courses_id":"583","courses_instructor":"","courses_title":"cad algrthm i cr","courses_uuid":"55693","courses_pass":9,"courses_fail":0,"courses_audit":0},{"courses_dept":"eece","courses_avg":93.56,"courses_id":"583","courses_instructor":"","courses_title":"cad algrthm i cr","courses_uuid":"55694","courses_pass":9,"courses_fail":0,"courses_audit":0},{"courses_dept":"eece","courses_avg":93.58,"courses_id":"583","courses_instructor":"wilton, steven","courses_title":"cad algrthm i cr","courses_uuid":"88765","courses_pass":12,"courses_fail":0,"courses_audit":0},{"courses_dept":"eece","courses_avg":93.58,"courses_id":"583","courses_instructor":"","courses_title":"cad algrthm i cr","courses_uuid":"88766","courses_pass":12,"courses_fail":0,"courses_audit":0},{"courses_dept":"eece","courses_avg":98.75,"courses_id":"541","courses_instructor":"coria, lino","courses_title":"multimedia sys","courses_uuid":"10235","courses_pass":12,"courses_fail":0,"courses_audit":0},{"courses_dept":"eece","courses_avg":98.75,"courses_id":"541","courses_instructor":"","courses_title":"multimedia sys","courses_uuid":"10236","courses_pass":12,"courses_fail":0,"courses_audit":0},{"courses_dept":"eece","courses_avg":93.8,"courses_id":"531","courses_instructor":"nojeh, alireza","courses_title":"nanosc model&sim","courses_uuid":"74883","courses_pass":5,"courses_fail":0,"courses_audit":0},{"courses_dept":"eece","courses_avg":93.8,"courses_id":"531","courses_instructor":"","courses_title":"nanosc model&sim","courses_uuid":"74884","courses_pass":5,"courses_fail":0,"courses_audit":0},{"courses_dept":"eece","courses_avg":94.71,"courses_id":"554","courses_instructor":"dommel, hermann","courses_title":"power syst dynam","courses_uuid":"18466","courses_pass":14,"courses_fail":0,"courses_audit":0},{"courses_dept":"eece","courses_avg":94.71,"courses_id":"554","courses_instructor":"","courses_title":"power syst dynam","courses_uuid":"18467","courses_pass":14,"courses_fail":0,"courses_audit":0},{"courses_dept":"eece","courses_avg":93,"courses_id":"576","courses_instructor":"walus, konrad","courses_title":"semicon thy appl","courses_uuid":"10273","courses_pass":7,"courses_fail":0,"courses_audit":0},{"courses_dept":"eece","courses_avg":93,"courses_id":"576","courses_instructor":"","courses_title":"semicon thy appl","courses_uuid":"10274","courses_pass":7,"courses_fail":0,"courses_audit":0}]}

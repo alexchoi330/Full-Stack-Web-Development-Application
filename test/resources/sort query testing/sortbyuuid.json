@@ -1,0 +1,25 @@
+{
+	"title": "SELECT dept, avg WHERE dept is eece and course avg is > 92, order by title",
+	"input": {
+		"WHERE": {
+			"LT": {
+				"courses_avg": 10
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"courses_avg",
+				"courses_id",
+				"courses_instructor",
+				"courses_title",
+				"courses_uuid",
+				"courses_pass",
+				"courses_fail",
+				"courses_audit"
+			],
+			"ORDER": "courses_uuid"
+		}
+	},
+	"errorExpected": false,
+	"with": [{"courses_dept":"busi","courses_avg":4,"courses_id":"330","courses_instructor":"","courses_title":"found re apprai","courses_uuid":"16427","courses_pass":0,"courses_fail":1,"courses_audit":0},{"courses_dept":"busi","courses_avg":4,"courses_id":"330","courses_instructor":"","courses_title":"found re apprai","courses_uuid":"16428","courses_pass":0,"courses_fail":1,"courses_audit":0},{"courses_dept":"wood","courses_avg":1,"courses_id":"475","courses_instructor":"","courses_title":"prpty,ident&uses","courses_uuid":"49835","courses_pass":0,"courses_fail":2,"courses_audit":0},{"courses_dept":"lfs","courses_avg":0,"courses_id":"100","courses_instructor":"","courses_title":"in land food com","courses_uuid":"56402","courses_pass":0,"courses_fail":1,"courses_audit":0},{"courses_dept":"lfs","courses_avg":0,"courses_id":"100","courses_instructor":"","courses_title":"in land food com","courses_uuid":"56403","courses_pass":0,"courses_fail":1,"courses_audit":0},{"courses_dept":"fopr","courses_avg":4.5,"courses_id":"362","courses_instructor":"bendickson, dennis","courses_title":"sustnbt&frst ops","courses_uuid":"84769","courses_pass":0,"courses_fail":4,"courses_audit":0},{"courses_dept":"frst","courses_avg":0,"courses_id":"202","courses_instructor":"","courses_title":"forest ecology","courses_uuid":"89536","courses_pass":0,"courses_fail":1,"courses_audit":0}]}
