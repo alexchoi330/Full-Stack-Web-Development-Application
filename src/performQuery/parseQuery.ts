@@ -1,7 +1,7 @@
 import {IInsightFacade, InsightError, NotFoundError} from "../controller/IInsightFacade";
 import {greaterThan, lessThan, is, or, and, equalTo, not} from "./logic";
 import {skeyCheck, mkeyCheck, courseIDCheck, numberCheck, quickSort,
-	MSFieldHelper, MSFieldHelperReverse} from "./parseQueryHelpers";
+	MSFieldHelper, MSFieldHelperReverse, fieldSorter} from "./parseQueryHelpers";
 
 export enum Field {
 	avg = "Avg",
@@ -213,29 +213,6 @@ export function orderHelper (datasetContents: any, datasetID: any, order: any, d
 		console.log(data);
 		return data;
 	}
-}
-// function fieldSorter taken from https://stackoverflow.com/questions/6913512/how-to-sort-an-array-of-objects-by-multiple-fields?page=1&tab=votes#tab-top
-function fieldSorter(fields: any[], ascend: boolean) {
-	return function (a: { [x: string]: number; }, b: { [x: string]: number; }) {
-		return fields
-			.map(function (o) {
-				let dir = 1;
-				if (!ascend) {
-					dir = -1;
-					// o=o.substring(1);
-				}
-				if (a[o] > b[o]) {
-					return dir;
-				}
-				if (a[o] < b[o]) {
-					return -(dir);
-				}
-				return 0;
-			})
-			.reduce(function firstNonZeroValue (p,n) {
-				return p ? p : n;
-			}, 0);
-	};
 }
 
 
