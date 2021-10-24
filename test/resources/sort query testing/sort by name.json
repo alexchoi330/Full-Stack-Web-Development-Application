@@ -1,0 +1,31 @@
+{
+	"title": "SELECT dept, avg WHERE room seats > 150 ,sort by rooms full name",
+	"input": {
+		"WHERE": {
+			"AND": [
+				{
+					"GT": {
+						"rooms_seats": 75
+					}
+				},
+				{
+					"IS": {
+						"rooms_furniture": "Classroom-Fixed Tables/Movable Chairs"
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_name",
+				"rooms_fullname",
+				"rooms_seats",
+				"rooms_address",
+				"rooms_type",
+				"rooms_furniture"
+			],
+			"ORDER": "rooms_name"
+		}
+	},
+	"errorExpected": false,
+	"with": [{"rooms_name":"ALRD_105","rooms_fullname":"Allard Hall (LAW)","rooms_seats":94,"rooms_address":"1822 East Mall","rooms_type":"Case Style","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"ANGU_098","rooms_fullname":"Henry Angus","rooms_seats":260,"rooms_address":"2053 Main Mall","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"BIOL_2200","rooms_fullname":"Biological Sciences","rooms_seats":76,"rooms_address":"6270 University Boulevard","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"BUCH_B213","rooms_fullname":"Buchanan","rooms_seats":78,"rooms_address":"1866 Main Mall","rooms_type":"Case Style","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"BUCH_B315","rooms_fullname":"Buchanan","rooms_seats":78,"rooms_address":"1866 Main Mall","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"CHBE_101","rooms_fullname":"Chemical and Biological Engineering Building","rooms_seats":200,"rooms_address":"2360 East Mall V6T 1Z3","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"CHBE_102","rooms_fullname":"Chemical and Biological Engineering Building","rooms_seats":94,"rooms_address":"2360 East Mall V6T 1Z3","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"DMP_110","rooms_fullname":"Hugh Dempster Pavilion","rooms_seats":120,"rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"DMP_301","rooms_fullname":"Hugh Dempster Pavilion","rooms_seats":80,"rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"DMP_310","rooms_fullname":"Hugh Dempster Pavilion","rooms_seats":160,"rooms_address":"6245 Agronomy Road V6T 1Z4","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"ESB_2012","rooms_fullname":"Earth Sciences Building","rooms_seats":80,"rooms_address":"2207 Main Mall","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"FRDM_153","rooms_fullname":"Friedman Building","rooms_seats":160,"rooms_address":"2177 Wesbrook Mall V6T 1Z3","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"IONA_301","rooms_fullname":"Iona Building","rooms_seats":100,"rooms_address":"6000 Iona Drive","rooms_type":"Case Style","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"LSC_1001","rooms_fullname":"Life Sciences Centre","rooms_seats":350,"rooms_address":"2350 Health Sciences Mall","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"LSC_1002","rooms_fullname":"Life Sciences Centre","rooms_seats":350,"rooms_address":"2350 Health Sciences Mall","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"LSC_1003","rooms_fullname":"Life Sciences Centre","rooms_seats":125,"rooms_address":"2350 Health Sciences Mall","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"PHRM_1101","rooms_fullname":"Pharmaceutical Sciences Building","rooms_seats":236,"rooms_address":"2405 Wesbrook Mall","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"PHRM_1201","rooms_fullname":"Pharmaceutical Sciences Building","rooms_seats":167,"rooms_address":"2405 Wesbrook Mall","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"SWNG_121","rooms_fullname":"West Mall Swing Space","rooms_seats":187,"rooms_address":"2175 West Mall V6T 1Z4","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"SWNG_122","rooms_fullname":"West Mall Swing Space","rooms_seats":188,"rooms_address":"2175 West Mall V6T 1Z4","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"SWNG_221","rooms_fullname":"West Mall Swing Space","rooms_seats":190,"rooms_address":"2175 West Mall V6T 1Z4","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"SWNG_222","rooms_fullname":"West Mall Swing Space","rooms_seats":190,"rooms_address":"2175 West Mall V6T 1Z4","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"WOOD_1","rooms_fullname":"Woodward (Instructional Resources Centre-IRC)","rooms_seats":120,"rooms_address":"2194 Health Sciences Mall","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"WOOD_3","rooms_fullname":"Woodward (Instructional Resources Centre-IRC)","rooms_seats":88,"rooms_address":"2194 Health Sciences Mall","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"WOOD_4","rooms_fullname":"Woodward (Instructional Resources Centre-IRC)","rooms_seats":120,"rooms_address":"2194 Health Sciences Mall","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"},{"rooms_name":"WOOD_5","rooms_fullname":"Woodward (Instructional Resources Centre-IRC)","rooms_seats":120,"rooms_address":"2194 Health Sciences Mall","rooms_type":"Tiered Large Group","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs"}]}
