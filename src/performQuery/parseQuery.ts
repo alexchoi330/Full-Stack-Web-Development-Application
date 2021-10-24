@@ -109,9 +109,9 @@ export function checkOptions (query: any): string {
 		throw new InsightError("invalid key in OPTIONS");
 	}
 	let columns = query["COLUMNS"] as string[];
-	let order = query["ORDER"] as string;
+	let order = query["ORDER"] as any;
 	let courseID = columns[0].split("_", 1)[0];
-	let checkColumns = [];
+	// let checkColumns = [];
 	for (const column in columns) {
 		let courseIDTwo = columns[column].split("_", 1)[0];
 		if (!(courseID === courseIDTwo)) {
@@ -119,9 +119,26 @@ export function checkOptions (query: any): string {
 		}
 		let msKey = columns[column].split("_", 2)[1];
 		if (!(skeyCheck(msKey) || mkeyCheck(msKey))) {
-			throw new InsightError("key inside ORDER is wrong");
+			throw new InsightError("key inside COLUMNS is wrong");
 		}
-		checkColumns.push(MSFieldHelper(msKey));
+	}
+	if (typeof order === "string" || order === undefined) {
+		// checked already
+	} else {
+		if (!Object.prototype.hasOwnProperty.call(order, "dir") ||
+			!Object.prototype.hasOwnProperty.call(order,"keys") ||
+			Object.keys(order).length > 2) {
+			throw new InsightError("dir/keys in object error");
+		}
+		if (order["dir"] !== "UP" && order["dir"] !== "DOWN") {
+			throw new InsightError("dir value wrong");
+		}
+		for (let key in order["keys"]) {
+			let keyTemp = order["keys"][key].split("_", 2)[1];
+			if (!(skeyCheck(keyTemp) || mkeyCheck(keyTemp))) {
+				throw new InsightError("key inside ORDER keys is wrong");
+			}
+		}
 	}
 	return courseID;
 }
@@ -132,7 +149,7 @@ export function optionsSort (datasetContents: any, datasetID: any, query: any, d
 		orderBool = true;
 	}
 	let columns = query["COLUMNS"] as string[];
-	let order = query["ORDER"] as string;
+	let order = query["ORDER"] as any;
 	let checkColumns = [];
 	for (const column in columns) {
 		let msKey = columns[column].split("_", 2)[1];
@@ -154,24 +171,71 @@ export function optionsSort (datasetContents: any, datasetID: any, query: any, d
 		}
 	}
 	if (!orderBool) {
-		// console.log (finalArr);
+		console.log (finalArr);
 		return finalArr;
 	} else {
 		return orderHelper(datasetContents, datasetID, order, finalArr);
 	}
 }
 
-export function orderHelper (datasetContents: any, datasetID: any, key: string, data: any[]): any[] {
-	let courseID = key.split("_", 1)[0];
-	if (!courseIDCheck(datasetContents, courseID, datasetID)) {
-		throw new InsightError("courseID in order doesn't match");
+export function orderHelper (datasetContents: any, datasetID: any, order: any, data: any[]): any[] {
+	if (typeof order === "string") {
+		let courseID = order.split("_", 1)[0];
+		if (!courseIDCheck(datasetContents, courseID, datasetID)) {
+			throw new InsightError("courseID in order doesn't match");
+		}
+		if (!(typeof data[0][order] === "number" || typeof data[0][order] === "string")) {
+			throw new InsightError("Order data doesn't make sense");
+		}
+		let temp = data;
+		// console.log(temp);
+		// console.log("After sort");
+		quickSort(temp, order, 0, temp.length - 1, true);
+		// console.log(temp);
+		return temp;
+	} else {
+		for (let key in order["keys"]) {
+			let courseID = order["keys"][key].split("_", 1)[0];
+			if (!courseIDCheck(datasetContents, courseID, datasetID)) {
+				throw new InsightError("courseID in order doesn't match");
+			}
+		}
+		console.log(order);
+		let ascend = true;
+		if (order["dir"] === "UP") {
+			ascend = true;
+		} else if (order["dir"] === "DOWN") {
+			ascend = false;
+		}
+		console.log(data);
+		console.log("after sort");
+		data.sort(fieldSorter(order["keys"], ascend));
+		console.log(data);
+		return data;
 	}
-	if (!(typeof data[0][key] === "number" || typeof  data[0][key] === "string")) {
-		throw new InsightError("Order data doesn't make sense");
-	}
-	let temp = data;
-	quickSort(temp, key,0, temp.length - 1);
-	return temp;
+}
+// function fieldSorter taken from https://stackoverflow.com/questions/6913512/how-to-sort-an-array-of-objects-by-multiple-fields?page=1&tab=votes#tab-top
+function fieldSorter(fields: any[], ascend: boolean) {
+	return function (a: { [x: string]: number; }, b: { [x: string]: number; }) {
+		return fields
+			.map(function (o) {
+				let dir = 1;
+				if (!ascend) {
+					dir = -1;
+					// o=o.substring(1);
+				}
+				if (a[o] > b[o]) {
+					return dir;
+				}
+				if (a[o] < b[o]) {
+					return -(dir);
+				}
+				return 0;
+			})
+			.reduce(function firstNonZeroValue (p,n) {
+				return p ? p : n;
+			}, 0);
+	};
 }
 
 

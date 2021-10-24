@@ -367,7 +367,7 @@ describe("InsightFacade", function () {
 		testFolder<any, any[], PQErrorKind>(
 			"Dynamic InsightFacade PerformQuery tests",
 			(input) => insightFacade.performQuery(input),
-			"./test/resources/testing queries",
+			"./test/resources/query more tests",
 			{
 				errorValidator: (error): error is PQErrorKind =>
 					error === "ResultTooLargeError" || error === "InsightError",
@@ -376,14 +376,20 @@ describe("InsightFacade", function () {
 					expect(actual).to.be.instanceof(Array);
 					expect(actual).to.have.length(expected.length);
 					expect(actual).to.have.deep.members(expected);
-					if (typeof orderKey === "string") {
-						for (let i = 1; i < actual.length; i = i + 1) {
-							expect(actual[i - 1][orderKey]).to.deep.equal(expected[i - 1][orderKey]);
-							// need more thought about this one
-						}
-					} else {
-						for (let i = 1; i < actual.length; i = i + 1) {
-							expect(actual[i - 1]).to.deep.include(expected[i - 1]);
+					if (orderKey !== undefined) {
+						if (typeof orderKey === "string") {
+							for (let i = 1; i < actual.length; i = i + 1) {
+								expect(actual[i - 1][orderKey]).to.deep.equal(expected[i - 1][orderKey]);
+							}
+						} else if (orderKey["keys"].length === 1) {
+							for (let i = 1; i < actual.length; i = i + 1) {
+								expect(actual[i - 1][orderKey["keys"][0]]).to.deep.equal(
+									expected[i - 1][orderKey["keys"][0]]);
+							}
+						} else {
+							for (let i = 1; i < actual.length; i = i + 1) {
+								expect(actual[i - 1]).to.deep.equal(expected[i - 1]);
+							}
 						}
 					}
 				},
