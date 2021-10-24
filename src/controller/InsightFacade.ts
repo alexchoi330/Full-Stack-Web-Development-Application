@@ -11,7 +11,7 @@ import fs from "fs-extra";
 import parse5, {Document} from "parse5";
 import {persistDir} from "../../test/TestUtil";
 import {
-	DFS, saveToDisk, parseCourses, parseOutBuildingCodeTd, parseOutBuildingCodeFromTd
+	DFS, saveToDisk, parseCourses, parse_Out_Td_Based_Off_Attribute, parseOutDataFromText, parseRooms
 } from "../addDataset/addDatasetHelpers";
 // import {parseQuery} from "../performQuery/parseQuery";
 import {not} from "../performQuery/logic";
@@ -105,11 +105,22 @@ export default class InsightFacade implements IInsightFacade {
 		let nodes: parse5.ChildNode[] = [];
 		DFS(indexDocument.childNodes, "td", nodes);
 
-		// parse out td for building code
-		let buildingCodeNodes = parseOutBuildingCodeTd(nodes);
+		// parse out building code tds'
+		let buildingCodeNodes = parse_Out_Td_Based_Off_Attribute(nodes, "views-field views-field-field-building-code");
 
 		// parse out all building codes from td
-		let codes = parseOutBuildingCodeFromTd(buildingCodeNodes);
+		let codes = parseOutDataFromText(buildingCodeNodes);
+
+		for (let code of codes) {
+			let buildingPath = id + "/campus/discover/buildings-and-classrooms/" + code;
+			let buildingData = await jsZip.files[buildingPath].async("string");
+			let buildingDocument: Document = parse5.parse(buildingData);
+			let buildingJSONs = parseRooms(buildingDocument, code);
+			for(let buildingJSON of buildingJSONs) {
+				let roomNumber = buildingJSON["rooms_number"];
+				rooms.set(code + roomNumber, buildingJSON);
+			}
+		}
 
 		// add dataset to our internal data structures
 		this.datasetContents.set(id, rooms);
