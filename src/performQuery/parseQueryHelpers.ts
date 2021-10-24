@@ -98,35 +98,61 @@ function partition(arr: any[], key: string, start: number, end: number, ascend: 
 	let previous = start - 1;
 	for (let i = start; i < end; i++) {
 		if (ascend) {
-			if (mkeyCheck(msKey)) {
-				if (arr[i][key] < pivot) {
-					previous++;
-					swapTwo(arr, previous, i);
-				}
-			} else if (skeyCheck(msKey)) {
-				if (arr[i][key].localeCompare(pivot) <= -1) {
-					previous++;
-					swapTwo(arr, previous, i);
-				}
-			} else {
-				throw new InsightError("quick sort shouldn't be here");
+			// if (mkeyCheck(msKey)) {
+			if (arr[i][key] < pivot) {
+				previous++;
+				swapTwo(arr, previous, i);
 			}
+			// } else if (skeyCheck(msKey)) {
+				// if (arr[i][key].localeCompare(pivot) <= -1) {
+				// if (arr[i][key] < pivot) {
+					// previous++;
+					// swapTwo(arr, previous, i);
+				// }
+			// } else {
+			// 	throw new InsightError("quick sort shouldn't be here");
+			// }
 		} else {
-			if (mkeyCheck(msKey)) {
-				if (arr[i][key] > pivot) {
-					previous++;
-					swapTwo(arr, previous, i);
-				}
-			} else if (skeyCheck(msKey)) {
-				if (arr[i][key].localeCompare(pivot) > -1) {
-					previous++;
-					swapTwo(arr, previous, i);
-				}
-			} else {
-				throw new InsightError("quick sort shouldn't be here");
+			// if (mkeyCheck(msKey)) {
+			if (arr[i][key] > pivot) {
+				previous++;
+				swapTwo(arr, previous, i);
 			}
+			// } else if (skeyCheck(msKey)) {
+				// if (arr[i][key].localeCompare(pivot) > -1) {
+				// if (arr[i][key] > pivot) {
+					// previous++;
+					// swapTwo(arr, previous, i);
+				// }
+			// } else {
+			// 	throw new InsightError("quick sort shouldn't be here");
+			// }
 		}
 	}
 	swapTwo(arr, previous + 1, end);
 	return (previous + 1);
+}
+
+// function fieldSorter taken from https://stackoverflow.com/questions/6913512/how-to-sort-an-array-of-objects-by-multiple-fields?page=1&tab=votes#tab-top
+export function fieldSorter(fields: any[], ascend: boolean) {
+	return function (a: { [x: string]: number; }, b: { [x: string]: number; }) {
+		return fields
+			.map(function (o) {
+				let dir = 1;
+				if (!ascend) {
+					dir = -1;
+					// o=o.substring(1);
+				}
+				if (a[o] > b[o]) {
+					return dir;
+				}
+				if (a[o] < b[o]) {
+					return -(dir);
+				}
+				return 0;
+			})
+			.reduce(function firstNonZeroValue (p,n) {
+				return p ? p : n;
+			}, 0);
+	};
 }
