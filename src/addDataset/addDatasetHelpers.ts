@@ -1,4 +1,4 @@
-import parse5 from "parse5";
+import parse5, {Document} from "parse5";
 import fs from "fs-extra";
 import {Field} from "../performQuery/parseQuery";
 
@@ -50,12 +50,13 @@ function parseCourses(course: any[]): any[] {
 	return result;
 }
 
-function parseOutBuildingCodeTd(nodes: parse5.ChildNode[]): parse5.ChildNode[] {
+// given a list of td, parse out td based off of attribute
+function parse_Out_Td_Based_Off_Attribute(nodes: parse5.ChildNode[], attribute: string): parse5.ChildNode[] {
 	let buildingCodeNodes: parse5.ChildNode[] = [];
 	for(let node of nodes) {
 		if ("attrs" in node) {
 			for(let attr of node.attrs) {
-				if(attr.value === "views-field views-field-field-building-code") {
+				if(attr.value === attribute) {
 					buildingCodeNodes.push(node);
 				}
 			}
@@ -64,20 +65,65 @@ function parseOutBuildingCodeTd(nodes: parse5.ChildNode[]): parse5.ChildNode[] {
 	return buildingCodeNodes;
 }
 
-function parseOutBuildingCodeFromTd(buildingCodeNodes: parse5.ChildNode[]): string[]{
-	let codes = [];
+function parseOutDataFromText(buildingCodeNodes: parse5.ChildNode[]): string[]{
+	let data = [];
 	for(let node of buildingCodeNodes) {
 		if ("childNodes" in node) {
 			for(let child of node.childNodes) {
 				if(child.nodeName === "#text") {
 					if ("value" in child) {
-						codes.push(child.value.replace(/\s/g, ""));
+						data.push(child.value.replace(/\s/g, ""));
 					}
 				}
 			}
 		}
 	}
-	return codes;
+	return data;
 }
 
-export{DFS, saveToDisk, parseCourses, parseOutBuildingCodeTd, parseOutBuildingCodeFromTd};
+function parseOutDataFromHyperlink(buildingCodeNodes: parse5.ChildNode[]): string[]{
+	let data = [];
+	for(let node of buildingCodeNodes) {
+		if ("childNodes" in node) {
+			for(let child of node.childNodes) {
+				if(child.nodeName === "a") {
+					if ("childNodes" in child) {
+						for(let child2 of child.childNodes) {
+							if ("value" in child2) {
+								data.push(child2.value.replace(/\s/g, ""));
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return data;
+}
+
+function parseRooms(buildingDocument: Document, BuildingShortName: string): JSON[] {
+	let data: parse5.ChildNode[] = [];
+
+	// grab all the td elements from a building
+	DFS(buildingDocument.childNodes, "td", data);
+
+	// grab all the room numbers from a building
+	let roomNumbersTD = parse_Out_Td_Based_Off_Attribute(data, "views-field views-field-field-room-number");
+	let roomsNumbers = parseOutDataFromHyperlink(roomNumbersTD);
+
+	// grab all the capacities from a building
+	let capacitiesTD = parse_Out_Td_Based_Off_Attribute(data, "views-field views-field-field-room-capacity");
+	let capacities = parseOutDataFromText(capacitiesTD);
+
+	// grab all the Furniture type from a building
+	let furnitureTypesTD = parse_Out_Td_Based_Off_Attribute(data, "views-field views-field-field-room-furniture");
+	let furnitureTypes = parseOutDataFromText(furnitureTypesTD);
+
+	// grab all the Room type from a building
+	let roomTypesTD = parse_Out_Td_Based_Off_Attribute(data, "views-field views-field-field-room-type");
+	let roomTypes = parseOutDataFromText(roomTypesTD);
+
+	return [];
+}
+
+export{DFS, saveToDisk, parseCourses, parse_Out_Td_Based_Off_Attribute, parseOutDataFromText, parseRooms};
