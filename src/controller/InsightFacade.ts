@@ -119,12 +119,13 @@ export default class InsightFacade implements IInsightFacade {
 			for(let buildingJSON of buildingJSONs) {
 				let roomNumber = buildingJSON["rooms_number"];
 				rooms.set(code + roomNumber, buildingJSON);
+				size += 1;
 			}
 		}
 
 		// add dataset to our internal data structures
 		this.datasetContents.set(id, rooms);
-		this.datasetKind.set(id, InsightDatasetKind.Courses);
+		this.datasetKind.set(id, InsightDatasetKind.Rooms);
 		this.datasetSize.set(id, size);
 		return;
 	}
