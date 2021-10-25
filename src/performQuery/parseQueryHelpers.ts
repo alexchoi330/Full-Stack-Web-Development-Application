@@ -55,12 +55,13 @@ export function MSFieldHelperReverse (field: string): string {
 }
 
 export function skeyCheck(skey: string): boolean{
-	let validKeys = ["dept", "id", "instructor", "title", "uuid"];
+	let validKeys = ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number", "name", "address",
+		"type", "furniture", "href"];
 	return validKeys.includes(skey);
 }
 
 export function mkeyCheck(mkey: string): boolean{
-	let validKeys = ["avg", "pass", "fail", "audit", "year"];
+	let validKeys = ["avg", "pass", "fail", "audit", "year", "lat", "lon", "seats"];
 	return validKeys.includes(mkey);
 }
 
