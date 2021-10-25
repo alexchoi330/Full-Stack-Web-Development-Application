@@ -43,8 +43,9 @@ function parseCourses(course: any[]): any[] {
 			|| section[Field.year] == null) {
 			continue;
 		}
-		// Change UUID to string
+		// Change courses_uuid to string and courses_year to number
 		section[Field.uuid] = section[Field.uuid].toString();
+		section[Field.year] = Number(section[Field.year]);
 		result.push(section);
 	}
 	return result;
