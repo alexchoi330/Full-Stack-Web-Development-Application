@@ -72,7 +72,7 @@ function parseOutDataFromText(buildingCodeNodes: parse5.ChildNode[]): string[]{
 			for(let child of node.childNodes) {
 				if(child.nodeName === "#text") {
 					if ("value" in child) {
-						data.push(child.value.replace(/\s/g, ""));
+						data.push(child.value.trim());
 					}
 				}
 			}
@@ -90,7 +90,7 @@ function parseOutDataFromHyperlink(buildingCodeNodes: parse5.ChildNode[]): strin
 					if ("childNodes" in child) {
 						for(let child2 of child.childNodes) {
 							if ("value" in child2) {
-								data.push(child2.value.replace(/\s/g, ""));
+								data.push(child2.value.trim());
 							}
 						}
 					}
@@ -101,7 +101,8 @@ function parseOutDataFromHyperlink(buildingCodeNodes: parse5.ChildNode[]): strin
 	return data;
 }
 
-function parseRooms(buildingDocument: Document, BuildingShortName: string): any[] {
+function parseRooms(buildingDocument: Document, BuildingShortName: string,
+	BuildingFullName: string, BuildingAdr: string): any[] {
 	let roomJsons = [];
 	let data: parse5.ChildNode[] = [];
 
@@ -126,17 +127,18 @@ function parseRooms(buildingDocument: Document, BuildingShortName: string): any[
 
 	for(let i in roomsNumbers) {
 		let roomJSON = {
-			rooms_fullname:"",
+			rooms_fullname:BuildingFullName,
 			rooms_shortname:BuildingShortName,
 			rooms_number:roomsNumbers[i],
-			rooms_name:"",
-			rooms_address:"",
+			rooms_name:BuildingShortName + roomsNumbers[i],
+			rooms_address:BuildingAdr,
 			rooms_lat:"",
 			rooms_lon:"",
 			rooms_seats:capacities[i], // need to add default value
 			rooms_type:roomTypes[i],
 			rooms_furniture:furnitureTypes[i],
-			rooms_href:"",
+			rooms_href:"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/"
+				+ BuildingShortName + "-" + roomsNumbers[i],
 		};
 		roomJsons.push(roomJSON);
 	}
@@ -144,4 +146,5 @@ function parseRooms(buildingDocument: Document, BuildingShortName: string): any[
 	return roomJsons;
 }
 
-export{DFS, saveToDisk, parseCourses, parse_Out_Td_Based_Off_Attribute, parseOutDataFromText, parseRooms};
+export{DFS, saveToDisk, parseCourses, parse_Out_Td_Based_Off_Attribute,
+	parseOutDataFromText, parseOutDataFromHyperlink, parseRooms};

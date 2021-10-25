@@ -11,7 +11,8 @@ import fs from "fs-extra";
 import parse5, {Document} from "parse5";
 import {persistDir} from "../../test/TestUtil";
 import {
-	DFS, saveToDisk, parseCourses, parse_Out_Td_Based_Off_Attribute, parseOutDataFromText, parseRooms
+	DFS, saveToDisk, parseCourses, parse_Out_Td_Based_Off_Attribute,
+	parseOutDataFromText, parseRooms, parseOutDataFromHyperlink
 } from "../addDataset/addDatasetHelpers";
 // import {parseQuery} from "../performQuery/parseQuery";
 import {not} from "../performQuery/logic";
@@ -105,20 +106,24 @@ export default class InsightFacade implements IInsightFacade {
 		let nodes: parse5.ChildNode[] = [];
 		DFS(indexDocument.childNodes, "td", nodes);
 
-		// parse out building code tds'
-		let buildingCodeNodes = parse_Out_Td_Based_Off_Attribute(nodes, "views-field views-field-field-building-code");
+		// parse out building information tds'
+		let buildingCodeNodes = parse_Out_Td_Based_Off_Attribute(nodes,"views-field views-field-field-building-code");
+		let buildingFullNameNodes = parse_Out_Td_Based_Off_Attribute(nodes,"views-field views-field-title");
+		let buildingAdrNodes = parse_Out_Td_Based_Off_Attribute(nodes,"views-field views-field-field-building-address");
 
-		// parse out all building codes from td
+		// parse out all building information from td
 		let codes = parseOutDataFromText(buildingCodeNodes);
+		let buildingFullNames = parseOutDataFromHyperlink(buildingFullNameNodes);
+		let buildingAddresses = parseOutDataFromText(buildingAdrNodes);
 
-		for (let code of codes) {
-			let buildingPath = id + "/campus/discover/buildings-and-classrooms/" + code;
+		for (let i in codes) {
+			let buildingPath = id + "/campus/discover/buildings-and-classrooms/" + codes[i];
 			let buildingData = await jsZip.files[buildingPath].async("string");
 			let buildingDocument: Document = parse5.parse(buildingData);
-			let buildingJSONs = parseRooms(buildingDocument, code);
+			let buildingJSONs = parseRooms(buildingDocument, codes[i], buildingFullNames[i], buildingAddresses[i]);
 			for(let buildingJSON of buildingJSONs) {
 				let roomNumber = buildingJSON["rooms_number"];
-				rooms.set(code + roomNumber, buildingJSON);
+				rooms.set(codes[i] + roomNumber, buildingJSON);
 				size += 1;
 			}
 		}
