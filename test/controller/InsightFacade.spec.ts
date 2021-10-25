@@ -356,7 +356,7 @@ describe("InsightFacade", function () {
 			return insightFacade.addDataset("courses", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses)
 				.then(() => {
 					return insightFacade.addDataset("rooms", datasetContents.get("rooms") ?? "",
-						InsightDatasetKind.Courses)
+						InsightDatasetKind.Rooms)
 						.catch(() => "error???");
 				});
 			// return insightFacade.addDataset("courses", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses)
@@ -373,7 +373,7 @@ describe("InsightFacade", function () {
 		testFolder<any, any[], PQErrorKind>(
 			"Dynamic InsightFacade PerformQuery tests",
 			(input) => insightFacade.performQuery(input),
-			"./test/resources/testing queries",
+			"./test/resources/sort query testing",
 			{
 				errorValidator: (error): error is PQErrorKind =>
 					error === "ResultTooLargeError" || error === "InsightError",

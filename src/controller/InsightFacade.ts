@@ -54,7 +54,6 @@ export default class InsightFacade implements IInsightFacade {
 			await this.addCourse(id, content);
 		} else if(kind === InsightDatasetKind.Rooms) {
 			await this.addRoom(id, content);
-			console.log(this.datasetContents);
 		} else {
 			return Promise.reject(new InsightError("Kind is not courses or rooms"));
 		}

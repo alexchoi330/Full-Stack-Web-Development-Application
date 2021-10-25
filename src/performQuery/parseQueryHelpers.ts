@@ -3,6 +3,8 @@ import {and, or} from "./logic";
 
 
 export function MSFieldHelper (field: string): string {
+	let rms = ["fullname", "shortname", "number", "name", "address", "lat",
+		"lon", "seats", "type", "furniture", "href"];
 	if (field === "avg") {
 		return "Avg";
 	} else if  (field === "pass") {
@@ -23,12 +25,16 @@ export function MSFieldHelper (field: string): string {
 		return "Title";
 	} else if (field === "uuid") {
 		return "id";
+	} else if (rms.includes(field)) {
+		return field;
 	} else {
 		return "BAD ID";
 	}
 }
 
 export function MSFieldHelperReverse (field: string): string {
+	let rms = ["fullname", "shortname", "number", "name", "address", "lat",
+		"lon", "seats", "type", "furniture", "href"];
 	if (field === "Avg") {
 		return "avg";
 	} else if  (field === "Pass") {
@@ -49,6 +55,8 @@ export function MSFieldHelperReverse (field: string): string {
 		return "title";
 	} else if (field === "id") {
 		return "uuid";
+	} else if (rms.includes(field)) {
+		return field;
 	} else {
 		return "BAD ID";
 	}
