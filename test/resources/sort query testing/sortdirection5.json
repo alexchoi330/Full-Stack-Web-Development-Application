@@ -1,0 +1,36 @@
+{
+	"title": "SELECT dept, avg WHERE avg < 70 and fail > 100, shOuld throw error if direction is NOT up or down",
+	"input": {
+		"WHERE": {
+			"AND": [
+				{
+					"GT": {
+						"courses_avg": 70
+					}
+				},
+				{
+					"GT": {
+						"courses_fail": 100
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"courses_avg",
+				"courses_id",
+				"courses_instructor",
+				"courses_title",
+				"courses_uuid",
+				"courses_pass",
+				"courses_fail",
+				"courses_audit"
+			],
+			"ORDER": {
+				"dir": "LEFT", "keys": ["courses_dept", "courses_avg", "courses_pass"]
+			}
+		}
+	},
+	"errorExpected": true
+}
