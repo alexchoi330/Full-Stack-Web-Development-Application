@@ -152,9 +152,14 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		const whereObj = query["WHERE"];
 		const optionObj = query["OPTIONS"];
+		console.log(whereObj, optionObj);
+		let transformationsObj = {};
+		if ("TRANSFORMATIONS" in query) {
+			transformationsObj = query["TRANSFORMATIONS"];
+			console.log(transformationsObj);
+		}
 		this.currentDatasetID = checkOptions(optionObj);
 		let whereReturn;
-		console.log(whereObj, optionObj);
 		if (Object.keys(whereObj).length === 0) {
 			this.currentDatasetID = optionObj["COLUMNS"][0].split("_", 1)[0];
 			whereReturn = new Map(this.datasetContents.get(this.currentDatasetID) as Map<string, any[]>);
@@ -171,6 +176,7 @@ export default class InsightFacade implements IInsightFacade {
 			throw new ResultTooLargeError("The query returns over 5000 results");
 		}
 		let optionsReturn = optionsSort(this.datasetContents, this.currentDatasetID, optionObj, whereReturn);
+		// transformationsSort(this.datasetContents, this.currentDatasetID, transformationObj, optionsReturn);
 		return Promise.resolve(optionsReturn);
 	}
 

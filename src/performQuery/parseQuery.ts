@@ -215,4 +215,21 @@ export function orderHelper (datasetContents: any, datasetID: any, order: any, d
 	}
 }
 
+export function transformationsSort (datasetContents: any, datasetID: any, query: any, data: any[]): any[] {
+	if (!Object.prototype.hasOwnProperty.call(query, "GROUP") ||
+		!Object.prototype.hasOwnProperty.call(query, "APPLY") ||
+		query.keys().length > 2) {
+		throw new InsightError("transformation missing GROUP or APPLY or too many arguments");
+	}
+	let group = query["GROUP"];
+	let apply = query["APPLY"];
+	let clone = [...data];
+	let cloneArray = [clone];
+	for (let key in group) {
+		// loop through all elements of array to make groups and update the array
+		console.log(group[key]);
+	}
+	return [];
+}
+
 
