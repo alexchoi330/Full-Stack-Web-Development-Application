@@ -122,8 +122,14 @@ export default class InsightFacade implements IInsightFacade {
 			let buildingDocument: Document = parse5.parse(buildingData);
 			let buildingJSONs = parseRooms(buildingDocument, codes[i], buildingFullNames[i], buildingAddresses[i]);
 			for(let buildingJSON of buildingJSONs) {
-				let roomNumber = buildingJSON["rooms_number"];
-				rooms.set(codes[i] + roomNumber, buildingJSON);
+				let building = rooms.get(codes[i]) as any[];
+				if(building !== undefined) {
+					building.push(buildingJSON);
+				} else {
+					building = [];
+					building.push(buildingJSON);
+				}
+				rooms.set(codes[i], building);
 				size += 1;
 			}
 		}

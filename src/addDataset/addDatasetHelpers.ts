@@ -1,6 +1,7 @@
 import parse5, {Document} from "parse5";
 import fs from "fs-extra";
 import {Field} from "../performQuery/parseQuery";
+const http = require("http");
 
 function DFS(Tree: parse5.ChildNode[], DOM: string, tableData: parse5.ChildNode[]): void{
 	for(let child of Tree) {
@@ -147,5 +148,16 @@ function parseRooms(buildingDocument: Document, BuildingShortName: string,
 	return roomJsons;
 }
 
+function getGeolocation(): any[] {
+	const res = http.get({
+		hostname: "http://cs310.students.cs.ubc.ca",
+		port: 11316,
+		path: "/api/v1/project_team109/6245%20Agronomy%20Road%20V6T%201Z4",
+		agent: false  // Create a new agent just for this one request
+	});
+	let x = res;
+	return [];
+}
+
 export{DFS, saveToDisk, parseCourses, parse_Out_Td_Based_Off_Attribute,
-	parseOutDataFromText, parseOutDataFromHyperlink, parseRooms};
+	parseOutDataFromText, parseOutDataFromHyperlink, parseRooms, getGeolocation};
