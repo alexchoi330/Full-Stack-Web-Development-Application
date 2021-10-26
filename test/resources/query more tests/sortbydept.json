@@ -1,19 +1,25 @@
 {
-	"title": "SELECT dept, avg WHERE avg > 98.6 and sort by dept alphabet",
+	"title": "SELECT dept, avg WHERE avg > 98 sort by c_id",
 	"input": {
 		"WHERE": {
 			"GT": {
-				"courses_avg": 98.6
-			}
-		},
+			"courses_avg": 98.5
+		}
+	},
 		"OPTIONS": {
 			"COLUMNS": [
 				"courses_dept",
-				"courses_avg"
+				"courses_avg",
+				"courses_id",
+				"courses_instructor",
+				"courses_title",
+				"courses_uuid",
+				"courses_pass",
+				"courses_fail",
+				"courses_audit"
 			],
 			"ORDER": "courses_dept"
 		}
 	},
 	"errorExpected": false,
-	"with": [{"courses_dept":"cnps","courses_avg":99.19},{"courses_dept":"eece","courses_avg":98.75},{"courses_dept":"eece","courses_avg":98.75},{"courses_dept":"epse","courses_avg":98.76},{"courses_dept":"epse","courses_avg":98.76},{"courses_dept":"epse","courses_avg":98.8},{"courses_dept":"epse","courses_avg":98.7},{"courses_dept":"math","courses_avg":99.78},{"courses_dept":"math","courses_avg":99.78},{"courses_dept":"nurs","courses_avg":98.71},{"courses_dept":"nurs","courses_avg":98.71},{"courses_dept":"spph","courses_avg":98.98},{"courses_dept":"spph","courses_avg":98.98}]
-}
+	"with": [{"courses_dept":"cnps","courses_avg":99.19,"courses_id":"574","courses_instructor":"cox, daniel","courses_title":"career planning","courses_uuid":"26777","courses_pass":16,"courses_fail":0,"courses_audit":0},{"courses_dept":"eece","courses_avg":98.75,"courses_id":"541","courses_instructor":"coria, lino","courses_title":"multimedia sys","courses_uuid":"10235","courses_pass":12,"courses_fail":0,"courses_audit":0},{"courses_dept":"eece","courses_avg":98.75,"courses_id":"541","courses_instructor":"","courses_title":"multimedia sys","courses_uuid":"10236","courses_pass":12,"courses_fail":0,"courses_audit":0},{"courses_dept":"epse","courses_avg":98.7,"courses_id":"421","courses_instructor":"cole, kenneth","courses_title":"assess lrn diffi","courses_uuid":"33780","courses_pass":10,"courses_fail":0,"courses_audit":0},{"courses_dept":"epse","courses_avg":98.8,"courses_id":"449","courses_instructor":"grow, laura","courses_title":"educ stds autism","courses_uuid":"6320","courses_pass":25,"courses_fail":0,"courses_audit":0},{"courses_dept":"epse","courses_avg":98.58,"courses_id":"449","courses_instructor":"grow, laura","courses_title":"educ stds autism","courses_uuid":"29255","courses_pass":24,"courses_fail":0,"courses_audit":0},{"courses_dept":"epse","courses_avg":98.58,"courses_id":"449","courses_instructor":"","courses_title":"educ stds autism","courses_uuid":"29256","courses_pass":24,"courses_fail":0,"courses_audit":0},{"courses_dept":"epse","courses_avg":98.76,"courses_id":"449","courses_instructor":"grow, laura","courses_title":"educ stds autism","courses_uuid":"44816","courses_pass":17,"courses_fail":0,"courses_audit":0},{"courses_dept":"epse","courses_avg":98.76,"courses_id":"449","courses_instructor":"","courses_title":"educ stds autism","courses_uuid":"44817","courses_pass":17,"courses_fail":0,"courses_audit":0},{"courses_dept":"math","courses_avg":99.78,"courses_id":"527","courses_instructor":"gomez, jose","courses_title":"algb topology i","courses_uuid":"5373","courses_pass":9,"courses_fail":0,"courses_audit":0},{"courses_dept":"math","courses_avg":99.78,"courses_id":"527","courses_instructor":"","courses_title":"algb topology i","courses_uuid":"5374","courses_pass":9,"courses_fail":0,"courses_audit":0},{"courses_dept":"nurs","courses_avg":98.71,"courses_id":"509","courses_instructor":"brew, nancy","courses_title":"cl pro prim care","courses_uuid":"15343","courses_pass":14,"courses_fail":0,"courses_audit":0},{"courses_dept":"nurs","courses_avg":98.71,"courses_id":"509","courses_instructor":"","courses_title":"cl pro prim care","courses_uuid":"15344","courses_pass":14,"courses_fail":0,"courses_audit":0},{"courses_dept":"nurs","courses_avg":98.58,"courses_id":"578","courses_instructor":"","courses_title":"fam nrs pract","courses_uuid":"96250","courses_pass":12,"courses_fail":0,"courses_audit":0},{"courses_dept":"nurs","courses_avg":98.58,"courses_id":"578","courses_instructor":"","courses_title":"fam nrs pract","courses_uuid":"96251","courses_pass":12,"courses_fail":0,"courses_audit":0},{"courses_dept":"spph","courses_avg":98.98,"courses_id":"300","courses_instructor":"frank, erica","courses_title":"work int health","courses_uuid":"65069","courses_pass":82,"courses_fail":0,"courses_audit":0},{"courses_dept":"spph","courses_avg":98.98,"courses_id":"300","courses_instructor":"","courses_title":"work int health","courses_uuid":"65070","courses_pass":82,"courses_fail":0,"courses_audit":0}]}

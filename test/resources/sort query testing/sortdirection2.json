@@ -1,0 +1,41 @@
+{
+	"title": "SELECT dept, avg WHERE dept is math and avg > 50 and avg < 55, should sort descending down with two keys",
+	"input": {
+		"WHERE": {
+			"AND": [
+				{
+					"IS": {
+						"courses_dept": "math"
+					}
+				},
+				{
+					"GT": {
+						"courses_avg": 50
+					}
+				},
+				{
+					"LT": {
+						"courses_avg": 55
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"courses_avg",
+				"courses_id",
+				"courses_instructor",
+				"courses_title",
+				"courses_uuid",
+				"courses_pass",
+				"courses_fail",
+				"courses_audit"
+			],
+			"ORDER": {
+				"dir": "DOWN", "keys": ["courses_uuid", "courses_avg"]
+			}
+		}
+	},
+	"errorExpected": false,
+	"with": [{"courses_dept":"math","courses_avg":54.78,"courses_id":"255","courses_instructor":"","courses_title":"ord diff equtns","courses_uuid":"68495","courses_pass":17,"courses_fail":10,"courses_audit":0},{"courses_dept":"math","courses_avg":54.78,"courses_id":"255","courses_instructor":"","courses_title":"ord diff equtns","courses_uuid":"68494","courses_pass":17,"courses_fail":10,"courses_audit":0},{"courses_dept":"math","courses_avg":53.12,"courses_id":"180","courses_instructor":"","courses_title":"dif calc phys ap","courses_uuid":"68477","courses_pass":46,"courses_fail":21,"courses_audit":0},{"courses_dept":"math","courses_avg":53.12,"courses_id":"180","courses_instructor":"","courses_title":"dif calc phys ap","courses_uuid":"68476","courses_pass":46,"courses_fail":21,"courses_audit":0},{"courses_dept":"math","courses_avg":51.49,"courses_id":"110","courses_instructor":"lo, quin wai joseph","courses_title":"diff calculus","courses_uuid":"5169","courses_pass":45,"courses_fail":20,"courses_audit":0},{"courses_dept":"math","courses_avg":53.06,"courses_id":"105","courses_instructor":"talpo, mattia","courses_title":"int calc ap c&ss","courses_uuid":"47043","courses_pass":53,"courses_fail":19,"courses_audit":0},{"courses_dept":"math","courses_avg":53.88,"courses_id":"105","courses_instructor":"ao, weiwei","courses_title":"int calc ap c&ss","courses_uuid":"47041","courses_pass":27,"courses_fail":13,"courses_audit":0},{"courses_dept":"math","courses_avg":54.64,"courses_id":"105","courses_instructor":"","courses_title":"int calc ap c&ss","courses_uuid":"47039","courses_pass":30,"courses_fail":15,"courses_audit":0},{"courses_dept":"math","courses_avg":54.82,"courses_id":"180","courses_instructor":"gupta, rajiv","courses_title":"dif calc phys ap","courses_uuid":"3808","courses_pass":147,"courses_fail":51,"courses_audit":0},{"courses_dept":"math","courses_avg":53.5,"courses_id":"257","courses_instructor":"loewen, philip","courses_title":"partl diff equat","courses_uuid":"34090","courses_pass":19,"courses_fail":15,"courses_audit":0},{"courses_dept":"math","courses_avg":52.86,"courses_id":"184","courses_instructor":"","courses_title":"calc socsci comm","courses_uuid":"29800","courses_pass":15,"courses_fail":6,"courses_audit":0},{"courses_dept":"math","courses_avg":51.04,"courses_id":"184","courses_instructor":"","courses_title":"calc socsci comm","courses_uuid":"29796","courses_pass":12,"courses_fail":11,"courses_audit":0},{"courses_dept":"math","courses_avg":54.5,"courses_id":"184","courses_instructor":"","courses_title":"calc socsci comm","courses_uuid":"29793","courses_pass":18,"courses_fail":6,"courses_audit":0},{"courses_dept":"math","courses_avg":50.13,"courses_id":"184","courses_instructor":"","courses_title":"calc socsci comm","courses_uuid":"29791","courses_pass":16,"courses_fail":8,"courses_audit":0},{"courses_dept":"math","courses_avg":54.62,"courses_id":"184","courses_instructor":"","courses_title":"calc socsci comm","courses_uuid":"29790","courses_pass":14,"courses_fail":7,"courses_audit":0},{"courses_dept":"math","courses_avg":51.5,"courses_id":"180","courses_instructor":"","courses_title":"dif calc phys ap","courses_uuid":"29768","courses_pass":11,"courses_fail":7,"courses_audit":0},{"courses_dept":"math","courses_avg":54.61,"courses_id":"110","courses_instructor":"","courses_title":"diff calculus","courses_uuid":"29748","courses_pass":16,"courses_fail":7,"courses_audit":0},{"courses_dept":"math","courses_avg":52.92,"courses_id":"184","courses_instructor":"raggi, miguel","courses_title":"calc socsci comm","courses_uuid":"13754","courses_pass":33,"courses_fail":16,"courses_audit":0},{"courses_dept":"math","courses_avg":54.96,"courses_id":"180","courses_instructor":"gupta, rajiv","courses_title":"dif calc phys ap","courses_uuid":"13738","courses_pass":17,"courses_fail":7,"courses_audit":0},{"courses_dept":"math","courses_avg":54.44,"courses_id":"180","courses_instructor":"gupta, rajiv","courses_title":"dif calc phys ap","courses_uuid":"13737","courses_pass":18,"courses_fail":7,"courses_audit":0}]}

@@ -354,7 +354,13 @@ describe("InsightFacade", function () {
 
 			// return Promise.all(loadDatasetPromises);
 			return insightFacade.addDataset("courses", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses)
-				.catch(()=> "error???");
+				.then(() => {
+					return insightFacade.addDataset("rooms", datasetContents.get("rooms") ?? "",
+						InsightDatasetKind.Rooms)
+						.catch(() => "error???");
+				});
+			// return insightFacade.addDataset("courses", datasetContents.get("courses") ?? "", InsightDatasetKind.Courses)
+			// 	.catch(()=> "error???");
 		});
 
 		after(function () {
@@ -367,19 +373,33 @@ describe("InsightFacade", function () {
 		testFolder<any, any[], PQErrorKind>(
 			"Dynamic InsightFacade PerformQuery tests",
 			(input) => insightFacade.performQuery(input),
-			"./test/resources/testing queries",
+			"./test/resources/query room testing",
 			{
 				errorValidator: (error): error is PQErrorKind =>
 					error === "ResultTooLargeError" || error === "InsightError",
 				assertOnResult(expected: any[], actual: any, input: any ) {
 					const orderKey = input.OPTIONS.ORDER;
 					expect(actual).to.be.instanceof(Array);
-					expect(actual).to.have.length(expected.length);
+					// expect(actual).to.have.length(expected.length);
 					expect(actual).to.have.deep.members(expected);
 					if (orderKey !== undefined) {
+						if (typeof orderKey === "string") {
+							for (let i = 1; i < actual.length; i = i + 1) {
+								expect(actual[i - 1][orderKey]).to.deep.equal(expected[i - 1][orderKey]);
+							}
+						} else if (orderKey["keys"].length === 1) {
+							for (let i = 1; i < actual.length; i = i + 1) {
+								expect(actual[i - 1][orderKey["keys"][0]]).to.deep.equal(
+									expected[i - 1][orderKey["keys"][0]]);
+							}
+						} else {
+							for (let i = 1; i < actual.length; i = i + 1) {
+								expect(actual[i - 1]).to.deep.equal(expected[i - 1]);
+							}
+						}
+					} else {
 						for (let i = 1; i < actual.length; i = i + 1) {
-							expect(actual[i - 1][orderKey]).to.deep.equal(expected[i - 1][orderKey]);
-							// need more thought about this one
+							expect(actual[i - 1]).to.deep.include(expected[i - 1]);
 						}
 					}
 				},

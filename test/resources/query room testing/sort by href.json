@@ -1,0 +1,30 @@
+{
+	"title": "SELECT dept, avg WHERE room seats > 150 ,sort by rooms full name",
+	"input": {
+		"WHERE": {
+			"AND": [ {
+				"IS": {
+					"rooms_address": "*Mall"
+				}
+			},
+				{
+					"IS": {
+						"rooms_fullname": "A*"
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_fullname",
+				"rooms_number",
+				"rooms_seats",
+				"rooms_address",
+				"rooms_type",
+				"rooms_href"
+			],
+			"ORDER": "rooms_href"
+		}
+	},
+	"errorExpected": false,
+	"with": [{"rooms_fullname":"Aquatic Ecosystems Research Laboratory","rooms_number":"120","rooms_seats":144,"rooms_address":"2202 Main Mall","rooms_type":"Tiered Large Group","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/AERL-120"},{"rooms_fullname":"Allard Hall (LAW)","rooms_number":"105","rooms_seats":94,"rooms_address":"1822 East Mall","rooms_type":"Case Style","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/ALRD-105"},{"rooms_fullname":"Allard Hall (LAW)","rooms_number":"112","rooms_seats":20,"rooms_address":"1822 East Mall","rooms_type":"Open Design General Purpose","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/ALRD-112"},{"rooms_fullname":"Allard Hall (LAW)","rooms_number":"113","rooms_seats":20,"rooms_address":"1822 East Mall","rooms_type":"Open Design General Purpose","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/ALRD-113"},{"rooms_fullname":"Allard Hall (LAW)","rooms_number":"121","rooms_seats":50,"rooms_address":"1822 East Mall","rooms_type":"Case Style","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/ALRD-121"},{"rooms_fullname":"Allard Hall (LAW)","rooms_number":"B101","rooms_seats":44,"rooms_address":"1822 East Mall","rooms_type":"Open Design General Purpose","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/ALRD-B101"},{"rooms_fullname":"Auditorium Annex","rooms_number":"142","rooms_seats":20,"rooms_address":"1924 West Mall","rooms_type":"Small Group","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/AUDX-142"},{"rooms_fullname":"Auditorium Annex","rooms_number":"157","rooms_seats":21,"rooms_address":"1924 West Mall","rooms_type":"Small Group","rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/AUDX-157"}]}

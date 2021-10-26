@@ -129,17 +129,17 @@ function parseRooms(buildingDocument: Document, BuildingShortName: string,
 
 	for(let i in roomsNumbers) {
 		let roomJSON = {
-			rooms_fullname:BuildingFullName,
-			rooms_shortname:BuildingShortName,
-			rooms_number:roomsNumbers[i],
-			rooms_name:BuildingShortName + roomsNumbers[i],
-			rooms_address:BuildingAdr,
-			rooms_lat:"",
-			rooms_lon:"",
-			rooms_seats:capacities[i], // need to add default value
-			rooms_type:roomTypes[i],
-			rooms_furniture:furnitureTypes[i],
-			rooms_href:"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/"
+			fullname:BuildingFullName,
+			shortname:BuildingShortName,
+			number:roomsNumbers[i],
+			name:BuildingShortName + "_" + roomsNumbers[i],
+			address:BuildingAdr,
+			lat:"",
+			lon:"",
+			seats:Number(capacities[i]), // need to add default value
+			type:roomTypes[i],
+			furniture:furnitureTypes[i],
+			href:"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/"
 				+ BuildingShortName + "-" + roomsNumbers[i],
 		};
 		roomJsons.push(roomJSON);

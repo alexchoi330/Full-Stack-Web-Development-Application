@@ -1,0 +1,37 @@
+{
+	"title": "SELECT dept, avg WHERE avg < 70 and fail > 100, should sort ascending up with order keys",
+	"input": {
+		"WHERE": {
+			"AND": [
+				{
+					"GT": {
+						"courses_avg": 70
+					}
+				},
+				{
+					"GT": {
+						"courses_fail": 100
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"courses_avg",
+				"courses_id",
+				"courses_instructor",
+				"courses_title",
+				"courses_uuid",
+				"courses_pass",
+				"courses_fail",
+				"courses_audit"
+			],
+			"ORDER": {
+				"dir": "UP", "keys": ["courses_dept", "courses_avg", "courses_pass"]
+			}
+		}
+	},
+	"errorExpected": false,
+	"with": [{"courses_dept":"apsc","courses_avg":72.08,"courses_id":"160","courses_instructor":"","courses_title":"comp eng design","courses_uuid":"18671","courses_pass":576,"courses_fail":118,"courses_audit":0},{"courses_dept":"apsc","courses_avg":72.29,"courses_id":"160","courses_instructor":"","courses_title":"comp eng design","courses_uuid":"22385","courses_pass":662,"courses_fail":141,"courses_audit":0},{"courses_dept":"apsc","courses_avg":73.39,"courses_id":"160","courses_instructor":"","courses_title":"comp eng design","courses_uuid":"8246","courses_pass":645,"courses_fail":118,"courses_audit":0},{"courses_dept":"apsc","courses_avg":74.96,"courses_id":"160","courses_instructor":"","courses_title":"comp eng design","courses_uuid":"19807","courses_pass":715,"courses_fail":112,"courses_audit":0},{"courses_dept":"apsc","courses_avg":75.46,"courses_id":"160","courses_instructor":"","courses_title":"comp eng design","courses_uuid":"45774","courses_pass":735,"courses_fail":103,"courses_audit":0},{"courses_dept":"biol","courses_avg":70.02,"courses_id":"112","courses_instructor":"","courses_title":"biology of cell","courses_uuid":"20532","courses_pass":1578,"courses_fail":150,"courses_audit":0},{"courses_dept":"biol","courses_avg":70.48,"courses_id":"200","courses_instructor":"rosenberg, ellen","courses_title":"cell biology 1","courses_uuid":"88960","courses_pass":1026,"courses_fail":106,"courses_audit":1},{"courses_dept":"chem","courses_avg":70.14,"courses_id":"123","courses_instructor":"","courses_title":"phys & org chem","courses_uuid":"54483","courses_pass":1394,"courses_fail":112,"courses_audit":0},{"courses_dept":"chem","courses_avg":70.22,"courses_id":"121","courses_instructor":"","courses_title":"structural chem","courses_uuid":"54475","courses_pass":1551,"courses_fail":235,"courses_audit":0},{"courses_dept":"chem","courses_avg":70.36,"courses_id":"123","courses_instructor":"","courses_title":"phys & org chem","courses_uuid":"42504","courses_pass":1359,"courses_fail":157,"courses_audit":0},{"courses_dept":"chem","courses_avg":70.97,"courses_id":"121","courses_instructor":"","courses_title":"structural chem","courses_uuid":"42495","courses_pass":1586,"courses_fail":192,"courses_audit":0},{"courses_dept":"chem","courses_avg":72.1,"courses_id":"123","courses_instructor":"","courses_title":"phys & org chem","courses_uuid":"64764","courses_pass":1530,"courses_fail":115,"courses_audit":0},{"courses_dept":"chem","courses_avg":72.83,"courses_id":"123","courses_instructor":"","courses_title":"thm kin org chem","courses_uuid":"89227","courses_pass":1545,"courses_fail":121,"courses_audit":0},{"courses_dept":"cpsc","courses_avg":71.22,"courses_id":"110","courses_instructor":"","courses_title":"comptn, progrmng","courses_uuid":"49856","courses_pass":819,"courses_fail":150,"courses_audit":0},{"courses_dept":"cpsc","courses_avg":72.28,"courses_id":"110","courses_instructor":"","courses_title":"comptn, progrmng","courses_uuid":"1256","courses_pass":886,"courses_fail":157,"courses_audit":0},{"courses_dept":"cpsc","courses_avg":72.63,"courses_id":"110","courses_instructor":"","courses_title":"comptn, progrmng","courses_uuid":"83395","courses_pass":736,"courses_fail":118,"courses_audit":3},{"courses_dept":"cpsc","courses_avg":73.25,"courses_id":"110","courses_instructor":"","courses_title":"comptn, progrmng","courses_uuid":"62349","courses_pass":966,"courses_fail":190,"courses_audit":0},{"courses_dept":"econ","courses_avg":70.08,"courses_id":"101","courses_instructor":"","courses_title":"prncpls micrecon","courses_uuid":"9980","courses_pass":1948,"courses_fail":120,"courses_audit":2},{"courses_dept":"phys","courses_avg":70.63,"courses_id":"101","courses_instructor":"","courses_title":"energy & waves","courses_uuid":"50198","courses_pass":1558,"courses_fail":184,"courses_audit":0},{"courses_dept":"phys","courses_avg":71.15,"courses_id":"170","courses_instructor":"","courses_title":"mechanics i","courses_uuid":"75290","courses_pass":772,"courses_fail":111,"courses_audit":0},{"courses_dept":"phys","courses_avg":71.43,"courses_id":"101","courses_instructor":"","courses_title":"energy & waves","courses_uuid":"80561","courses_pass":1395,"courses_fail":171,"courses_audit":0},{"courses_dept":"phys","courses_avg":71.52,"courses_id":"101","courses_instructor":"","courses_title":"energy & waves","courses_uuid":"75268","courses_pass":1460,"courses_fail":162,"courses_audit":0},{"courses_dept":"phys","courses_avg":71.85,"courses_id":"101","courses_instructor":"","courses_title":"energy & waves","courses_uuid":"41176","courses_pass":1342,"courses_fail":177,"courses_audit":1},{"courses_dept":"phys","courses_avg":74.98,"courses_id":"101","courses_instructor":"","courses_title":"energy & waves","courses_uuid":"98668","courses_pass":1521,"courses_fail":109,"courses_audit":0}]}
+

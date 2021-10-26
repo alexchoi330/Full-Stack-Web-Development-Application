@@ -138,6 +138,8 @@ function is(data: Map<string, any[]>, comparator: string, compare_value: string)
 	data.forEach((value: any[], key: string) => {
 		let course = JSON.parse(JSON.stringify(value));
 		for (let currSection of course) {
+			// console.log(currSection);
+			// console.log(comparator);
 			let currValue = currSection[comparator];
 			if(isEqualString(compare_value, currValue)) {
 				let sections = result.get(key) as any[];
