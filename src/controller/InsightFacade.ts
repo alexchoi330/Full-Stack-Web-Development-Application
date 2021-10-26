@@ -14,8 +14,6 @@ import {
 	DFS, saveToDisk, parseCourses, parse_Out_Td_Based_Off_Attribute,
 	parseOutDataFromText, parseRooms, parseOutDataFromHyperlink
 } from "../addDataset/addDatasetHelpers";
-// import {parseQuery} from "../performQuery/parseQuery";
-import {not} from "../performQuery/logic";
 import {
 	checkOptions, optionsSort, whereParse
 } from "../performQuery/parseQuery";
