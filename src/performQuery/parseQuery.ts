@@ -228,6 +228,19 @@ export function transformationsSort (datasetContents: any, datasetID: any, query
 	for (let key in group) {
 		// loop through all elements of array to make groups and update the array
 		console.log(group[key]);
+		for (let x in cloneArray) {
+			let result;
+			for (let y in cloneArray[x]) {
+				// taken from https://stackoverflow.com/questions/40774697/how-to-group-an-array-of-objects-by-key
+				result = cloneArray[x][y].reduce(function
+				(r: { [x: string]: any[]; }, a: { [x: string]: string | number; }) {
+					r[a[group[key]]] = r[a[group[key]]] || [];
+					r[a[group[key]]].push(a);
+					return r;
+				}, Object.create(null));
+			}
+			console.log(cloneArray);
+		}
 	}
 	return [];
 }

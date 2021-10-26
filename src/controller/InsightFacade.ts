@@ -15,7 +15,7 @@ import {
 	parseOutDataFromText, parseRooms, parseOutDataFromHyperlink, getGeolocation
 } from "../addDataset/addDatasetHelpers";
 import {
-	checkOptions, optionsSort, whereParse
+	checkOptions, optionsSort, whereParse, transformationsSort
 } from "../performQuery/parseQuery";
 
 /**
@@ -170,6 +170,8 @@ export default class InsightFacade implements IInsightFacade {
 			transformationsObj = query["TRANSFORMATIONS"];
 			console.log(transformationsObj);
 		}
+		// TODO: check the transformations, especially the applykeys and save newly defined keys in an array
+		// apparently if transformations exist columns can only contain keys from group or apply
 		this.currentDatasetID = checkOptions(optionObj);
 		let whereReturn;
 		if (Object.keys(whereObj).length === 0) {
@@ -188,7 +190,7 @@ export default class InsightFacade implements IInsightFacade {
 			throw new ResultTooLargeError("The query returns over 5000 results");
 		}
 		let optionsReturn = optionsSort(this.datasetContents, this.currentDatasetID, optionObj, whereReturn);
-		// transformationsSort(this.datasetContents, this.currentDatasetID, transformationObj, optionsReturn);
+		// transformationsSort(this.datasetContents, this.currentDatasetID, transformationsObj, optionsReturn);
 		return Promise.resolve(optionsReturn);
 	}
 
