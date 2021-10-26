@@ -215,4 +215,3 @@ export function orderHelper (datasetContents: any, datasetID: any, order: any, d
 	}
 }
 
-
