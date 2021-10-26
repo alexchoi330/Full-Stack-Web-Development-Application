@@ -141,6 +141,7 @@ function parseRooms(buildingDocument: Document, BuildingShortName: string,
 			furniture:furnitureTypes[i],
 			href:"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/"
 				+ BuildingShortName + "-" + roomsNumbers[i],
+			id:BuildingShortName + "_" + roomsNumbers[i]
 		};
 		roomJsons.push(roomJSON);
 	}
