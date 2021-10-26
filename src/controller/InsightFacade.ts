@@ -12,7 +12,7 @@ import parse5, {Document} from "parse5";
 import {persistDir} from "../../test/TestUtil";
 import {
 	DFS, saveToDisk, parseCourses, parse_Out_Td_Based_Off_Attribute,
-	parseOutDataFromText, parseRooms, parseOutDataFromHyperlink
+	parseOutDataFromText, parseRooms, parseOutDataFromHyperlink, getGeolocation
 } from "../addDataset/addDatasetHelpers";
 import {
 	checkOptions, optionsSort, whereParse
@@ -117,7 +117,9 @@ export default class InsightFacade implements IInsightFacade {
 			let buildingPath = id + "/campus/discover/buildings-and-classrooms/" + codes[i];
 			let buildingData = await jsZip.files[buildingPath].async("string");
 			let buildingDocument: Document = parse5.parse(buildingData);
-			let buildingJSONs = parseRooms(buildingDocument, codes[i], buildingFullNames[i], buildingAddresses[i]);
+			let geolocation = JSON.parse(await getGeolocation(buildingAddresses[i]));
+			let buildingJSONs = parseRooms(buildingDocument, codes[i], buildingFullNames[i], buildingAddresses[i],
+				geolocation.lat, geolocation.lon);
 			for(let buildingJSON of buildingJSONs) {
 				let building = rooms.get(codes[i]) as any[];
 				if(building !== undefined) {

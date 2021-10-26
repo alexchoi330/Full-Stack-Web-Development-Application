@@ -104,7 +104,7 @@ function parseOutDataFromHyperlink(buildingCodeNodes: parse5.ChildNode[]): strin
 }
 
 function parseRooms(buildingDocument: Document, BuildingShortName: string,
-	BuildingFullName: string, BuildingAdr: string): any[] {
+	BuildingFullName: string, BuildingAdr: string, latitude: number, longitude: number): any[] {
 	let roomJsons = [];
 	let data: parse5.ChildNode[] = [];
 
@@ -134,8 +134,8 @@ function parseRooms(buildingDocument: Document, BuildingShortName: string,
 			number:roomsNumbers[i],
 			name:BuildingShortName + "_" + roomsNumbers[i],
 			address:BuildingAdr,
-			lat:"",
-			lon:"",
+			lat:latitude,
+			lon:longitude,
 			seats:Number(capacities[i]), // need to add default value
 			type:roomTypes[i],
 			furniture:furnitureTypes[i],
@@ -149,15 +149,15 @@ function parseRooms(buildingDocument: Document, BuildingShortName: string,
 	return roomJsons;
 }
 
-function getGeolocation(): any[] {
-	const res = http.get({
-		hostname: "http://cs310.students.cs.ubc.ca",
-		port: 11316,
-		path: "/api/v1/project_team109/6245%20Agronomy%20Road%20V6T%201Z4",
-		agent: false  // Create a new agent just for this one request
+async function getGeolocation(address: string): Promise<string> {
+	return new Promise((resolve, reject) => {
+		let url = "http://cs310.students.cs.ubc.ca:11316/api/v1/project_team109/" + address.replace(" ", "%20");
+		http.get(url, (res: any) => {
+			let body = "";
+			res.on("data", (chunk: string) => body += chunk);
+			res.on("end", () => resolve(body));
+		}).on("error", reject);
 	});
-	let x = res;
-	return [];
 }
 
 export{DFS, saveToDisk, parseCourses, parse_Out_Td_Based_Off_Attribute,
