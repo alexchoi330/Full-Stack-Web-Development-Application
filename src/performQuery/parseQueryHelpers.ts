@@ -156,4 +156,3 @@ export function fieldSorter(fields: any[], ascend: boolean) {
 			}, 0);
 	};
 }
-
