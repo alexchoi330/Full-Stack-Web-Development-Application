@@ -17,8 +17,7 @@
 		},
 		"OPTIONS": {
 			"COLUMNS": [
-				"rooms_shortname",
-				"rooms_number"
+				"rooms_shortname"
 			],
 			"ORDER": {
 				"dir": "DOWN",

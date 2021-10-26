@@ -190,6 +190,7 @@ export default class InsightFacade implements IInsightFacade {
 			throw new ResultTooLargeError("The query returns over 5000 results");
 		}
 		let optionsReturn = optionsSort(this.datasetContents, this.currentDatasetID, optionObj, whereReturn);
+		// TODO: finish up transformation sort with group and apply, group should be done but needs testing
 		// transformationsSort(this.datasetContents, this.currentDatasetID, transformationsObj, optionsReturn);
 		return Promise.resolve(optionsReturn);
 	}
