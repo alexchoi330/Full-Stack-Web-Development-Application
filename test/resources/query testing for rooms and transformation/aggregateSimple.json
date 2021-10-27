@@ -1,0 +1,29 @@
+{
+	"title": "SELECT dept, avg WHERE room seats > 150 ,sort by rooms full name",
+	"input": {
+		"WHERE": {
+			"GT":{
+				"courses_avg": 96.3
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_title",
+				"overallAvg"
+			]
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"courses_title"
+			],
+			"APPLY": [
+				{
+					"overallAvg": {
+						"AVG": "courses_avg"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": false,
+	"with": [{"courses_title":"aud&non-txt arch","overallAvg":96.94},{"courses_title":"audi prctcm iv","overallAvg":96.9},{"courses_title":"career planning","overallAvg":98.04},{"courses_title":"prgm devl cnsl","overallAvg":96.33},{"courses_title":"thesis","overallAvg":97.67},{"courses_title":"adlt edu pract","overallAvg":96.46},{"courses_title":"res mthd in educ","overallAvg":97.5},{"courses_title":"multimedia sys","overallAvg":98.75},{"courses_title":"intro excp child","overallAvg":96.9},{"courses_title":"assess lrn diffi","overallAvg":97.94},{"courses_title":"educ stds autism","overallAvg":98.48},{"courses_title":"dev el sk df&hrd","overallAvg":98.45},{"courses_title":"specific lrn dis","overallAvg":96.33},{"courses_title":"acad assess schl","overallAvg":97.4},{"courses_title":"sem in autism","overallAvg":97.69},{"courses_title":"cor des ed res","overallAvg":97.09},{"courses_title":"coll&uni teachng","overallAvg":97.67},{"courses_title":"indig, tech&ed","overallAvg":96.47},{"courses_title":"mo pict prod i","overallAvg":96.4},{"courses_title":"ds intl forstry","overallAvg":96.36},{"courses_title":"algebra ii","overallAvg":96.44},{"courses_title":"diff geometry i","overallAvg":97.25},{"courses_title":"algb topology i","overallAvg":99.78},{"courses_title":"algb geometry i","overallAvg":97.48},{"courses_title":"harmonic anal i","overallAvg":97.09},{"courses_title":"probability ii","overallAvg":96.83},{"courses_title":"msc major essay","overallAvg":96.33},{"courses_title":"cnsl mat cr prov","overallAvg":96.5},{"courses_title":"seminar","overallAvg":96.59},{"courses_title":"ubc chamb string","overallAvg":96.5},{"courses_title":"cl pro prim care","overallAvg":98.46},{"courses_title":"fam nrs pract","overallAvg":97.81},{"courses_title":"eth&profl issues","overallAvg":97.03},{"courses_title":"nat resrce mngmt","overallAvg":96.47},{"courses_title":"masters thesis","overallAvg":97},{"courses_title":"sociocult determ","overallAvg":96.96},{"courses_title":"work int health","overallAvg":98.98},{"courses_title":"survlnc&monitrng","overallAvg":96.8}]}
