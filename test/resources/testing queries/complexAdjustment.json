@@ -28,7 +28,8 @@
 
 			"COLUMNS": [
 
-				"rooms_shortname"
+				"rooms_shortname",
+				"rooms_fullname"
 
 			],
 
@@ -44,7 +45,7 @@
 
 		"TRANSFORMATIONS": {
 
-			"GROUP": ["rooms_shortname"],
+			"GROUP": ["rooms_shortname", "rooms_fullname"],
 
 			"APPLY": [{
 

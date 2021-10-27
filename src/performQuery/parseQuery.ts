@@ -218,31 +218,43 @@ export function orderHelper (datasetContents: any, datasetID: any, order: any, d
 export function transformationsSort (datasetContents: any, datasetID: any, query: any, data: any[]): any[] {
 	if (!Object.prototype.hasOwnProperty.call(query, "GROUP") ||
 		!Object.prototype.hasOwnProperty.call(query, "APPLY") ||
-		query.keys().length > 2) {
+		Object.keys(query).length > 2) {
 		throw new InsightError("transformation missing GROUP or APPLY or too many arguments");
 	}
 	let group = query["GROUP"];
 	let apply = query["APPLY"];
 	let clone = [...data];
 	let cloneArray = [clone];
-	for (let key in group) {
-		// loop through all elements of array to make groups and update the array
-		console.log(group[key]);
-		for (let x in cloneArray) {
-			let result;
-			for (let y in cloneArray[x]) {
-				// taken from https://stackoverflow.com/questions/40774697/how-to-group-an-array-of-objects-by-key
-				result = cloneArray[x][y].reduce(function
-				(r: { [x: string]: any[]; }, a: { [x: string]: string | number; }) {
-					r[a[group[key]]] = r[a[group[key]]] || [];
-					r[a[group[key]]].push(a);
-					return r;
-				}, Object.create(null));
-			}
-			console.log(cloneArray);
+	let helper = {} as any;
+	let keys = [group[0]];
+	if (group.length > 1) {
+		for (let i = 1; i < group.length; i++) {
+			keys.push(group[i]);
 		}
 	}
-	return [];
+	// taken from https://stackoverflow.com/questions/46794232/group-objects-by-multiple-properties-in-array-then-sum-up-their-values
+	const result = clone.reduce((r, o) => {
+		let value = o[keys[0]];
+		if (keys.length > 1) {
+			for (let k = 1; k < keys.length; k++) {
+				value = value + "-" + o[keys[k]];
+			}
+		}
+		console.log(value);
+		const item = r.get(value) || Object.assign({}, o, {
+			used: 0,
+			instances: 0
+		});
+		// TODO: store all the data used to calculate AVG MIN MAX SUM COUNT in this new object and operate on it later
+		// item.used += o.used;
+		// item.instances += o.instances;
+
+		return r.set(value, item);
+	}, new Map()).values();
+	let array = [...result];
+	console.log(array);
+
+	return array;
 }
 
 

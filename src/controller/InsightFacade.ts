@@ -162,6 +162,7 @@ export default class InsightFacade implements IInsightFacade {
 			&& Object.prototype.hasOwnProperty.call(query, "OPTIONS"))) {
 			return Promise.reject(new InsightError("WHERE or OPTIONS not correct"));
 		}
+		let transformations = false;
 		const whereObj = query["WHERE"];
 		const optionObj = query["OPTIONS"];
 		console.log(whereObj, optionObj);
@@ -169,6 +170,7 @@ export default class InsightFacade implements IInsightFacade {
 		if ("TRANSFORMATIONS" in query) {
 			transformationsObj = query["TRANSFORMATIONS"];
 			console.log(transformationsObj);
+			transformations = true;
 		}
 		// TODO: check the transformations, especially the applykeys and save newly defined keys in an array
 		// apparently if transformations exist columns can only contain keys from group or apply
@@ -191,8 +193,13 @@ export default class InsightFacade implements IInsightFacade {
 		}
 		let optionsReturn = optionsSort(this.datasetContents, this.currentDatasetID, optionObj, whereReturn);
 		// TODO: finish up transformation sort with group and apply, group should be done but needs testing
-		// transformationsSort(this.datasetContents, this.currentDatasetID, transformationsObj, optionsReturn);
-		return Promise.resolve(optionsReturn);
+		if (transformations) {
+			let transformationsReturn = transformationsSort(
+				this.datasetContents, this.currentDatasetID, transformationsObj, optionsReturn);
+			return Promise.resolve(transformationsReturn);
+		} else {
+			return Promise.resolve(optionsReturn);
+		}
 	}
 
 	public listDatasets(): Promise<InsightDataset[]> {
