@@ -64,7 +64,7 @@ describe("InsightFacade", function () {
 
 		// This is a unit test. You should create more like this!
 		it("Should add a valid course dataset", function () {
-
+			clearDisk();
 			const id: string = "courses";
 			const content: string = datasetContents.get("courses") ?? "";
 			const expected: string[] = [id];
@@ -74,7 +74,7 @@ describe("InsightFacade", function () {
 		});
 
 		it("Should add a valid rooms dataset", function () {
-
+			clearDisk();
 			const id: string = "rooms";
 			const content: string = datasetContents.get("rooms") ?? "";
 			const expected: string[] = [id];
