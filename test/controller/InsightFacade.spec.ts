@@ -117,6 +117,55 @@ describe("InsightFacade", function () {
 					});
 			});
 
+			it("should list one room dataset", function () {
+				const id: string = "rooms";
+				const content: string = datasetContents.get("rooms") ?? "";
+				return facade.addDataset(id, content, InsightDatasetKind.Rooms)
+					.then(() => facade.listDatasets())
+					.then((insightDatasets) => {
+						expect(insightDatasets).to.deep.equal([
+							{
+								id: "rooms",
+								kind: InsightDatasetKind.Rooms,
+								numRows: 364,
+							}
+						]);
+						expect(insightDatasets).to.be.an.instanceof(Array);
+						expect(insightDatasets).to.have.length(1);
+						const[insightDataset] = insightDatasets;
+						expect(insightDataset).to.have.property("id");
+						expect(insightDataset.id).to.equal("rooms");
+					});
+			});
+
+			it("should list multiple dataset for rooms", function () {
+				const id: string = "rooms";
+				const id2: string = "rooms-2";
+				const content: string = datasetContents.get("rooms") ?? "";
+				return facade.addDataset(id, content, InsightDatasetKind.Rooms)
+					.then(() => {
+						return facade.addDataset(id2, content, InsightDatasetKind.Rooms);
+					})
+					.then(() => {
+						return facade.listDatasets();
+					})
+					.then((insightDatasets) => {
+						expect(insightDatasets).to.be.an.instanceof(Array);
+						expect(insightDatasets).to.have.length(2);
+						const insightDatasetRooms = insightDatasets.find((dataset) => dataset.id === "rooms");
+						expect(insightDatasetRooms).to.exist;
+						expect(insightDatasets).to.deep.equal([{
+							id: "rooms",
+							kind: InsightDatasetKind.Rooms,
+							numRows: 364,
+						}, {
+							id: "rooms-2",
+							kind: InsightDatasetKind.Rooms,
+							numRows: 364,
+						}]);
+					});
+			});
+
 			it("should list multiple dataset", function () {
 				const id: string = "courses";
 				const content: string = datasetContents.get("courses") ?? "";
@@ -160,12 +209,33 @@ describe("InsightFacade", function () {
 				});
 			});
 
+			it("should throw InsightError when removing room from empty Dataset", function() {
+				return facade.removeDataset("rooms").catch((err) => {
+					expect(err).to.be.instanceof(NotFoundError);
+				});
+			});
+
+
 			it("should throw NotFoundError when id is not in Dataset", function() {
 				const id: string = "courses";
 				const content: string = datasetContents.get("courses") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Courses)
 					.then(() => {
 						return facade.removeDataset("courses-2");
+					}).then((res) => {
+						throw new Error(`Resolved with: ${res}`);
+					})
+					.catch((err) => {
+						expect(err).to.be.instanceof(NotFoundError);
+					});
+			});
+
+			it("should throw NotFoundError when room id is not in Dataset", function() {
+				const id: string = "rooms";
+				const content: string = datasetContents.get("rooms") ?? "";
+				return facade.addDataset(id, content, InsightDatasetKind.Rooms)
+					.then(() => {
+						return facade.removeDataset("rooms-2");
 					}).then((res) => {
 						throw new Error(`Resolved with: ${res}`);
 					})
@@ -190,6 +260,23 @@ describe("InsightFacade", function () {
 					});
 			});
 
+			it("should return the room id of the Dataset that is successfully removed", function() {
+				const id: string = "rooms";
+				const content: string = datasetContents.get("rooms") ?? "";
+				return facade.addDataset(id, content, InsightDatasetKind.Rooms)
+					.then(() => {
+						return facade.removeDataset(id);
+					}).then((res) => {
+						expect(res).to.equal(id);
+					}).then(() => {
+						return facade.listDatasets();
+					}).then((insightDatasets) => {
+						expect(insightDatasets).to.be.an.instanceof(Array);
+						expect(insightDatasets).to.have.length(0);
+					});
+			});
+
+
 			it("add 2 datasets, only delete 1 of them", function() {
 				const id: string = "courses";
 				const content: string = datasetContents.get("courses") ?? "";
@@ -208,6 +295,28 @@ describe("InsightFacade", function () {
 							id: "courses",
 							kind: InsightDatasetKind.Courses,
 							numRows: size,
+						}]);
+					});
+			});
+
+			it("add 2 rooms datasets, only delete 1 room", function() {
+				const id: string = "rooms";
+				const content: string = datasetContents.get("rooms") ?? "";
+				return facade.addDataset(id, content, InsightDatasetKind.Rooms)
+					.then(() => {
+						return facade.addDataset("rooms-2", content, InsightDatasetKind.Rooms);
+					}).then(() => {
+						return facade.removeDataset("rooms-2");
+					}).then((res) => {
+						expect(res).to.equal("rooms-2");
+					}).then(() => {
+						return facade.listDatasets();
+					})
+					.then((insightDatasets) => {
+						expect(insightDatasets).to.deep.equal([{
+							id: "rooms",
+							kind: InsightDatasetKind.Rooms,
+							numRows: 364,
 						}]);
 					});
 			});
@@ -294,6 +403,31 @@ describe("InsightFacade", function () {
 					});
 			});
 
+			it("should successfully add one room dataset", function() {
+				const id: string = "rooms";
+				const content: string = datasetContents.get("rooms") ?? "";
+				return facade.addDataset(id, content, InsightDatasetKind.Rooms)
+					.then((res) => {
+						expect(res).to.be.an.instanceof(Array);
+						expect(res).to.have.length(1);
+						expect(res).to.deep.equal(["rooms"]);
+					});
+			});
+
+			it("should successfully add two room datasets", function() {
+				const id: string = "rooms";
+				const content: string = datasetContents.get("rooms") ?? "";
+				return facade.addDataset(id, content, InsightDatasetKind.Rooms)
+					.then(() => {
+						return facade.addDataset("rooms-2", content, InsightDatasetKind.Rooms);
+					}).then((res) => {
+						expect(res).to.be.an.instanceof(Array);
+						expect(res).to.have.length(2);
+						expect(res).to.include.deep.members(["rooms"]);
+						expect(res).to.include.deep.members(["rooms-2"]);
+					});
+			});
+
 			it("should throw InsightError when add id contains underscore", function() {
 				const id: string = "courses";
 				const content: string = datasetContents.get("courses") ?? "";
@@ -373,7 +507,7 @@ describe("InsightFacade", function () {
 		testFolder<any, any[], PQErrorKind>(
 			"Dynamic InsightFacade PerformQuery tests",
 			(input) => insightFacade.performQuery(input),
-			"./test/resources/query room testing",
+			"./test/resources/query testing for rooms and transformation",
 			{
 				errorValidator: (error): error is PQErrorKind =>
 					error === "ResultTooLargeError" || error === "InsightError",
