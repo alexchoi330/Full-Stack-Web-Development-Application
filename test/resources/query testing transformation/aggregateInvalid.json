@@ -1,0 +1,25 @@
+{
+	"title": "invalid query, missing group",
+	"input": {
+		"WHERE": {
+			"GT": {
+				"courses_avg": 96.3
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_title",
+				"overallAvg"
+			]
+		},
+		"TRANSFORMATIONS": {
+			"APPLY": [
+				{
+					"overallAvg": {
+						"AVG": "courses_avg"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": true }
