@@ -15,8 +15,9 @@ import {
 	parseOutDataFromText, parseRooms, parseOutDataFromHyperlink, getGeolocation
 } from "../addDataset/addDatasetHelpers";
 import {
-	checkOptions, optionsSort, whereParse
+	checkOptions, optionsSort, whereParse, transformationsSort, transformationsOptions, checkTransformations, checkSize
 } from "../performQuery/parseQuery";
+
 
 /**
  * This is the main programmatic entry point for the project.
@@ -158,19 +159,30 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	public performQuery(query: any): Promise<any[]> {
-		if (!(Object.prototype.hasOwnProperty.call(query, "WHERE")
-			&& Object.prototype.hasOwnProperty.call(query, "OPTIONS"))) {
+		if (!(Object.prototype.hasOwnProperty.call(query, "WHERE") &&
+			Object.prototype.hasOwnProperty.call(query, "OPTIONS"))) {
 			return Promise.reject(new InsightError("WHERE or OPTIONS not correct"));
 		}
-		const whereObj = query["WHERE"];
-		const optionObj = query["OPTIONS"];
+		let transformations = false;
+		const [whereObj, optionObj] = [query["WHERE"], query["OPTIONS"]];
+		// const optionObj = query["OPTIONS"];
 		console.log(whereObj, optionObj);
+		let anyKeys: any[] = [];
+		this.currentDatasetID = checkOptions(optionObj, anyKeys);
+		let apply = [];
 		let transformationsObj = {};
 		if ("TRANSFORMATIONS" in query) {
 			transformationsObj = query["TRANSFORMATIONS"];
 			console.log(transformationsObj);
+			transformations = true;
+			const applyObj = query["TRANSFORMATIONS"]["APPLY"];
+			for (let x in applyObj) {
+				let temp = Object.values(applyObj[x])[0] as any;
+				apply.push(Object.values(temp)[0]);
+			}
+			anyKeys = checkTransformations(this.datasetContents, this.currentDatasetID, transformationsObj);
 		}
-		this.currentDatasetID = checkOptions(optionObj);
+		checkOptions(optionObj, anyKeys);
 		let whereReturn;
 		if (Object.keys(whereObj).length === 0) {
 			this.currentDatasetID = optionObj["COLUMNS"][0].split("_", 1)[0];
@@ -180,16 +192,17 @@ export default class InsightFacade implements IInsightFacade {
 		} else {
 			whereReturn = whereParse(this.datasetContents, this.currentDatasetID, whereObj);
 		}
-		let totalReturn = 0;
-		for (let item of whereReturn.values()) {
-			totalReturn = totalReturn + item.length;
+		checkSize(whereReturn);
+		let optionsReturn = optionsSort(this.datasetContents, this.currentDatasetID, optionObj, whereReturn, apply);
+		if (transformations) {
+			let transformationsReturn = transformationsSort(
+				this.datasetContents, this.currentDatasetID, transformationsObj, optionsReturn);
+			let transformationsSorted = transformationsOptions(this.datasetContents, this.currentDatasetID,
+				optionObj, transformationsReturn);
+			return Promise.resolve(transformationsSorted);
+		} else {
+			return Promise.resolve(optionsReturn);
 		}
-		if (totalReturn > 5000) {
-			throw new ResultTooLargeError("The query returns over 5000 results");
-		}
-		let optionsReturn = optionsSort(this.datasetContents, this.currentDatasetID, optionObj, whereReturn);
-		// transformationsSort(this.datasetContents, this.currentDatasetID, transformationObj, optionsReturn);
-		return Promise.resolve(optionsReturn);
 	}
 
 	public listDatasets(): Promise<InsightDataset[]> {

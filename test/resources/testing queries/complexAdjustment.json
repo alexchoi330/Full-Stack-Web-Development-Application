@@ -1,0 +1,66 @@
+{
+	"title": "SELECT dept, avg WHERE avg not < 98.8",
+	"input": {
+
+		"WHERE": {
+
+			"AND": [{
+
+				"IS": {
+
+					"rooms_furniture": "*Tables*"
+
+				}
+
+			}, {
+
+				"GT": {
+
+					"rooms_seats": 300
+
+				}
+
+			}]
+
+		},
+
+		"OPTIONS": {
+
+			"COLUMNS": [
+
+				"rooms_shortname",
+				"rooms_fullname"
+
+			],
+
+			"ORDER": {
+
+				"dir": "DOWN",
+
+				"keys": ["rooms_shortname"]
+
+			}
+
+		},
+
+		"TRANSFORMATIONS": {
+
+			"GROUP": ["rooms_shortname", "rooms_fullname"],
+
+			"APPLY": [{
+
+				"maxSeats": {
+
+					"MAX": "rooms_seats"
+
+				}
+
+			}]
+
+		}
+
+	},
+	"with": [
+		{"rooms_shortname":"OSBO","rooms_fullname":"Robert F. Osborne Centre"},{"rooms_shortname":"LSC","rooms_fullname":"Life Sciences Centre"},{"rooms_shortname":"HEBB","rooms_fullname":"Hebb"}
+		]
+}

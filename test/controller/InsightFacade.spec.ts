@@ -14,7 +14,7 @@ import {clearDisk, diskLength} from "../TestUtil";
 // this.timeout(5000);
 
 describe("InsightFacade", function () {
-	this.timeout(10000);
+	this.timeout(20000);
 	let insightFacade: InsightFacade;
 	const persistDir = "./data";
 	const size = 64612;
@@ -373,7 +373,7 @@ describe("InsightFacade", function () {
 		testFolder<any, any[], PQErrorKind>(
 			"Dynamic InsightFacade PerformQuery tests",
 			(input) => insightFacade.performQuery(input),
-			"./test/resources/query room testing",
+			"./test/resources/testing queries",
 			{
 				errorValidator: (error): error is PQErrorKind =>
 					error === "ResultTooLargeError" || error === "InsightError",

@@ -1,7 +1,7 @@
-import {IInsightFacade, InsightError, NotFoundError} from "../controller/IInsightFacade";
+import {IInsightFacade, InsightError, NotFoundError, ResultTooLargeError} from "../controller/IInsightFacade";
 import {greaterThan, lessThan, is, or, and, equalTo, not} from "./logic";
-import {skeyCheck, mkeyCheck, courseIDCheck, numberCheck, quickSort,
-	MSFieldHelper, MSFieldHelperReverse, fieldSorter} from "./parseQueryHelpers";
+import {skeyCheck, mkeyCheck, courseIDCheck, numberCheck,
+	MSFieldHelper, MSFieldHelperReverse, groupApply, orderHelper} from "./parseQueryHelpers";
 
 export enum Field {
 	avg = "Avg",
@@ -98,7 +98,7 @@ export function logicComparisonHelper (key: string, queryList: Array<Map<string,
 	throw new InsightError("should not be here");
 }
 
-export function checkOptions (query: any): string {
+export function checkOptions (query: any, names: any[]): string {
 	let orderBool = false;
 	if (!(Object.prototype.hasOwnProperty.call(query, "COLUMNS"))) {
 		throw new InsightError("COLUMNS not correct");
@@ -111,14 +111,13 @@ export function checkOptions (query: any): string {
 	let columns = query["COLUMNS"] as string[];
 	let order = query["ORDER"] as any;
 	let courseID = columns[0].split("_", 1)[0];
-	// let checkColumns = [];
 	for (const column in columns) {
 		let courseIDTwo = columns[column].split("_", 1)[0];
-		if (!(courseID === courseIDTwo)) {
+		if (!(courseID === courseIDTwo) && !(names.includes(columns[column])) && names.length > 0) {
 			throw new InsightError("Wrong courseID in OPTIONS");
 		}
 		let msKey = columns[column].split("_", 2)[1];
-		if (!(skeyCheck(msKey) || mkeyCheck(msKey))) {
+		if (!(skeyCheck(msKey) || mkeyCheck(msKey)) && !(names.includes(columns[column])) && names.length > 0) {
 			throw new InsightError("key inside COLUMNS is wrong");
 		}
 	}
@@ -134,8 +133,14 @@ export function checkOptions (query: any): string {
 			throw new InsightError("dir value wrong");
 		}
 		for (let key in order["keys"]) {
+			let courseTemp = order["keys"][key].split("_", 1)[0];
 			let keyTemp = order["keys"][key].split("_", 2)[1];
-			if (!(skeyCheck(keyTemp) || mkeyCheck(keyTemp))) {
+			if (courseTemp !== courseID && !(names.includes(order["keys"][key])) &&
+				names.length > 0) {
+				throw new InsightError("course id inside ORDER keys is wrong");
+			}
+			if (!(skeyCheck(keyTemp) || mkeyCheck(keyTemp)) && !(names.includes(order["keys"][key])) &&
+				names.length > 0) {
 				throw new InsightError("key inside ORDER keys is wrong");
 			}
 		}
@@ -143,7 +148,8 @@ export function checkOptions (query: any): string {
 	return courseID;
 }
 
-export function optionsSort (datasetContents: any, datasetID: any, query: any, data: Map<string,any[]>): any[] {
+export function optionsSort (datasetContents: any, datasetID: any,
+	query: any, data: Map<string,any[]>, apply: any[]): any[] {
 	let orderBool = false;
 	if (Object.prototype.hasOwnProperty.call(query, "ORDER")) {
 		orderBool = true;
@@ -155,6 +161,11 @@ export function optionsSort (datasetContents: any, datasetID: any, query: any, d
 		let msKey = columns[column].split("_", 2)[1];
 		checkColumns.push(MSFieldHelper(msKey));
 	}
+	for (const column in apply) {
+		let msKey = apply[column].split("_", 2)[1];
+		checkColumns.push(msKey);
+	}
+
 	let tempData = new Map(data);
 	let finalArr = [];
 	for (let value of tempData.values()) {
@@ -178,58 +189,105 @@ export function optionsSort (datasetContents: any, datasetID: any, query: any, d
 	}
 }
 
-export function orderHelper (datasetContents: any, datasetID: any, order: any, data: any[]): any[] {
-	if (typeof order === "string") {
-		let courseID = order.split("_", 1)[0];
-		if (!courseIDCheck(datasetContents, courseID, datasetID)) {
-			throw new InsightError("courseID in order doesn't match");
-		}
-		if (!(typeof data[0][order] === "number" || typeof data[0][order] === "string")) {
-			throw new InsightError("Order data doesn't make sense");
-		}
-		let temp = data;
-		// console.log(temp);
-		// console.log("After sort");
-		quickSort(temp, order, 0, temp.length - 1, true);
-		// console.log(temp);
-		return temp;
-	} else {
-		for (let key in order["keys"]) {
-			let courseID = order["keys"][key].split("_", 1)[0];
-			if (!courseIDCheck(datasetContents, courseID, datasetID)) {
-				throw new InsightError("courseID in order doesn't match");
-			}
-		}
-		console.log(order);
-		let ascend = true;
-		if (order["dir"] === "UP") {
-			ascend = true;
-		} else if (order["dir"] === "DOWN") {
-			ascend = false;
-		}
-		console.log(data);
-		console.log("after sort");
-		data.sort(fieldSorter(order["keys"], ascend));
-		console.log(data);
-		return data;
-	}
-}
-
-export function transformationsSort (datasetContents: any, datasetID: any, query: any, data: any[]): any[] {
+export function checkTransformations (datasetContents: any, datasetID: any, query: any): any[] {
 	if (!Object.prototype.hasOwnProperty.call(query, "GROUP") ||
 		!Object.prototype.hasOwnProperty.call(query, "APPLY") ||
-		query.keys().length > 2) {
+		Object.keys(query).length > 2) {
 		throw new InsightError("transformation missing GROUP or APPLY or too many arguments");
 	}
 	let group = query["GROUP"];
 	let apply = query["APPLY"];
-	let clone = [...data];
-	let cloneArray = [clone];
-	for (let key in group) {
-		// loop through all elements of array to make groups and update the array
-		console.log(group[key]);
+	let result = [];
+	for (let g in group) {
+		let ID = group[g].split("_", 1)[0];
+		let key = group[g].split("_", 2)[1];
+		if (!(ID === datasetID)) {
+			throw new InsightError("datasetID wrong inside GROUP");
+		}
+		if (!(skeyCheck(key) || mkeyCheck(key))) {
+			throw new InsightError("key inside GROUP is wrong");
+		}
+		result.push(g);
 	}
-	return [];
+	for (let a in apply) {
+		if (Object.keys(apply[a]).length > 1) {
+			throw new InsightError("Too many keys inside APPLY");
+		}
+		let insideObj = Object.values(apply[a])[0] as any;
+		console.log(insideObj);
+		if (Object.keys(insideObj).length > 1) {
+			throw new InsightError("Too many keys inside APPLY INNER OBJECT");
+		}
+		if (!Object.prototype.hasOwnProperty.call(insideObj, "MAX") &&
+			!Object.prototype.hasOwnProperty.call(insideObj, "MIN") &&
+			!Object.prototype.hasOwnProperty.call(insideObj, "SUM") &&
+			!Object.prototype.hasOwnProperty.call(insideObj, "COUNT") &&
+			!Object.prototype.hasOwnProperty.call(insideObj, "AVG")) {
+			throw new InsightError("APPLYTOKEN is wrong");
+		}
+		let IDKey = Object.values(insideObj)[0] as string;
+		let ID = IDKey.split("_", 1)[0];
+		let key = IDKey.split("_", 2)[1];
+		if (!(skeyCheck(key) || mkeyCheck(key))) {
+			throw new InsightError("key inside APPLYTOKEN is wrong");
+		}
+		if (!(ID === datasetID)) {
+			throw new InsightError("datasetID wrong inside APPLY");
+		}
+		result.push(Object.keys(apply[a])[0]);
+	}
+	return result;
+}
+
+export function transformationsSort (datasetContents: any, datasetID: any, query: any, data: any[]): any[] {
+	let group = query["GROUP"];
+	let apply = query["APPLY"];
+	let clone = [...data];
+	let keys = [group[0]];
+	if (group.length > 1) {
+		for (let i = 1; i < group.length; i++) {
+			keys.push(group[i]);
+		}
+	}
+	let array = groupApply(clone, keys, apply);
+	console.log(array);
+	return array;
+}
+
+export function transformationsOptions(datasetContents: any, datasetID: any, query: any, data: any[]): any[] {
+	let orderBool = false;
+	if (Object.prototype.hasOwnProperty.call(query, "ORDER")) {
+		orderBool = true;
+	}
+	let columns = query["COLUMNS"] as string[];
+	let order = query["ORDER"] as any;
+	let tempData = [...data];
+	let finalArr = [];
+	for (let value of tempData) {
+		let obj = {} as any;
+		for (let key of Object.keys(value)) {
+			if (columns.indexOf(key) > -1) {
+				obj[key] = value[key];
+			}
+		}
+		finalArr.push(obj);
+	}
+	if (!orderBool) {
+		console.log (finalArr);
+		return finalArr;
+	} else {
+		return orderHelper(datasetContents, datasetID, order, finalArr);
+	}
+}
+
+export function checkSize(whereReturn: Map<string, any[]>) {
+	let totalReturn = 0;
+	for (let item of whereReturn.values()) {
+		totalReturn = totalReturn + item.length;
+	}
+	if (totalReturn > 5000) {
+		throw new ResultTooLargeError("The query returns over 5000 results");
+	}
 }
 
 

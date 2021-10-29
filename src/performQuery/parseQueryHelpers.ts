@@ -165,3 +165,108 @@ export function fieldSorter(fields: any[], ascend: boolean) {
 			}, 0);
 	};
 }
+
+export function groupApply(clone: any[], keys: any[], apply: any[]) {
+	// taken from https://stackoverflow.com/questions/46794232/group-objects-by-multiple-properties-in-array-then-sum-up-their-values
+	const result = clone.reduce((r, o) => {
+		let value = o[keys[0]];
+		if (keys.length > 1) {
+			for (let k = 1; k < keys.length; k++) {
+				value = value + "-" + o[keys[k]];
+			}
+		}
+		// console.log(value);
+		const item = r.get(value) || o;
+		// TODO: store all the data used to calculate AVG MIN MAX SUM COUNT in this new object and operate on it later
+		applyHelper(apply, item, o);
+
+		return r.set(value, item);
+	}, new Map()).values();
+	let array = [...result];
+	return array;
+}
+
+
+export function orderHelper (datasetContents: any, datasetID: any, order: any, data: any[]): any[] {
+	if (typeof order === "string") {
+		let courseID = order.split("_", 1)[0];
+		if (!courseIDCheck(datasetContents, courseID, datasetID)) {
+			throw new InsightError("courseID in order doesn't match");
+		}
+		if (!(typeof data[0][order] === "number" || typeof data[0][order] === "string")) {
+			throw new InsightError("Order data doesn't make sense");
+		}
+		let temp = data;
+		quickSort(temp, order, 0, temp.length - 1, true);
+		return temp;
+	} else {
+		console.log(order);
+		let ascend = true;
+		if (order["dir"] === "UP") {
+			ascend = true;
+		} else if (order["dir"] === "DOWN") {
+			ascend = false;
+		}
+		console.log(data);
+		console.log("after sort");
+		data.sort(fieldSorter(order["keys"], ascend));
+		console.log(data);
+		return data;
+	}
+}
+
+
+function applyHelper(apply: any[], item: any, o: any) {
+	for (let a in apply) {
+		// console.log(apply[a]);
+		let key = Object.keys(apply[a])[0];
+		let valueIns = Object.values(apply[a])[0] as any;
+		// console.log (Object.values(valueIns)[0]);
+		// console.log(key);
+		// console.log(item);
+		if (Object.keys(valueIns)[0] === "MAX") {
+			if (key in item) {
+				if (item[key] < o[Object.values(valueIns)[0] as string]) {
+					item[key] = o[Object.values(valueIns)[0] as string];
+				}
+			} else {
+				item[key] = o[Object.values(valueIns)[0] as string];
+			}
+		} else if (Object.keys(valueIns)[0] === "MIN") {
+			if (key in item) {
+				if (item[key] > o[Object.values(valueIns)[0] as string]) {
+					item[key] = o[Object.values(valueIns)[0] as string];
+				}
+			} else {
+				item[key] = o[Object.values(valueIns)[0] as string];
+			}
+		} else if (Object.keys(valueIns)[0] === "SUM") {
+			if (key in item) {
+				item[key] = item[key] + o[Object.values(valueIns)[0] as string];
+			} else {
+				item[key] = o[Object.values(valueIns)[0] as string];
+			}
+		} else if (Object.keys(valueIns)[0] === "COUNT") {
+			if (key in item) {
+				if (!(o[Object.values(valueIns)[0] as string] in item[key])) {
+					item[key] = item[key] + 1;
+					item["COUNTARRAY"].push(o[Object.values(valueIns)[0] as string]);
+				}
+			} else {
+				item[key] = 1;
+				item["COUNTARRAY"] = [o[Object.values(valueIns)[0] as string]];
+			}
+		} else if (Object.keys(valueIns)[0] === "AVG") {
+			if (key in item) {
+				item["COUNTAVG"] = item["COUNTAVG"] + 1;
+				item["TOTALAVG"] = item["TOTALAVG"] + o[Object.values(valueIns)[0] as string];
+				item[key] = item["TOTALAVG"] / item["COUNTAVG"];
+			} else {
+				item["COUNTAVG"] = 1;
+				item["TOTALAVG"] = o[Object.values(valueIns)[0] as string];
+				item[key] = item["TOTALAVG"] / item["COUNTAVG"];
+			}
+		}
+	}
+}
+
