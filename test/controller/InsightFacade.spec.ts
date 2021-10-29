@@ -14,7 +14,7 @@ import {clearDisk, diskLength} from "../TestUtil";
 // this.timeout(5000);
 
 describe("InsightFacade", function () {
-	this.timeout(15000);
+	this.timeout(20000);
 	let insightFacade: InsightFacade;
 	const persistDir = "./data";
 	const size = 64612;

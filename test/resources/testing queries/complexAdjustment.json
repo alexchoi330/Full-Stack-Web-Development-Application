@@ -61,23 +61,6 @@
 
 	},
 	"with": [
-		{
-
-			"rooms_shortname": "OSBO",
-
-			"maxSeats": 442
-
-		},  {
-
-			"rooms_shortname": "HEBB",
-
-			"maxSeats": 375
-
-		}, {
-
-			"rooms_shortname": "LSC",
-
-			"maxSeats": 350
-
-		}	]
+		{"rooms_shortname":"OSBO","rooms_fullname":"Robert F. Osborne Centre"},{"rooms_shortname":"LSC","rooms_fullname":"Life Sciences Centre"},{"rooms_shortname":"HEBB","rooms_fullname":"Hebb"}
+		]
 }

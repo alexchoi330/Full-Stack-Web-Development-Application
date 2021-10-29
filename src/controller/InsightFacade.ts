@@ -15,8 +15,9 @@ import {
 	parseOutDataFromText, parseRooms, parseOutDataFromHyperlink, getGeolocation
 } from "../addDataset/addDatasetHelpers";
 import {
-	checkOptions, optionsSort, whereParse, transformationsSort
+	checkOptions, optionsSort, whereParse, transformationsSort, transformationsOptions, checkTransformations, checkSize
 } from "../performQuery/parseQuery";
+
 
 /**
  * This is the main programmatic entry point for the project.
@@ -158,23 +159,30 @@ export default class InsightFacade implements IInsightFacade {
 	}
 
 	public performQuery(query: any): Promise<any[]> {
-		if (!(Object.prototype.hasOwnProperty.call(query, "WHERE")
-			&& Object.prototype.hasOwnProperty.call(query, "OPTIONS"))) {
+		if (!(Object.prototype.hasOwnProperty.call(query, "WHERE") &&
+			Object.prototype.hasOwnProperty.call(query, "OPTIONS"))) {
 			return Promise.reject(new InsightError("WHERE or OPTIONS not correct"));
 		}
 		let transformations = false;
-		const whereObj = query["WHERE"];
-		const optionObj = query["OPTIONS"];
+		const [whereObj, optionObj] = [query["WHERE"], query["OPTIONS"]];
+		// const optionObj = query["OPTIONS"];
 		console.log(whereObj, optionObj);
+		let anyKeys: any[] = [];
+		this.currentDatasetID = checkOptions(optionObj, anyKeys);
+		let apply = [];
 		let transformationsObj = {};
 		if ("TRANSFORMATIONS" in query) {
 			transformationsObj = query["TRANSFORMATIONS"];
 			console.log(transformationsObj);
 			transformations = true;
+			const applyObj = query["TRANSFORMATIONS"]["APPLY"];
+			for (let x in applyObj) {
+				let temp = Object.values(applyObj[x])[0] as any;
+				apply.push(Object.values(temp)[0]);
+			}
+			anyKeys = checkTransformations(this.datasetContents, this.currentDatasetID, transformationsObj);
 		}
-		// TODO: check the transformations, especially the applykeys and save newly defined keys in an array
-		// apparently if transformations exist columns can only contain keys from group or apply
-		this.currentDatasetID = checkOptions(optionObj);
+		checkOptions(optionObj, anyKeys);
 		let whereReturn;
 		if (Object.keys(whereObj).length === 0) {
 			this.currentDatasetID = optionObj["COLUMNS"][0].split("_", 1)[0];
@@ -184,19 +192,14 @@ export default class InsightFacade implements IInsightFacade {
 		} else {
 			whereReturn = whereParse(this.datasetContents, this.currentDatasetID, whereObj);
 		}
-		let totalReturn = 0;
-		for (let item of whereReturn.values()) {
-			totalReturn = totalReturn + item.length;
-		}
-		if (totalReturn > 5000) {
-			throw new ResultTooLargeError("The query returns over 5000 results");
-		}
-		let optionsReturn = optionsSort(this.datasetContents, this.currentDatasetID, optionObj, whereReturn);
-		// TODO: finish up transformation sort with group and apply, group should be done but needs testing
+		checkSize(whereReturn);
+		let optionsReturn = optionsSort(this.datasetContents, this.currentDatasetID, optionObj, whereReturn, apply);
 		if (transformations) {
 			let transformationsReturn = transformationsSort(
 				this.datasetContents, this.currentDatasetID, transformationsObj, optionsReturn);
-			return Promise.resolve(transformationsReturn);
+			let transformationsSorted = transformationsOptions(this.datasetContents, this.currentDatasetID,
+				optionObj, transformationsReturn);
+			return Promise.resolve(transformationsSorted);
 		} else {
 			return Promise.resolve(optionsReturn);
 		}
