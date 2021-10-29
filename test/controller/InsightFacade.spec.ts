@@ -368,10 +368,10 @@ describe("InsightFacade", function () {
 			it("should successfully add two rooms dataset", function() {
 				const id: string = "rooms";
 				const content: string = datasetContents.get("rooms") ?? "";
-				const content1: string = datasetContents.get("rooms2") ?? "";
+				const content2: string = datasetContents.get("rooms2") ?? "";
 				return facade.addDataset(id, content, InsightDatasetKind.Rooms)
 					.then(() => {
-						return facade.addDataset("rooms2", content1, InsightDatasetKind.Rooms);
+						return facade.addDataset("rooms2", content2, InsightDatasetKind.Rooms);
 					}).then((res) => {
 						expect(res).to.be.an.instanceof(Array);
 						expect(res).to.have.length(2);
