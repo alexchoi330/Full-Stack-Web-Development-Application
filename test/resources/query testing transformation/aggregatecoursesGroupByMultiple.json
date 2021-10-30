@@ -1,0 +1,31 @@
+{
+	"title": "SELECT dept, avg WHERE room seats > 150 ,sort by rooms full name",
+	"input": {
+		"WHERE": {
+			"GT": {
+				"courses_avg": 97.5
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"courses_avg",
+				"overallMax"
+			]
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"courses_dept",
+				"courses_avg"
+			],
+			"APPLY": [
+				{
+					"overallMax": {
+						"MAX": "courses_year"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": false,
+	"with": [{"courses_dept":"cnps","courses_avg":99.19,"overallMax":2012},{"courses_dept":"crwr","courses_avg":98,"overallMax":2013},{"courses_dept":"eece","courses_avg":98.75,"overallMax":2009},{"courses_dept":"epse","courses_avg":98.08,"overallMax":2009},{"courses_dept":"epse","courses_avg":98.7,"overallMax":2009},{"courses_dept":"epse","courses_avg":98.36,"overallMax":1900},{"courses_dept":"epse","courses_avg":98.8,"overallMax":2014},{"courses_dept":"epse","courses_avg":98.58,"overallMax":2012},{"courses_dept":"epse","courses_avg":98.76,"overallMax":2012},{"courses_dept":"epse","courses_avg":98.45,"overallMax":2011},{"courses_dept":"epse","courses_avg":97.78,"overallMax":2009},{"courses_dept":"epse","courses_avg":97.69,"overallMax":2013},{"courses_dept":"epse","courses_avg":97.67,"overallMax":2007},{"courses_dept":"math","courses_avg":99.78,"overallMax":2009},{"courses_dept":"nurs","courses_avg":98.71,"overallMax":2011},{"courses_dept":"nurs","courses_avg":98.21,"overallMax":2015},{"courses_dept":"nurs","courses_avg":97.53,"overallMax":2015},{"courses_dept":"nurs","courses_avg":98.5,"overallMax":2013},{"courses_dept":"nurs","courses_avg":98.58,"overallMax":2010},{"courses_dept":"spph","courses_avg":98.98,"overallMax":2015}]}

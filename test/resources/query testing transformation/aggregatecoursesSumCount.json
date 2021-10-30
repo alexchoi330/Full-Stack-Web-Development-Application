@@ -1,0 +1,35 @@
+{
+	"title": "SELECT dept, avg WHERE room seats > 150 ,sort by rooms full name",
+	"input":{
+		"WHERE": {
+			"IS": {
+				"courses_dept": "a*"
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"overallCount",
+				"overallSum"
+			]
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"courses_dept"
+			],
+			"APPLY": [
+				{
+					"overallCount": {
+						"COUNT": "courses_title"
+					}
+				},
+				{
+					"overallSum": {
+						"SUM": "courses_pass"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": false,
+	"with": [{"courses_dept":"aanb","overallCount":2,"overallSum":30},{"courses_dept":"adhe","overallCount":5,"overallSum":8242},{"courses_dept":"anat","overallCount":4,"overallSum":1478},{"courses_dept":"anth","overallCount":33,"overallSum":11826},{"courses_dept":"apbi","overallCount":44,"overallSum":12398},{"courses_dept":"appp","overallCount":4,"overallSum":492},{"courses_dept":"apsc","overallCount":18,"overallSum":57100},{"courses_dept":"arbc","overallCount":4,"overallSum":350},{"courses_dept":"arch","overallCount":50,"overallSum":16376},{"courses_dept":"arcl","overallCount":13,"overallSum":1824},{"courses_dept":"arst","overallCount":19,"overallSum":4523},{"courses_dept":"arth","overallCount":32,"overallSum":18999},{"courses_dept":"asia","overallCount":61,"overallSum":36930},{"courses_dept":"asic","overallCount":2,"overallSum":1142},{"courses_dept":"astr","overallCount":17,"overallSum":14406},{"courses_dept":"astu","overallCount":5,"overallSum":3092},{"courses_dept":"atsc","overallCount":8,"overallSum":2008},{"courses_dept":"audi","overallCount":38,"overallSum":11190}]}

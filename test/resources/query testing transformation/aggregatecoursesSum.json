@@ -1,0 +1,30 @@
+{
+	"title": "SELECT dept, avg WHERE room seats > 150 ,sort by rooms full name",
+	"input": {
+		"WHERE": {
+			"IS": {
+				"courses_dept": "f*"
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"overallSum"
+
+			]
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"courses_dept"
+			],
+			"APPLY": [
+				{
+					"overallSum": {
+						"SUM": "courses_fail"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": false,
+	"with": [{"courses_dept":"fhis","overallSum":2},{"courses_dept":"fipr","overallSum":48},{"courses_dept":"fish","overallSum":0},{"courses_dept":"fist","overallSum":388},{"courses_dept":"fmst","overallSum":908},{"courses_dept":"fnel","overallSum":4},{"courses_dept":"fnh","overallSum":828},{"courses_dept":"fnis","overallSum":26},{"courses_dept":"food","overallSum":4},{"courses_dept":"fopr","overallSum":63},{"courses_dept":"fre","overallSum":66},{"courses_dept":"fren","overallSum":1420},{"courses_dept":"frst","overallSum":1170}]}
