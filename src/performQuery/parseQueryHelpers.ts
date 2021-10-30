@@ -79,10 +79,51 @@ export function courseIDCheck(datasets: Map<string, Map<string,any[]>>, id: stri
 }
 
 export function numberCheck(id: string, field: any): void {
-	if (id === "avg" || id === "pass" || id === "fail" || id === "audit" || id === "year") {
+	if (id === "avg" || id === "pass" || id === "fail" || id === "audit" || id === "year" ||
+		id === "lat" || id === "lon" || id === "seats") {
 		if (!(typeof field === "number")) {
 			throw new InsightError("field is not a number when it should be");
 		}
+	}
+}
+
+export function applyCheck(apply: any, datasetID: any, result: any[]) {
+	let applyKeyRule: {
+		[key: string]: string,
+	} = {};
+	for (let a in apply) {
+		let applyKey = Object.keys(apply[a])[0] as string;
+		if (Object.keys(apply[a]).length > 1) {
+			throw new InsightError("Too many keys inside APPLY");
+		}
+		let insideObj = Object.values(apply[a])[0] as any;
+		console.log(insideObj);
+		if (Object.keys(insideObj).length > 1) {
+			throw new InsightError("Too many keys inside APPLY INNER OBJECT");
+		}
+		if (!Object.prototype.hasOwnProperty.call(insideObj, "MAX") &&
+			!Object.prototype.hasOwnProperty.call(insideObj, "MIN") &&
+			!Object.prototype.hasOwnProperty.call(insideObj, "SUM") &&
+			!Object.prototype.hasOwnProperty.call(insideObj, "COUNT") &&
+			!Object.prototype.hasOwnProperty.call(insideObj, "AVG")) {
+			throw new InsightError("APPLYTOKEN is wrong");
+		}
+		let IDKey = Object.values(insideObj)[0] as string;
+		let ID = IDKey.split("_", 1)[0];
+		let key = IDKey.split("_", 2)[1];
+		if (!(skeyCheck(key) || mkeyCheck(key))) {
+			throw new InsightError("key inside APPLYTOKEN is wrong");
+		}
+		if (!(ID === datasetID)) {
+			throw new InsightError("datasetID wrong inside APPLY");
+		}
+		if (Object.keys(applyKeyRule).includes(applyKey) && applyKeyRule[applyKey] === Object.keys(insideObj)[0]) {
+			throw new InsightError("APPLYKEY in APPLYRULE should be unique");
+		}
+		applyKeyRule[applyKey] = Object.keys(insideObj)[0];
+		console.log(applyKeyRule);
+		result.push(Object.values(insideObj)[0]);
+		result.push(Object.keys(apply[a])[0]);
 	}
 }
 
@@ -92,7 +133,6 @@ function swapTwo (arr: any[],objOne: number, objTwo: number) {
 	arr[objTwo] = temp;
 }
 
-// implement quicksort for both
 export function quickSort(arr: any[], key: string, start: number, end: number, ascend: boolean) {
 	if (start < end) {
 		let mid = partition(arr, key, start, end, ascend);
@@ -102,41 +142,19 @@ export function quickSort(arr: any[], key: string, start: number, end: number, a
 }
 
 function partition(arr: any[], key: string, start: number, end: number, ascend: boolean): number {
-	// let msKey = key.split("_", 1)[0];
-	let msKey = key.split("_", 2)[1];
 	let pivot = arr[end][key];
 	let previous = start - 1;
 	for (let i = start; i < end; i++) {
 		if (ascend) {
-			// if (mkeyCheck(msKey)) {
 			if (arr[i][key] < pivot) {
 				previous++;
 				swapTwo(arr, previous, i);
 			}
-			// } else if (skeyCheck(msKey)) {
-				// if (arr[i][key].localeCompare(pivot) <= -1) {
-				// if (arr[i][key] < pivot) {
-					// previous++;
-					// swapTwo(arr, previous, i);
-				// }
-			// } else {
-			// 	throw new InsightError("quick sort shouldn't be here");
-			// }
 		} else {
-			// if (mkeyCheck(msKey)) {
 			if (arr[i][key] > pivot) {
 				previous++;
 				swapTwo(arr, previous, i);
 			}
-			// } else if (skeyCheck(msKey)) {
-				// if (arr[i][key].localeCompare(pivot) > -1) {
-				// if (arr[i][key] > pivot) {
-					// previous++;
-					// swapTwo(arr, previous, i);
-				// }
-			// } else {
-			// 	throw new InsightError("quick sort shouldn't be here");
-			// }
 		}
 	}
 	swapTwo(arr, previous + 1, end);
@@ -151,7 +169,6 @@ export function fieldSorter(fields: any[], ascend: boolean) {
 				let dir = 1;
 				if (!ascend) {
 					dir = -1;
-					// o=o.substring(1);
 				}
 				if (a[o] > b[o]) {
 					return dir;
@@ -176,11 +193,8 @@ export function groupApply(clone: any[], keys: any[], apply: any[]) {
 				value = value + "-" + o[keys[k]];
 			}
 		}
-		// console.log(value);
 		const item = r.get(value) || o;
-		// TODO: store all the data used to calculate AVG MIN MAX SUM COUNT in this new object and operate on it later
 		applyHelper(apply, item, o, keys);
-
 		return r.set(value, item);
 	}, new Map()).values();
 	let array = [...result];
@@ -216,7 +230,6 @@ export function orderHelper (datasetContents: any, datasetID: any, order: any, d
 	}
 }
 
-
 function applyHelper(apply: any[], item: any, o: any, groupKeys: any[]) {
 	for (let a in apply) {
 		// console.log(apply[a]);
@@ -224,59 +237,62 @@ function applyHelper(apply: any[], item: any, o: any, groupKeys: any[]) {
 		// console.log (Object.values(valueIns)[0]);
 		// console.log(key);
 		// console.log(item);
-		if (Object.keys(valueIns)[0] === "MAX") {
-			if (key in item) {
-				if (item[key] < o[Object.values(valueIns)[0] as string]) {
-					item[key] = o[Object.values(valueIns)[0] as string];
-				}
-			} else {
+		checkApplyNumber(Object.keys(valueIns)[0] as string, Object.values(valueIns)[0] as string);
+		minMaxSumCountAvg(valueIns, key, item, o);
+	}
+}
+
+function minMaxSumCountAvg(valueIns: any, key: any, item: any, o: any) {
+	if (Object.keys(valueIns)[0] === "MAX") {
+		if (key in item) {
+			if (item[key] < o[Object.values(valueIns)[0] as string]) {
 				item[key] = o[Object.values(valueIns)[0] as string];
 			}
-		} else if (Object.keys(valueIns)[0] === "MIN") {
-			if (key in item) {
-				if (item[key] > o[Object.values(valueIns)[0] as string]) {
-					item[key] = o[Object.values(valueIns)[0] as string];
-				}
-			} else {
+		} else {
+			item[key] = o[Object.values(valueIns)[0] as string];
+		}
+	} else if (Object.keys(valueIns)[0] === "MIN") {
+		if (key in item) {
+			if (item[key] > o[Object.values(valueIns)[0] as string]) {
 				item[key] = o[Object.values(valueIns)[0] as string];
 			}
-		} else if (Object.keys(valueIns)[0] === "SUM") {
-			if (key in item) {
-				item[key] = item[key] + o[Object.values(valueIns)[0] as string];
-				item[key] = Number(item[key].toFixed(2));
-			} else {
-				item[key] = o[Object.values(valueIns)[0] as string];
+		} else {
+			item[key] = o[Object.values(valueIns)[0] as string];
+		}
+	} else if (Object.keys(valueIns)[0] === "SUM") {
+		if (key in item) {
+			item[key] = item[key] + o[Object.values(valueIns)[0] as string];
+			item[key] = Number(item[key].toFixed(2));
+		} else {
+			item[key] = o[Object.values(valueIns)[0] as string];
+		}
+	} else if (Object.keys(valueIns)[0] === "COUNT") {
+		if (key in item) {
+			if (!item["COUNTARRAY"].includes(o[Object.values(valueIns)[0] as string])) {
+				item[key] = item[key] + 1;
+				item["COUNTARRAY"].push(o[Object.values(valueIns)[0] as string]);
 			}
-		} else if (Object.keys(valueIns)[0] === "COUNT") {
-			if (key in item) {
-				// console.log(item);
-				// console.log(o);
-				if (!item["COUNTARRAY"].includes(o[Object.values(valueIns)[0] as string])) {
-					item[key] = item[key] + 1;
-					item["COUNTARRAY"].push(o[Object.values(valueIns)[0] as string]);
-				}
-			} else {
-				item[key] = 1;
-				// let countArrayObj: any = {};
-				// let objKey = o[Object.values(valueIns)[0] as string] as string;
-				// countArrayObj[objKey] = groupKeys;
-				// item["COUNTARRAY"] = countArrayObj;
-				item["COUNTARRAY"] = [o[Object.values(valueIns)[0] as string]];
-			}
-		} else if (Object.keys(valueIns)[0] === "AVG") {
-			// console.log(Object.values(valueIns)[0]);
-			// console.log(o);
-			if (key in item) {
-				item["COUNTAVG"] = item["COUNTAVG"] + 1;
-				item["TOTALAVG"] = Decimal.add(item["TOTALAVG"], new Decimal(o[Object.values(valueIns)[0] as string]));
-				item[key] = item["TOTALAVG"].toNumber() / item["COUNTAVG"];
-				item[key] = Number(item[key].toFixed(2));
-			} else {
-				item["COUNTAVG"] = 1;
-				item["TOTALAVG"] = new Decimal(o[Object.values(valueIns)[0] as string]);
-				item[key] = item["TOTALAVG"].toNumber() / item["COUNTAVG"];
-			}
+		} else {
+			item[key] = 1;
+			item["COUNTARRAY"] = [o[Object.values(valueIns)[0] as string]];
+		}
+	} else if (Object.keys(valueIns)[0] === "AVG") {
+		if (key in item) {
+			item["COUNTAVG"] = item["COUNTAVG"] + 1;
+			item["TOTALAVG"] = Decimal.add(item["TOTALAVG"], new Decimal(o[Object.values(valueIns)[0] as string]));
+			item[key] = item["TOTALAVG"].toNumber() / item["COUNTAVG"];
+			item[key] = Number(item[key].toFixed(2));
+		} else {
+			item["COUNTAVG"] = 1;
+			item["TOTALAVG"] = new Decimal(o[Object.values(valueIns)[0] as string]);
+			item[key] = item["TOTALAVG"].toNumber() / item["COUNTAVG"];
 		}
 	}
 }
 
+function checkApplyNumber (key: string, value: string) {
+	if (key === "MAX" || key === "MIN" || key === "AVG" || key === "SUM") {
+		let valueT = key.split("_", 2)[1];
+		mkeyCheck(valueT);
+	}
+}
