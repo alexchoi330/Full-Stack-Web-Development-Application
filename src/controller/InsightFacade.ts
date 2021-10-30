@@ -169,8 +169,7 @@ export default class InsightFacade implements IInsightFacade {
 		console.log(whereObj, optionObj);
 		let anyKeys: any[] = [];
 		this.currentDatasetID = checkOptions(optionObj, anyKeys);
-		let apply = [];
-		let transformationsObj = {};
+		let apply = [], transformationsObj = {};
 		if ("TRANSFORMATIONS" in query) {
 			transformationsObj = query["TRANSFORMATIONS"];
 			console.log(transformationsObj);
@@ -193,8 +192,15 @@ export default class InsightFacade implements IInsightFacade {
 			whereReturn = whereParse(this.datasetContents, this.currentDatasetID, whereObj);
 		}
 		checkSize(whereReturn);
+		let columnsCopy: any[] = [];
+		if (transformations) {
+			columnsCopy = [...optionObj["COLUMNS"]];
+			optionObj["COLUMNS"] = anyKeys;
+		}
+		// console.log(optionObj);
 		let optionsReturn = optionsSort(this.datasetContents, this.currentDatasetID, optionObj, whereReturn, apply);
 		if (transformations) {
+			optionObj["COLUMNS"] = columnsCopy;
 			let transformationsReturn = transformationsSort(
 				this.datasetContents, this.currentDatasetID, transformationsObj, optionsReturn);
 			let transformationsSorted = transformationsOptions(this.datasetContents, this.currentDatasetID,
