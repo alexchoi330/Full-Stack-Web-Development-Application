@@ -195,8 +195,7 @@ export function checkTransformations (datasetContents: any, datasetID: any, quer
 		Object.keys(query).length > 2) {
 		throw new InsightError("transformation missing GROUP or APPLY or too many arguments");
 	}
-	let group = query["GROUP"];
-	let apply = query["APPLY"];
+	let group = query["GROUP"], apply = query["APPLY"];
 	let result = [];
 	for (let g in group) {
 		let ID = group[g].split("_", 1)[0];
@@ -207,7 +206,7 @@ export function checkTransformations (datasetContents: any, datasetID: any, quer
 		if (!(skeyCheck(key) || mkeyCheck(key))) {
 			throw new InsightError("key inside GROUP is wrong");
 		}
-		result.push(g);
+		result.push(group[g]);
 	}
 	for (let a in apply) {
 		if (Object.keys(apply[a]).length > 1) {
@@ -234,8 +233,10 @@ export function checkTransformations (datasetContents: any, datasetID: any, quer
 		if (!(ID === datasetID)) {
 			throw new InsightError("datasetID wrong inside APPLY");
 		}
+		result.push(Object.values(insideObj)[0]);
 		result.push(Object.keys(apply[a])[0]);
 	}
+	console.log(result);
 	return result;
 }
 
@@ -263,6 +264,7 @@ export function transformationsOptions(datasetContents: any, datasetID: any, que
 	let order = query["ORDER"] as any;
 	let tempData = [...data];
 	let finalArr = [];
+	console.log(columns);
 	for (let value of tempData) {
 		let obj = {} as any;
 		for (let key of Object.keys(value)) {

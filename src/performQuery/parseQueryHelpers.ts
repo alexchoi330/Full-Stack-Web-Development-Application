@@ -1,5 +1,6 @@
 import {InsightError} from "../controller/IInsightFacade";
 import {and, or} from "./logic";
+import Decimal from "decimal.js";
 
 
 export function MSFieldHelper (field: string): string {
@@ -178,7 +179,7 @@ export function groupApply(clone: any[], keys: any[], apply: any[]) {
 		// console.log(value);
 		const item = r.get(value) || o;
 		// TODO: store all the data used to calculate AVG MIN MAX SUM COUNT in this new object and operate on it later
-		applyHelper(apply, item, o);
+		applyHelper(apply, item, o, keys);
 
 		return r.set(value, item);
 	}, new Map()).values();
@@ -216,11 +217,10 @@ export function orderHelper (datasetContents: any, datasetID: any, order: any, d
 }
 
 
-function applyHelper(apply: any[], item: any, o: any) {
+function applyHelper(apply: any[], item: any, o: any, groupKeys: any[]) {
 	for (let a in apply) {
 		// console.log(apply[a]);
-		let key = Object.keys(apply[a])[0];
-		let valueIns = Object.values(apply[a])[0] as any;
+		let key = Object.keys(apply[a])[0], valueIns = Object.values(apply[a])[0] as any;
 		// console.log (Object.values(valueIns)[0]);
 		// console.log(key);
 		// console.log(item);
@@ -243,28 +243,38 @@ function applyHelper(apply: any[], item: any, o: any) {
 		} else if (Object.keys(valueIns)[0] === "SUM") {
 			if (key in item) {
 				item[key] = item[key] + o[Object.values(valueIns)[0] as string];
+				item[key] = Number(item[key].toFixed(2));
 			} else {
 				item[key] = o[Object.values(valueIns)[0] as string];
 			}
 		} else if (Object.keys(valueIns)[0] === "COUNT") {
 			if (key in item) {
-				if (!(o[Object.values(valueIns)[0] as string] in item[key])) {
+				// console.log(item);
+				// console.log(o);
+				if (!item["COUNTARRAY"].includes(o[Object.values(valueIns)[0] as string])) {
 					item[key] = item[key] + 1;
 					item["COUNTARRAY"].push(o[Object.values(valueIns)[0] as string]);
 				}
 			} else {
 				item[key] = 1;
+				// let countArrayObj: any = {};
+				// let objKey = o[Object.values(valueIns)[0] as string] as string;
+				// countArrayObj[objKey] = groupKeys;
+				// item["COUNTARRAY"] = countArrayObj;
 				item["COUNTARRAY"] = [o[Object.values(valueIns)[0] as string]];
 			}
 		} else if (Object.keys(valueIns)[0] === "AVG") {
+			// console.log(Object.values(valueIns)[0]);
+			// console.log(o);
 			if (key in item) {
 				item["COUNTAVG"] = item["COUNTAVG"] + 1;
-				item["TOTALAVG"] = item["TOTALAVG"] + o[Object.values(valueIns)[0] as string];
-				item[key] = item["TOTALAVG"] / item["COUNTAVG"];
+				item["TOTALAVG"] = Decimal.add(item["TOTALAVG"], new Decimal(o[Object.values(valueIns)[0] as string]));
+				item[key] = item["TOTALAVG"].toNumber() / item["COUNTAVG"];
+				item[key] = Number(item[key].toFixed(2));
 			} else {
 				item["COUNTAVG"] = 1;
-				item["TOTALAVG"] = o[Object.values(valueIns)[0] as string];
-				item[key] = item["TOTALAVG"] / item["COUNTAVG"];
+				item["TOTALAVG"] = new Decimal(o[Object.values(valueIns)[0] as string]);
+				item[key] = item["TOTALAVG"].toNumber() / item["COUNTAVG"];
 			}
 		}
 	}

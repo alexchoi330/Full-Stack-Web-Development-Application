@@ -1,0 +1,30 @@
+{
+	"title": "SELECT dept, avg WHERE room seats > 150 ,sort by rooms full name",
+	"input": {
+		"WHERE": {
+			"IS": {
+				"courses_dept": "a*"
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"overallCount"
+
+			]
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"courses_dept"
+			],
+			"APPLY": [
+				{
+					"overallCount": {
+						"COUNT": "courses_title"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": false,
+	"with": [{"courses_dept":"aanb","overallCount":2},{"courses_dept":"adhe","overallCount":5},{"courses_dept":"anat","overallCount":4},{"courses_dept":"anth","overallCount":33},{"courses_dept":"apbi","overallCount":44},{"courses_dept":"appp","overallCount":4},{"courses_dept":"apsc","overallCount":18},{"courses_dept":"arbc","overallCount":4},{"courses_dept":"arch","overallCount":50},{"courses_dept":"arcl","overallCount":13},{"courses_dept":"arst","overallCount":19},{"courses_dept":"arth","overallCount":32},{"courses_dept":"asia","overallCount":61},{"courses_dept":"asic","overallCount":2},{"courses_dept":"astr","overallCount":17},{"courses_dept":"astu","overallCount":5},{"courses_dept":"atsc","overallCount":8},{"courses_dept":"audi","overallCount":38}]}

@@ -1,0 +1,37 @@
+{
+	"title": "SELECT courses dept, instructor, count of titles, sum of pass, WHERE dept is 'adhe', group by dept and instructor",
+	"input":{
+		"WHERE": {
+			"IS": {
+				"courses_dept": "adhe"
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"courses_instructor",
+				"overallCount",
+				"overallSum"
+			]
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"courses_dept",
+				"courses_instructor"
+			],
+			"APPLY": [
+				{
+					"overallCount": {
+						"COUNT": "courses_title"
+					}
+				},
+				{
+					"overallSum": {
+						"SUM": "courses_pass"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": false,
+	"with": [{"courses_dept":"adhe","courses_instructor":"","overallCount":5,"overallSum":4247},{"courses_dept":"adhe","courses_instructor":"smulders, dave","overallCount":2,"overallSum":1013},{"courses_dept":"adhe","courses_instructor":"palacios, carolina","overallCount":3,"overallSum":816},{"courses_dept":"adhe","courses_instructor":"walker, judith","overallCount":1,"overallSum":203},{"courses_dept":"adhe","courses_instructor":"regmi, kapil","overallCount":1,"overallSum":98},{"courses_dept":"adhe","courses_instructor":"crisfield, erin","overallCount":1,"overallSum":146},{"courses_dept":"adhe","courses_instructor":"elfert, maren","overallCount":1,"overallSum":33},{"courses_dept":"adhe","courses_instructor":"chan, jennifer","overallCount":1,"overallSum":63},{"courses_dept":"adhe","courses_instructor":"vanwynsberghe, robert","overallCount":2,"overallSum":85},{"courses_dept":"adhe","courses_instructor":"bishundayal, deonarine","overallCount":2,"overallSum":1314},{"courses_dept":"adhe","courses_instructor":"aijazi, omer","overallCount":1,"overallSum":36},{"courses_dept":"adhe","courses_instructor":"palacios, carolina;sork, thomas joda","overallCount":1,"overallSum":12},{"courses_dept":"adhe","courses_instructor":"wilson, mary","overallCount":1,"overallSum":39},{"courses_dept":"adhe","courses_instructor":"butterwick, shauna;jubas, kaela","overallCount":1,"overallSum":24},{"courses_dept":"adhe","courses_instructor":"falk, clifford","overallCount":1,"overallSum":113}]}

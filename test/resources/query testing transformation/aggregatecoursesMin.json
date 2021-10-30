@@ -1,0 +1,29 @@
+{
+	"title": "SELECT dept, avg WHERE room seats > 150 ,sort by rooms full name",
+	"input": {
+		"WHERE": {
+			"GT": {
+				"courses_avg": 97
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"overallMin"
+			]
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"courses_dept"
+			],
+			"APPLY": [
+				{
+					"overallMin": {
+						"MIN": "courses_pass"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": false,
+	"with": [{"courses_dept":"cnps","overallMin":15},{"courses_dept":"crwr","overallMin":1},{"courses_dept":"educ","overallMin":14},{"courses_dept":"eece","overallMin":12},{"courses_dept":"epse","overallMin":9},{"courses_dept":"math","overallMin":4},{"courses_dept":"nurs","overallMin":12},{"courses_dept":"spph","overallMin":82}]}

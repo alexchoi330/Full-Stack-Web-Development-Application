@@ -1,0 +1,37 @@
+{
+	"title": "group by rooms fullname, furniture, avg of seats, sum of seats, where seats > 250, group by fullname, furniture",
+	"input": {
+		"WHERE": {
+			"GT": {
+				"rooms_seats": 250
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_fullname",
+				"rooms_furniture",
+				"overallAVG",
+				"overallSum"
+			]
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"rooms_fullname",
+				"rooms_furniture"
+			],
+			"APPLY": [
+				{
+					"overallAVG": {
+						"AVG": "rooms_seats"
+					}
+				},
+				{
+					"overallSum": {
+						"SUM": "rooms_seats"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": false,
+	"with":[{"rooms_fullname":"Buchanan","rooms_furniture":"Classroom-Fixed Tablets","overallAVG":275,"overallSum":275},{"rooms_fullname":"Centre for Interactive  Research on Sustainability","rooms_furniture":"Classroom-Fixed Tablets","overallAVG":426,"overallSum":426},{"rooms_fullname":"Chemistry","rooms_furniture":"Classroom-Fixed Tablets","overallAVG":265,"overallSum":265},{"rooms_fullname":"Earth Sciences Building","rooms_furniture":"Classroom-Fixed Tablets","overallAVG":350,"overallSum":350},{"rooms_fullname":"Hebb","rooms_furniture":"Classroom-Fixed Tables/Fixed Chairs","overallAVG":375,"overallSum":375},{"rooms_fullname":"Hennings","rooms_furniture":"Classroom-Fixed Tablets","overallAVG":257,"overallSum":257},{"rooms_fullname":"Henry Angus","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs","overallAVG":260,"overallSum":260},{"rooms_fullname":"Life Sciences Centre","rooms_furniture":"Classroom-Fixed Tables/Movable Chairs","overallAVG":350,"overallSum":700},{"rooms_fullname":"Neville Scarfe","rooms_furniture":"Classroom-Fixed Tablets","overallAVG":280,"overallSum":280},{"rooms_fullname":"Robert F. Osborne Centre","rooms_furniture":"Classroom-Movable Tables & Chairs","overallAVG":442,"overallSum":442},{"rooms_fullname":"Student Recreation Centre","rooms_furniture":"Classroom-Movable Tables & Chairs","overallAVG":299,"overallSum":897},{"rooms_fullname":"Wesbrook","rooms_furniture":"Classroom-Fixed Tablets","overallAVG":325,"overallSum":325},{"rooms_fullname":"Woodward (Instructional Resources Centre-IRC)","rooms_furniture":"Classroom-Fixed Tablets","overallAVG":503,"overallSum":503}]}

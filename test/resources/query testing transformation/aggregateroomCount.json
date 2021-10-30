@@ -1,0 +1,37 @@
+{
+	"title": "select rooms fullname, different furniture counts, WHERE rooms fullname starts with A or C, group by fullname",
+	"input": {
+		"WHERE": {
+			"OR": [{
+				"IS":{
+					"rooms_fullname": "A*"
+				}
+			},
+				{
+					"IS":{
+						"rooms_fullname": "C*"
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_fullname",
+				"overallsum"
+			]
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"rooms_fullname"
+			],
+			"APPLY": [
+				{
+					"overallsum": {
+						"COUNT": "rooms_furniture"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": false,
+	"with": [{"rooms_fullname":"Allard Hall (LAW)","overallsum":2},{"rooms_fullname":"Anthropology and Sociology","overallsum":3},{"rooms_fullname":"Aquatic Ecosystems Research Laboratory","overallsum":1},{"rooms_fullname":"Auditorium Annex","overallsum":1},{"rooms_fullname":"Centre for Interactive  Research on Sustainability","overallsum":1},{"rooms_fullname":"Chemical and Biological Engineering Building","overallsum":2},{"rooms_fullname":"Chemistry","overallsum":1},{"rooms_fullname":"Civil and Mechanical Engineering","overallsum":3}]}

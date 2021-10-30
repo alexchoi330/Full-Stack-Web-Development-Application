@@ -1,0 +1,26 @@
+{
+	"title": "select rooms fullname and min of the seats, group by fullname",
+	"input": {
+		"WHERE": {
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_fullname",
+				"overallMin"
+			]
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"rooms_fullname"
+			],
+			"APPLY": [
+				{
+					"overallMin":{
+						"MIN": "rooms_seats"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": false,
+	"with": [{"rooms_fullname":"Allard Hall (LAW)","overallMin":20},{"rooms_fullname":"Anthropology and Sociology","overallMin":26},{"rooms_fullname":"Aquatic Ecosystems Research Laboratory","overallMin":144},{"rooms_fullname":"Auditorium Annex","overallMin":20},{"rooms_fullname":"Biological Sciences","overallMin":16},{"rooms_fullname":"Brock Hall Annex","overallMin":24},{"rooms_fullname":"Buchanan","overallMin":18},{"rooms_fullname":"Centre for Interactive  Research on Sustainability","overallMin":426},{"rooms_fullname":"Chemical and Biological Engineering Building","overallMin":60},{"rooms_fullname":"Chemistry","overallMin":90},{"rooms_fullname":"Civil and Mechanical Engineering","overallMin":22},{"rooms_fullname":"Earth and Ocean Sciences - Main","overallMin":50},{"rooms_fullname":"Earth Sciences Building","overallMin":80},{"rooms_fullname":"Food, Nutrition and Health","overallMin":12},{"rooms_fullname":"Forest Sciences Centre","overallMin":18},{"rooms_fullname":"Frank Forward","overallMin":35},{"rooms_fullname":"Frederic Lasserre","overallMin":20},{"rooms_fullname":"Friedman Building","overallMin":160},{"rooms_fullname":"Geography","overallMin":21},{"rooms_fullname":"Hebb","overallMin":54},{"rooms_fullname":"Hennings","overallMin":30},{"rooms_fullname":"Henry Angus","overallMin":16},{"rooms_fullname":"Hugh Dempster Pavilion","overallMin":40},{"rooms_fullname":"Iona Building","overallMin":50},{"rooms_fullname":"Irving K Barber Learning Centre","overallMin":8},{"rooms_fullname":"Jack Bell Building for the School of Social Work","overallMin":12},{"rooms_fullname":"Leonard S. Klinck (also known as CSCI)","overallMin":42},{"rooms_fullname":"Life Sciences Centre","overallMin":125},{"rooms_fullname":"MacLeod","overallMin":40},{"rooms_fullname":"MacMillan","overallMin":6},{"rooms_fullname":"Mathematics","overallMin":25},{"rooms_fullname":"Mathematics Annex","overallMin":106},{"rooms_fullname":"Neville Scarfe","overallMin":20},{"rooms_fullname":"Orchard Commons","overallMin":16},{"rooms_fullname":"Pharmaceutical Sciences Building","overallMin":7},{"rooms_fullname":"Ponderosa Commons: Oak House","overallMin":24},{"rooms_fullname":"Robert F. Osborne Centre","overallMin":39},{"rooms_fullname":"School of Population and Public Health","overallMin":12},{"rooms_fullname":"Student Recreation Centre","overallMin":299},{"rooms_fullname":"The Leon and Thea Koerner University Centre","overallMin":30},{"rooms_fullname":"War Memorial Gymnasium","overallMin":25},{"rooms_fullname":"Wesbrook","overallMin":102},{"rooms_fullname":"West Mall Swing Space","overallMin":27},{"rooms_fullname":"Woodward (Instructional Resources Centre-IRC)","overallMin":10}]}
