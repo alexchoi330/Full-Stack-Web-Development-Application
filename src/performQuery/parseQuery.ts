@@ -1,7 +1,7 @@
 import {IInsightFacade, InsightError, NotFoundError, ResultTooLargeError} from "../controller/IInsightFacade";
 import {greaterThan, lessThan, is, or, and, equalTo, not} from "./logic";
 import {skeyCheck, mkeyCheck, courseIDCheck, numberCheck,
-	MSFieldHelper, MSFieldHelperReverse, groupApply, orderHelper} from "./parseQueryHelpers";
+	MSFieldHelper, MSFieldHelperReverse, groupApply, orderHelper, applyCheck} from "./parseQueryHelpers";
 
 export enum Field {
 	avg = "Avg",
@@ -195,7 +195,8 @@ export function checkTransformations (datasetContents: any, datasetID: any, quer
 		Object.keys(query).length > 2) {
 		throw new InsightError("transformation missing GROUP or APPLY or too many arguments");
 	}
-	let group = query["GROUP"], apply = query["APPLY"];
+	let group = query["GROUP"];
+	let apply = query["APPLY"];
 	let result = [];
 	for (let g in group) {
 		let ID = group[g].split("_", 1)[0];
@@ -208,34 +209,7 @@ export function checkTransformations (datasetContents: any, datasetID: any, quer
 		}
 		result.push(group[g]);
 	}
-	for (let a in apply) {
-		if (Object.keys(apply[a]).length > 1) {
-			throw new InsightError("Too many keys inside APPLY");
-		}
-		let insideObj = Object.values(apply[a])[0] as any;
-		console.log(insideObj);
-		if (Object.keys(insideObj).length > 1) {
-			throw new InsightError("Too many keys inside APPLY INNER OBJECT");
-		}
-		if (!Object.prototype.hasOwnProperty.call(insideObj, "MAX") &&
-			!Object.prototype.hasOwnProperty.call(insideObj, "MIN") &&
-			!Object.prototype.hasOwnProperty.call(insideObj, "SUM") &&
-			!Object.prototype.hasOwnProperty.call(insideObj, "COUNT") &&
-			!Object.prototype.hasOwnProperty.call(insideObj, "AVG")) {
-			throw new InsightError("APPLYTOKEN is wrong");
-		}
-		let IDKey = Object.values(insideObj)[0] as string;
-		let ID = IDKey.split("_", 1)[0];
-		let key = IDKey.split("_", 2)[1];
-		if (!(skeyCheck(key) || mkeyCheck(key))) {
-			throw new InsightError("key inside APPLYTOKEN is wrong");
-		}
-		if (!(ID === datasetID)) {
-			throw new InsightError("datasetID wrong inside APPLY");
-		}
-		result.push(Object.values(insideObj)[0]);
-		result.push(Object.keys(apply[a])[0]);
-	}
+	applyCheck(apply, datasetID, result);
 	console.log(result);
 	return result;
 }
@@ -291,5 +265,3 @@ export function checkSize(whereReturn: Map<string, any[]>) {
 		throw new ResultTooLargeError("The query returns over 5000 results");
 	}
 }
-
-
