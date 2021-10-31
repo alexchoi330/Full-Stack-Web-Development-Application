@@ -1,0 +1,33 @@
+{
+	"title": "invalid b/c courses_id is not in group or apply",
+	"input":{
+		"WHERE": {
+			"IS": {
+				"courses_dept": "adhe"
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_id"
+			]
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"courses_dept",
+				"courses_instructor"
+			],
+			"APPLY": [
+				{
+					"overallCount": {
+						"COUNT": "courses_avg"
+					}
+				},
+				{
+					"overallMax": {
+						"MAX": "courses_avg"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": true}

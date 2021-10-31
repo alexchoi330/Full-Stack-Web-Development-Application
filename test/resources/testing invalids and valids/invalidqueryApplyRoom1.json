@@ -1,0 +1,36 @@
+{
+	"title": "SELECT courses dept, instructor, count of titles, sum of pass, WHERE dept is 'adhe', group by dept and instructor",
+	"input":{
+		"WHERE": {
+			"GT": {
+				"rooms_seats": 250
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_fullname",
+				"rooms_furniture",
+				"overallSum",
+				"overallSum"
+			]
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"rooms_fullname",
+				"rooms_furniture"
+			],
+			"APPLY": [
+				{
+					"overallSum": {
+						"SUM": "rooms_seats"
+					}
+				},
+				{
+					"overallSum": {
+						"MAX": "rooms_seats"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": true}

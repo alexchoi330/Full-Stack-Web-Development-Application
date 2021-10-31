@@ -1,0 +1,41 @@
+{
+	"title": "invalid query b/c not ALL of columns in either group or apply. courses_year is not in group or applykey, even though dept&instructor is in group and year has to be in columns since its in sort",
+	"input":{
+		"WHERE": {
+			"IS": {
+				"courses_dept": "adhe"
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_year",
+				"courses_dept",
+				"courses_instructor"
+			],
+			"ORDER": {
+				"dir": "DOWN",
+				"keys": [
+					"courses_year"
+				]
+			}
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"courses_dept",
+				"courses_instructor"
+			],
+			"APPLY": [
+				{
+					"overallCount": {
+						"COUNT": "courses_avg"
+					}
+				},
+				{
+					"overallMax": {
+						"MAX": "courses_avg"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": true}

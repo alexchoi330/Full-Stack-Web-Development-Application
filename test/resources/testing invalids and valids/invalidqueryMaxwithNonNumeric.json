@@ -1,0 +1,36 @@
+{
+	"title": "SELECT courses dept, instructor, count of titles, sum of pass, WHERE dept is 'adhe', group by dept and instructor",
+	"input":{
+		"WHERE": {
+			"IS": {
+				"courses_dept": "adhe"
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"courses_instructor",
+				"overallMax"
+			],
+			"ORDER": {
+				"dir": "DOWN",
+				"keys": [
+					"overallMax"
+				]
+			}
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"courses_dept",
+				"courses_instructor"
+			],
+			"APPLY": [
+				{
+					"overallMax": {
+						"MAX": "courses_instructor"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": true}
