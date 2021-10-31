@@ -88,16 +88,13 @@ export function numberCheck(id: string, field: any): void {
 }
 
 export function applyCheck(apply: any, datasetID: any, result: any[]) {
-	let applyKeyRule: {
-		[key: string]: string,
-	} = {};
+	let applyKeyRule: string[] = [];
 	for (let a in apply) {
 		let applyKey = Object.keys(apply[a])[0] as string;
 		if (Object.keys(apply[a]).length > 1) {
 			throw new InsightError("Too many keys inside APPLY");
 		}
 		let insideObj = Object.values(apply[a])[0] as any;
-		console.log(insideObj);
 		if (Object.keys(insideObj).length > 1) {
 			throw new InsightError("Too many keys inside APPLY INNER OBJECT");
 		}
@@ -117,11 +114,10 @@ export function applyCheck(apply: any, datasetID: any, result: any[]) {
 		if (!(ID === datasetID)) {
 			throw new InsightError("datasetID wrong inside APPLY");
 		}
-		if (Object.keys(applyKeyRule).includes(applyKey) && applyKeyRule[applyKey] === Object.keys(insideObj)[0]) {
+		if (applyKeyRule.includes(applyKey)) {
 			throw new InsightError("APPLYKEY in APPLYRULE should be unique");
 		}
-		applyKeyRule[applyKey] = Object.keys(insideObj)[0];
-		console.log(applyKeyRule);
+		applyKeyRule.push(applyKey);
 		result.push(Object.values(insideObj)[0]);
 		result.push(Object.keys(apply[a])[0]);
 	}
