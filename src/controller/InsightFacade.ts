@@ -15,7 +15,8 @@ import {
 	parseOutDataFromText, parseRooms, parseOutDataFromHyperlink, getGeolocation
 } from "../addDataset/addDatasetHelpers";
 import {
-	checkOptions, optionsSort, whereParse, transformationsSort, transformationsOptions, checkTransformations, checkSize
+	columnCheck, checkOptions, optionsSort, whereParse, transformationsSort,
+	transformationsOptions, checkTransformations, checkSize
 } from "../performQuery/parseQuery";
 
 
@@ -181,7 +182,7 @@ export default class InsightFacade implements IInsightFacade {
 			}
 			anyKeys = checkTransformations(this.datasetContents, this.currentDatasetID, transformationsObj);
 		}
-		checkOptions(optionObj, anyKeys);
+		checkOptions(optionObj, columnCheck(transformationsObj));
 		let whereReturn;
 		if (Object.keys(whereObj).length === 0) {
 			this.currentDatasetID = optionObj["COLUMNS"][0].split("_", 1)[0];

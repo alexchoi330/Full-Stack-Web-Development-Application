@@ -532,7 +532,7 @@ describe("InsightFacade", function () {
 		testFolder<any, any[], PQErrorKind>(
 			"Dynamic InsightFacade PerformQuery tests",
 			(input) => insightFacade.performQuery(input),
-			"./test/resources/testing invalids and valids",
+			"./test/resources/testing queries",
 			{
 				errorValidator: (error): error is PQErrorKind =>
 					error === "ResultTooLargeError" || error === "InsightError",

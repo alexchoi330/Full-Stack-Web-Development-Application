@@ -108,6 +108,12 @@ export function applyCheck(apply: any, datasetID: any, result: any[]) {
 		let IDKey = Object.values(insideObj)[0] as string;
 		let ID = IDKey.split("_", 1)[0];
 		let key = IDKey.split("_", 2)[1];
+		if (Object.keys(insideObj)[0] === "MAX" || Object.keys(insideObj)[0] === "MIN" ||
+			Object.keys(insideObj)[0] === "SUM" || Object.keys(insideObj)[0] === "AVG") {
+			if (!mkeyCheck(key)) {
+				throw new InsightError("MAX MIN SUM AVG key is not a number");
+			}
+		}
 		if (!(skeyCheck(key) || mkeyCheck(key))) {
 			throw new InsightError("key inside APPLYTOKEN is wrong");
 		}

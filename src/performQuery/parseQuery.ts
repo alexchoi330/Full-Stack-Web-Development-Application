@@ -112,6 +112,9 @@ export function checkOptions (query: any, names: any[]): string {
 	let order = query["ORDER"] as any;
 	let courseID = columns[0].split("_", 1)[0];
 	for (const column in columns) {
+		if (names.length !== 0 && !names.includes(columns[column])) {
+			throw new InsightError("column name is not in transformations");
+		}
 		let courseIDTwo = columns[column].split("_", 1)[0];
 		if (!(courseID === courseIDTwo) && !(names.includes(columns[column])) && names.length > 0) {
 			throw new InsightError("Wrong courseID in OPTIONS");
@@ -125,8 +128,7 @@ export function checkOptions (query: any, names: any[]): string {
 		// checked already
 	} else {
 		if (!Object.prototype.hasOwnProperty.call(order, "dir") ||
-			!Object.prototype.hasOwnProperty.call(order,"keys") ||
-			Object.keys(order).length > 2) {
+			!Object.prototype.hasOwnProperty.call(order,"keys") || Object.keys(order).length > 2) {
 			throw new InsightError("dir/keys in object error");
 		}
 		if (order["dir"] !== "UP" && order["dir"] !== "DOWN") {
@@ -135,8 +137,7 @@ export function checkOptions (query: any, names: any[]): string {
 		for (let key in order["keys"]) {
 			let courseTemp = order["keys"][key].split("_", 1)[0];
 			let keyTemp = order["keys"][key].split("_", 2)[1];
-			if (courseTemp !== courseID && !(names.includes(order["keys"][key])) &&
-				names.length > 0) {
+			if (courseTemp !== courseID && !(names.includes(order["keys"][key])) && names.length > 0) {
 				throw new InsightError("course id inside ORDER keys is wrong");
 			}
 			if (!(skeyCheck(keyTemp) || mkeyCheck(keyTemp)) && !(names.includes(order["keys"][key])) &&
@@ -267,4 +268,17 @@ export function checkSize(whereReturn: Map<string, any[]>) {
 	if (totalReturn > 5000) {
 		throw new ResultTooLargeError("The query returns over 5000 results");
 	}
+}
+
+export function columnCheck(transformationsQuery: any): any[] {
+	let group = transformationsQuery["GROUP"];
+	let apply = transformationsQuery["APPLY"];
+	let result = [];
+	for (let g in group) {
+		result.push(group[g]);
+	}
+	for (let a in apply) {
+		result.push(Object.keys(apply[a])[0]);
+	}
+	return result;
 }
