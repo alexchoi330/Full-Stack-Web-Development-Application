@@ -1,0 +1,41 @@
+{
+	"title": "invalid query b/c courses_avg isnt in Apply block (overallCount or overallMax), will pass if you replace courses_avg with overallMax/overallCount/dept/instructor ",
+	"input":{
+		"WHERE": {
+			"IS": {
+				"courses_dept": "adhe"
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_avg",
+				"courses_dept",
+				"courses_instructor"
+			],
+			"ORDER": {
+				"dir": "DOWN",
+				"keys": [
+					"courses_avg"
+				]
+			}
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"courses_dept",
+				"courses_instructor"
+			],
+			"APPLY": [
+				{
+					"overallCount": {
+						"COUNT": "courses_avg"
+					}
+				},
+				{
+					"overallMax": {
+						"MAX": "courses_avg"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": true}

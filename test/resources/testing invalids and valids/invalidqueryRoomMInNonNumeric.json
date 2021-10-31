@@ -1,0 +1,30 @@
+{
+	"title": "SELECT rooms fullname, furniture, avg of seats, where seats > 250, group by fullname and furniture",
+	"input": {
+		"WHERE": {
+			"GT": {
+				"rooms_seats": 250
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_fullname",
+				"rooms_furniture",
+				"overallAVG"
+			]
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"rooms_fullname",
+				"rooms_furniture"
+			],
+			"APPLY": [
+				{
+					"overallAVG": {
+						"MIN": "rooms_type"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": true}

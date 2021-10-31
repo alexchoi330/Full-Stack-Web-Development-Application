@@ -1,0 +1,42 @@
+{
+	"title": "SELECT courses dept, instructor, count of titles, sum of pass, WHERE dept is 'adhe', group by dept and instructor",
+	"input":{
+		"WHERE": {
+			"IS": {
+				"courses_dept": "adhe"
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"courses_instructor",
+				"overallMax"
+			],
+			"ORDER": {
+				"dir": "DOWN",
+				"keys": [
+					"overallMax"
+				]
+			}
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"courses_dept",
+				"courses_instructor"
+			],
+			"APPLY": [
+				{
+					"overallCount": {
+						"COUNT": "courses_avg"
+					}
+				},
+				{
+					"overallMax": {
+						"MAX": "courses_avg"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": false,
+	"with": [{"courses_dept":"adhe","courses_instructor":"bishundayal, deonarine","overallMax":96.11},{"courses_dept":"adhe","courses_instructor":"","overallMax":91.33},{"courses_dept":"adhe","courses_instructor":"falk, clifford","overallMax":90.18},{"courses_dept":"adhe","courses_instructor":"vanwynsberghe, robert","overallMax":90.16},{"courses_dept":"adhe","courses_instructor":"regmi, kapil","overallMax":89.51},{"courses_dept":"adhe","courses_instructor":"smulders, dave","overallMax":89.38},{"courses_dept":"adhe","courses_instructor":"crisfield, erin","overallMax":87.5},{"courses_dept":"adhe","courses_instructor":"walker, judith","overallMax":86.59},{"courses_dept":"adhe","courses_instructor":"wilson, mary","overallMax":86.19},{"courses_dept":"adhe","courses_instructor":"palacios, carolina;sork, thomas joda","overallMax":85.58},{"courses_dept":"adhe","courses_instructor":"palacios, carolina","overallMax":85.29},{"courses_dept":"adhe","courses_instructor":"aijazi, omer","overallMax":85.03},{"courses_dept":"adhe","courses_instructor":"elfert, maren","overallMax":79.33},{"courses_dept":"adhe","courses_instructor":"chan, jennifer","overallMax":78.91},{"courses_dept":"adhe","courses_instructor":"butterwick, shauna;jubas, kaela","overallMax":77.07}]}
