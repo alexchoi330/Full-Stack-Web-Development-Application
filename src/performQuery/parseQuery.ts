@@ -226,6 +226,9 @@ export function transformationsSort (datasetContents: any, datasetID: any, query
 	}
 	let array = groupApply(clone, keys, apply);
 	console.log(array);
+	if (array.length > 5000) {
+		throw new InsightError("Return size over 5000 with transformation obj");
+	}
 	return array;
 }
 
