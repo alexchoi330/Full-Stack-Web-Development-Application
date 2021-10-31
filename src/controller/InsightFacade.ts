@@ -172,7 +172,7 @@ export default class InsightFacade implements IInsightFacade {
 		let apply = [], transformationsObj = {};
 		if ("TRANSFORMATIONS" in query) {
 			transformationsObj = query["TRANSFORMATIONS"];
-			console.log(transformationsObj);
+			// console.log(transformationsObj);
 			transformations = true;
 			const applyObj = query["TRANSFORMATIONS"]["APPLY"];
 			for (let x in applyObj) {
@@ -191,11 +191,12 @@ export default class InsightFacade implements IInsightFacade {
 		} else {
 			whereReturn = whereParse(this.datasetContents, this.currentDatasetID, whereObj);
 		}
-		checkSize(whereReturn);
 		let columnsCopy: any[] = [];
 		if (transformations) {
 			columnsCopy = [...optionObj["COLUMNS"]];
 			optionObj["COLUMNS"] = anyKeys;
+		} else {
+			checkSize(whereReturn);
 		}
 		// console.log(optionObj);
 		let optionsReturn = optionsSort(this.datasetContents, this.currentDatasetID, optionObj, whereReturn, apply);
