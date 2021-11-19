@@ -1,11 +1,14 @@
 import express, {Application, Request, Response} from "express";
 import * as http from "http";
 import cors from "cors";
+import InsightFacade from "../controller/InsightFacade";
+import {InsightDatasetKind} from "../controller/IInsightFacade";
 
 export default class Server {
 	private readonly port: number;
 	private express: Application;
 	private server: http.Server | undefined;
+	private facade: InsightFacade;
 
 	constructor(port: number) {
 		console.info(`Server::<init>( ${port} )`);
@@ -14,6 +17,7 @@ export default class Server {
 
 		this.registerMiddleware();
 		this.registerRoutes();
+		this.facade = new InsightFacade();
 
 		// NOTE: you can serve static frontend files in from your express server
 		// by uncommenting the line below. This makes files in ./frontend/public
@@ -85,7 +89,29 @@ export default class Server {
 		this.express.get("/echo/:msg", Server.echo);
 
 		// TODO: your other endpoints should go here
+		// GET method route
+		this.express.get("/datasets", (req, res) => {
+			let datasets = this.facade.listDatasets();
+			res.status(200).send(datasets);
+		});
 
+		// Put method route
+		this.express.put("/dataset/:id/:kind", (req, res) => {
+			let id = req.params.id;
+			let kind = req.params.kind;
+			console.log(req.body.content);
+			if(kind === "Courses") {
+				this.facade.addDataset(id, req.body.content, InsightDatasetKind["Courses"]);
+				res.sendStatus(200);
+			} else if (kind === "Rooms") {
+				this.facade.addDataset(id, req.body.content, InsightDatasetKind["Rooms"]);
+				res.sendStatus(200);
+			} else {
+				res.sendStatus(400);
+			}
+		});
+		// Delete method route
+		// Post method route
 	}
 
 	// The next two methods handle the echo service.
