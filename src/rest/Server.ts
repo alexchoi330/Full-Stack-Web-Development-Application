@@ -122,17 +122,17 @@ export default class Server {
 			}
 		});
 
-		// // POST method route
-		// this.express.post("/query", (req, res) => {
-		// 	try {
-		// 		let result = this.facade.performQuery(req.body.query);
-		// 		res.status(200).send({result: result});
-		// 	} catch (error) {
-		// 		if(error instanceof InsightError || error instanceof ResultTooLargeError) {
-		// 			res.status(400).send({error: error.message});
-		// 		}
-		// 	}
-		// });
+		// POST method route
+		this.express.post("/query", (req, res) => {
+			try {
+				let result = this.facade.performQuery(req.body.query);
+				res.status(200).send({result: result});
+			} catch (error) {
+				if(error instanceof InsightError || error instanceof ResultTooLargeError) {
+					res.status(400).send({error: error.message});
+				}
+			}
+		});
 	}
 
 	// The next two methods handle the echo service.
