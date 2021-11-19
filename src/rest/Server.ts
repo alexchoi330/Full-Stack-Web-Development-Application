@@ -2,7 +2,7 @@ import express, {Application, Request, Response} from "express";
 import * as http from "http";
 import cors from "cors";
 import InsightFacade from "../controller/InsightFacade";
-import {InsightDatasetKind} from "../controller/IInsightFacade";
+import {InsightDatasetKind, InsightError} from "../controller/IInsightFacade";
 
 export default class Server {
 	private readonly port: number;
@@ -92,7 +92,9 @@ export default class Server {
 		// GET method route
 		this.express.get("/datasets", (req, res) => {
 			let datasets = this.facade.listDatasets();
-			res.status(200).send(datasets);
+			res.status(200).send({
+				result: datasets
+			});
 		});
 
 		// Put method route
@@ -100,17 +102,41 @@ export default class Server {
 			let id = req.params.id;
 			let kind = req.params.kind;
 			console.log(req.body.content);
-			if(kind === "Courses") {
-				this.facade.addDataset(id, req.body.content, InsightDatasetKind["Courses"]);
-				res.sendStatus(200);
+			if (kind === "Courses") {
+				try {
+					let result = this.facade.addDataset(id, req.body.content, InsightDatasetKind["Courses"]);
+					res.status(200).send({
+						result: result
+					});
+				} catch (error) {
+					if(error instanceof InsightError) {
+						res.status(400).send({
+							error: "Error adding courses dataset"
+						});
+					}
+				}
 			} else if (kind === "Rooms") {
-				this.facade.addDataset(id, req.body.content, InsightDatasetKind["Rooms"]);
-				res.sendStatus(200);
+				try {
+					let result = this.facade.addDataset(id, req.body.content, InsightDatasetKind["Rooms"]);
+					res.status(200).send({
+						result: result
+					});
+				} catch (error) {
+					if(error instanceof InsightError) {
+						res.status(400).send({
+							error: "Error adding rooms dataset"
+						});
+					}
+				}
 			} else {
-				res.sendStatus(400);
+				res.status(400).send({
+					error: "dataset kind is not Courses or Rooms"
+				});
 			}
 		});
+
 		// Delete method route
+
 		// Post method route
 	}
 
