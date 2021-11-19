@@ -107,21 +107,21 @@ export default class Server {
 			}
 		});
 
-		// // DELETE method route
-		// this.express.delete("/dataset/:id", (req, res) => {
-		// 	try {
-		// 		let removedDataset = this.facade.removeDataset(req.params.id);
-		// 		res.status(200).send({result: removedDataset});
-		// 	} catch (error) {
-		// 		if(error instanceof InsightError) {
-		// 			res.status(400).send({error: error.message});
-		// 		}
-		// 		if(error instanceof NotFoundError) {
-		// 			res.status(404).send({error: error.message});
-		// 		}
-		// 	}
-		// });
-		//
+		// DELETE method route
+		this.express.delete("/dataset/:id", (req, res) => {
+			try {
+				let removedDataset = this.facade.removeDataset(req.params.id);
+				res.status(200).send({result: removedDataset});
+			} catch (error) {
+				if(error instanceof InsightError) {
+					res.status(400).send({error: error.message});
+				}
+				if(error instanceof NotFoundError) {
+					res.status(404).send({error: error.message});
+				}
+			}
+		});
+
 		// // POST method route
 		// this.express.post("/query", (req, res) => {
 		// 	try {
