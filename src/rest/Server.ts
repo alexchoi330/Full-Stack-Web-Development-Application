@@ -2,7 +2,7 @@ import express, {Application, Request, Response} from "express";
 import * as http from "http";
 import cors from "cors";
 import InsightFacade from "../controller/InsightFacade";
-import {InsightDatasetKind, InsightError, NotFoundError} from "../controller/IInsightFacade";
+import {InsightDatasetKind, InsightError, NotFoundError, ResultTooLargeError} from "../controller/IInsightFacade";
 
 export default class Server {
 	private readonly port: number;
@@ -128,7 +128,7 @@ export default class Server {
 				let result = this.facade.performQuery(req.body.query);
 				res.status(200).send({result: result});
 			} catch (error) {
-				if(error instanceof InsightError) {
+				if(error instanceof InsightError || error instanceof ResultTooLargeError) {
 					res.status(400).send({error: error.message});
 				}
 			}
