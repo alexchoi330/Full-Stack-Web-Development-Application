@@ -126,7 +126,7 @@ export default class Server {
 		// POST method route
 		this.express.post("/query", async (req, res) => {
 			try {
-				let result = await this.facade.performQuery(req.body.query);
+				let result = await this.facade.performQuery(req.body);
 				res.status(200).send({result: result});
 			} catch (error) {
 				if (error instanceof InsightError || error instanceof ResultTooLargeError) {
