@@ -1,11 +1,14 @@
 import express, {Application, Request, Response} from "express";
 import * as http from "http";
 import cors from "cors";
+import InsightFacade from "../controller/InsightFacade";
+import {InsightDatasetKind, InsightError, NotFoundError, ResultTooLargeError} from "../controller/IInsightFacade";
 
 export default class Server {
 	private readonly port: number;
 	private express: Application;
 	private server: http.Server | undefined;
+	private facade: InsightFacade;
 
 	constructor(port: number) {
 		console.info(`Server::<init>( ${port} )`);
@@ -14,6 +17,7 @@ export default class Server {
 
 		this.registerMiddleware();
 		this.registerRoutes();
+		this.facade = new InsightFacade();
 
 		// NOTE: you can serve static frontend files in from your express server
 		// by uncommenting the line below. This makes files in ./frontend/public
@@ -80,12 +84,56 @@ export default class Server {
 
 	// Registers all request handlers to routes
 	private registerRoutes() {
-		// This is an example endpoint this you can invoke by accessing this URL in your browser:
-		// http://localhost:4321/echo/hello
-		this.express.get("/echo/:msg", Server.echo);
+		// GET method route
+		this.express.get("/datasets", async (req, res) => {
+			let datasets = await this.facade.listDatasets();
+			res.status(200).send({result: datasets});
+		});
 
-		// TODO: your other endpoints should go here
+		// PUT method route
+		this.express.put("/dataset/:id/:kind", async (req, res) => {
+			let id = req.params.id;
+			let kind = req.params.kind;
+			if (kind === "Courses" || kind === "Rooms") {
+				try {
+					let result = await this.facade.addDataset(id, req.body.content, InsightDatasetKind[kind]);
+					res.status(200).send({result: result});
+				} catch (error) {
+					if (error instanceof InsightError) {
+						res.status(400).send({error: error.message});
+					}
+				}
+			} else {
+				res.status(400).send({error: "Dataset kind not Courses or Rooms"});
+			}
+		});
 
+		// DELETE method route
+		this.express.delete("/dataset/:id", async (req, res) => {
+			try {
+				let removedDataset = await this.facade.removeDataset(req.params.id);
+				res.status(200).send({result: removedDataset});
+			} catch (error) {
+				if (error instanceof InsightError) {
+					res.status(400).send({error: error.message});
+				}
+				if (error instanceof NotFoundError) {
+					res.status(404).send({error: error.message});
+				}
+			}
+		});
+
+		// POST method route
+		this.express.post("/query", async (req, res) => {
+			try {
+				let result = await this.facade.performQuery(req.body);
+				res.status(200).send({result: result});
+			} catch (error) {
+				if (error instanceof InsightError || error instanceof ResultTooLargeError) {
+					res.status(400).send({error: error.message});
+				}
+			}
+		});
 	}
 
 	// The next two methods handle the echo service.
