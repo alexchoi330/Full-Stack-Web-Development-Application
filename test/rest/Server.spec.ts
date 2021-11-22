@@ -4,6 +4,7 @@ import chai, {expect, use} from "chai";
 import chaiHttp from "chai-http";
 import * as fs from "fs-extra";
 import {clearDisk, diskLength} from "../TestUtil";
+import {InsightDatasetKind} from "../../src/controller/IInsightFacade";
 
 describe("Facade D3", function () {
 	this.timeout(20000);
@@ -11,7 +12,7 @@ describe("Facade D3", function () {
 	let server: Server;
 	const datasetContents = new Map<string, any>();
 
-	const datasetsToLoad: {[key: string]: string} = {
+	const datasetsToLoad: { [key: string]: string } = {
 		courses: "./test/resources/archives/courses.zip",
 		coursesInvalidJSON: "./test/resources/archives/coursesInvalidJSON.zip",
 		rooms: "./test/resources/archives/rooms.zip",
@@ -50,7 +51,7 @@ describe("Facade D3", function () {
 
 	// Sample on how to format PUT requests
 
-	describe("PUT tests", function() {
+	describe("PUT tests", function () {
 
 		it("PUT test for courses dataset", function () {
 			const content: string = datasetContents.get("courses") ?? "";
@@ -140,7 +141,7 @@ describe("Facade D3", function () {
 			const content: string = datasetContents.get("courses") ?? "";
 			try {
 				console.log("in test");
-				return chai.request("http://localhost:4321")
+				chai.request("http://localhost:4321")
 					.put("/dataset/courses/Courses")
 					.send(content)
 					.set("Content-Type", "application/x-zip-compressed")
@@ -157,12 +158,6 @@ describe("Facade D3", function () {
 						// some logging here please!
 						expect.fail();
 					});
-			} catch (err) {
-				console.log("outside error");
-				console.log(err);
-				// and some more logging here!
-			}
-			try {
 				console.log("in test2");
 				return chai.request("http://localhost:4321")
 					.put("/dataset/courses2/Courses")
@@ -186,9 +181,154 @@ describe("Facade D3", function () {
 				console.log(err);
 				// and some more logging here!
 			}
+			// try {
+			//
+			// } catch (err) {
+			// 	console.log("outside error");
+			// 	console.log(err);
+			// 	// and some more logging here!
+			// }
 		});
 	});
 
+	describe("GET tests", function () {
+
+		it("GET test for empty dataset", function () {
+			const content: string = datasetContents.get("rooms") ?? "";
+			try {
+				console.log("in test");
+				return chai.request("http://localhost:4321")
+					.get("/datasets")
+					.then(function (res: any) {
+						// some logging here please!
+						console.log("no error");
+						expect(res.status).to.be.equal(200);
+						expect(res.body).to.deep.equal({result: []});
+					})
+					.catch(function (err) {
+						console.log("inside error");
+						console.log(err);
+						// some logging here please!
+						expect.fail();
+					});
+			} catch (err) {
+				console.log("outside error");
+				console.log(err);
+				// and some more logging here!
+			}
+		});
+
+		it("GET test for one dataset", function () {
+			const content: string = datasetContents.get("courses") ?? "";
+			try {
+				console.log("in test");
+				return chai.request("http://localhost:4321")
+					.put("/dataset/courses/Courses")
+					.send(content)
+					.set("Content-Type", "application/x-zip-compressed")
+					.then(function (res: any) {
+						// some logging here please!
+						console.log("no error1");
+						expect(res.status).to.be.equal(200);
+						// console.log(res);
+						expect(res.body).to.deep.equal({result: ["courses"]});
+						return chai.request("http://localhost:4321")
+							.get("/datasets")
+							.then(function (res2: any) {
+								// some logging here please!
+								console.log("no error2");
+								expect(res2.status).to.be.equal(200);
+								// console.log(res);
+								expect(res2.body).to.deep.equal({result: [{
+									id: "courses", kind: InsightDatasetKind.Courses, numRows: 64612,}]});
+							})
+							.catch(function (err) {
+								console.log("inside error");
+								console.log(err);
+								// some logging here please!
+								expect.fail();
+							});
+					})
+					.catch(function (err) {
+						console.log("inside error");
+						console.log(err);
+						// some logging here please!
+						expect.fail();
+					});
+			} catch (err) {
+				console.log("outside error");
+				console.log(err);
+				// and some more logging here!
+			}
+		});
+
+		it("GET test for two datasets", function () {
+			const content: string = datasetContents.get("courses") ?? "";
+			try {
+				console.log("in test");
+				return chai.request("http://localhost:4321")
+					.put("/dataset/courses/Courses")
+					.send(content)
+					.set("Content-Type", "application/x-zip-compressed")
+					.then(function (res: any) {
+						// some logging here please!
+						console.log("no error1");
+						expect(res.status).to.be.equal(200);
+						// console.log(res);
+						expect(res.body).to.deep.equal({result: ["courses"]});
+						const content2: string = datasetContents.get("rooms") ?? "";
+						return chai.request("http://localhost:4321")
+							.put("/dataset/rooms/Rooms")
+							.send(content2)
+							.set("Content-Type", "application/x-zip-compressed")
+							.then(function (res2: any) {
+								// some logging here please!
+								console.log("no error2");
+								expect(res2.status).to.be.equal(200);
+								// console.log(res);
+								expect(res2.body).to.deep.equal({result: ["courses", "rooms"]});
+								return chai.request("http://localhost:4321")
+									.get("/datasets")
+									.then(function (res3: any) {
+										// some logging here please!
+										console.log("no error3");
+										expect(res3.status).to.be.equal(200);
+										// console.log(res);
+										expect(res3.body).to.deep.equal({result: [
+											{id: "courses", kind: InsightDatasetKind.Courses, numRows: 64612,},
+											{id: "rooms", kind: InsightDatasetKind.Rooms, numRows: 364,}]});
+									})
+									.catch(function (err) {
+										console.log("inside error");
+										console.log(err);
+										// some logging here please!
+										expect.fail();
+									});
+							})
+							.catch(function (err) {
+								console.log("inside error");
+								console.log(err);
+								// some logging here please!
+								expect.fail();
+							});
+					})
+					.catch(function (err) {
+						console.log("inside error");
+						console.log(err);
+						// some logging here please!
+						expect.fail();
+					});
+			} catch (err) {
+				console.log("outside error");
+				console.log(err);
+				// and some more logging here!
+			}
+		});
+	});
+
+	describe ("DELETE tests", function () {
+		//
+	});
 
 	// The other endpoints work similarly. You should be able to find all instructions at the chai-http documentation
 });
