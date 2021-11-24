@@ -87,7 +87,7 @@ export default class Server {
 		// GET method route
 		this.express.get("/datasets", async (req, res) => {
 			let datasets = await this.facade.listDatasets();
-			res.status(200).send({result: datasets});
+			res.status(200).json({result: datasets});
 		});
 
 		// PUT method route
@@ -96,15 +96,16 @@ export default class Server {
 			let kind = req.params.kind;
 			if (kind === "Courses" || kind === "Rooms") {
 				try {
-					let result = await this.facade.addDataset(id, req.body.content, InsightDatasetKind[kind]);
-					res.status(200).send({result: result});
+					let content = req.body.toString("base64");
+					let result = await this.facade.addDataset(id, content, InsightDatasetKind[kind]);
+					res.status(200).json({result: result});
 				} catch (error) {
 					if (error instanceof InsightError) {
-						res.status(400).send({error: error.message});
+						res.status(400).json({error: error.message});
 					}
 				}
 			} else {
-				res.status(400).send({error: "Dataset kind not Courses or Rooms"});
+				res.status(400).json({error: "Dataset kind not Courses or Rooms"});
 			}
 		});
 
@@ -112,13 +113,13 @@ export default class Server {
 		this.express.delete("/dataset/:id", async (req, res) => {
 			try {
 				let removedDataset = await this.facade.removeDataset(req.params.id);
-				res.status(200).send({result: removedDataset});
+				res.status(200).json({result: removedDataset});
 			} catch (error) {
 				if (error instanceof InsightError) {
-					res.status(400).send({error: error.message});
+					res.status(400).json({error: error.message});
 				}
 				if (error instanceof NotFoundError) {
-					res.status(404).send({error: error.message});
+					res.status(404).json({error: error.message});
 				}
 			}
 		});
@@ -127,10 +128,10 @@ export default class Server {
 		this.express.post("/query", async (req, res) => {
 			try {
 				let result = await this.facade.performQuery(req.body);
-				res.status(200).send({result: result});
+				res.status(200).json({result: result});
 			} catch (error) {
 				if (error instanceof InsightError || error instanceof ResultTooLargeError) {
-					res.status(400).send({error: error.message});
+					res.status(400).json({error: error.message});
 				}
 			}
 		});
