@@ -89,11 +89,16 @@ export default class Server {
 			let datasets = await this.facade.listDatasets();
 			res.status(200).json({result: datasets});
 		});
-
 		// PUT method route
 		this.express.put("/dataset/:id/:kind", async (req, res) => {
-			let id = req.params.id;
-			let kind = req.params.kind;
+			let [id, kind] = [req.params.id, req.params.kind];
+			if(kind === "courses") {
+				kind = "Courses";
+			} else if(kind === "rooms") {
+				kind = "Rooms";
+			} else {
+				res.status(400).json({error: "Dataset kind not Courses or Rooms"});
+			}
 			if (kind === "Courses" || kind === "Rooms") {
 				try {
 					let content = req.body.toString("base64");
@@ -104,11 +109,8 @@ export default class Server {
 						res.status(400).json({error: error.message});
 					}
 				}
-			} else {
-				res.status(400).json({error: "Dataset kind not Courses or Rooms"});
 			}
 		});
-
 		// DELETE method route
 		this.express.delete("/dataset/:id", async (req, res) => {
 			try {
@@ -123,7 +125,6 @@ export default class Server {
 				}
 			}
 		});
-
 		// POST method route
 		this.express.post("/query", async (req, res) => {
 			try {

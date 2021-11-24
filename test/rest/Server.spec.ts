@@ -58,7 +58,7 @@ describe("Facade D3", function () {
 			try {
 				console.log("in test");
 				return chai.request("http://localhost:4321")
-					.put("/dataset/courses/Courses")
+					.put("/dataset/courses/courses")
 					.send(content)
 					.set("Content-Type", "application/x-zip-compressed")
 					.then(function (res: any) {
@@ -86,7 +86,7 @@ describe("Facade D3", function () {
 			try {
 				console.log("in test");
 				return chai.request("http://localhost:4321")
-					.put("/dataset/courses_Invalid/Courses")
+					.put("/dataset/courses_Invalid/courses")
 					.send(content)
 					.set("Content-Type", "application/x-zip-compressed")
 					.then(function (res: any) {
@@ -114,7 +114,7 @@ describe("Facade D3", function () {
 			try {
 				console.log("in test");
 				return chai.request("http://localhost:4321")
-					.put("/dataset/rooms/Rooms")
+					.put("/dataset/rooms/rooms")
 					.send(content)
 					.set("Content-Type", "application/x-zip-compressed")
 					.then(function (res: any) {
@@ -142,7 +142,7 @@ describe("Facade D3", function () {
 			try {
 				console.log("in test");
 				chai.request("http://localhost:4321")
-					.put("/dataset/courses/Courses")
+					.put("/dataset/courses/courses")
 					.send(content)
 					.set("Content-Type", "application/x-zip-compressed")
 					.then(function (res: any) {
@@ -160,7 +160,7 @@ describe("Facade D3", function () {
 					});
 				console.log("in test2");
 				return chai.request("http://localhost:4321")
-					.put("/dataset/courses2/Courses")
+					.put("/dataset/courses2/courses")
 					.send(content)
 					.set("Content-Type", "application/x-zip-compressed")
 					.then(function (res: any) {
@@ -224,7 +224,7 @@ describe("Facade D3", function () {
 			try {
 				console.log("in test");
 				return chai.request("http://localhost:4321")
-					.put("/dataset/courses/Courses")
+					.put("/dataset/courses/courses")
 					.send(content)
 					.set("Content-Type", "application/x-zip-compressed")
 					.then(function (res: any) {
@@ -271,7 +271,7 @@ describe("Facade D3", function () {
 			try {
 				console.log("in test");
 				return chai.request("http://localhost:4321")
-					.put("/dataset/courses/Courses")
+					.put("/dataset/courses/courses")
 					.send(content)
 					.set("Content-Type", "application/x-zip-compressed")
 					.then(function (res: any) {
@@ -282,7 +282,7 @@ describe("Facade D3", function () {
 						expect(res.body).to.deep.equal({result: ["courses"]});
 						const content2: string = datasetContents.get("rooms") ?? "";
 						return chai.request("http://localhost:4321")
-							.put("/dataset/rooms/Rooms")
+							.put("/dataset/rooms/rooms")
 							.send(content2)
 							.set("Content-Type", "application/x-zip-compressed")
 							.then(function (res2: any) {
@@ -339,7 +339,7 @@ describe("Facade D3", function () {
 			try {
 				console.log("in test");
 				return chai.request("http://localhost:4321")
-					.put("/dataset/courses/Courses")
+					.put("/dataset/courses/courses")
 					.send(content)
 					.set("Content-Type", "application/x-zip-compressed")
 					.then(function (res: any) {
@@ -398,7 +398,7 @@ describe("Facade D3", function () {
 		try {
 			console.log("in test");
 			return chai.request("http://localhost:4321")
-				.put("/dataset/courses/Courses")
+				.put("/dataset/courses/courses")
 				.send(content)
 				.set("Content-Type", "application/x-zip-compressed")
 				.then(function (res: any) {
@@ -469,7 +469,7 @@ describe("Facade D3", function () {
 			try {
 				console.log("in test");
 				return chai.request("http://localhost:4321")
-					.put("/dataset/rooms/Rooms")
+					.put("/dataset/rooms/rooms")
 					.send(content)
 					.set("Content-Type", "application/x-zip-compressed")
 					.then(function (res: any) {
@@ -589,12 +589,234 @@ describe("Facade D3", function () {
 			}
 		});
 
+		it("POST test for two complex query", function () {
+			const content: string = datasetContents.get("rooms") ?? "";
+			try {
+				console.log("in test");
+				return chai.request("http://localhost:4321")
+					.put("/dataset/rooms/rooms")
+					.send(content)
+					.set("Content-Type", "application/x-zip-compressed")
+					.then(function (res: any) {
+						// some logging here please!
+						console.log("no error1");
+						expect(res.status).to.be.equal(200);
+						// console.log(res);
+						expect(res.body).to.deep.equal({result: ["rooms"]});
+						return chai.request("http://localhost:4321")
+							.post("/query")
+							.send({
+
+								WHERE: {
+
+									AND: [{
+
+										IS: {
+
+											rooms_furniture: "*Tables*"
+
+										}
+
+									}, {
+
+										GT: {
+
+											rooms_seats: 300
+
+										}
+
+									}]
+
+								},
+
+								OPTIONS: {
+
+									COLUMNS: [
+
+										"rooms_shortname",
+
+										"maxSeats"
+
+									],
+
+									ORDER: {
+
+										dir: "DOWN",
+
+										keys: ["maxSeats"]
+
+									}
+
+								},
+
+								TRANSFORMATIONS: {
+
+									GROUP: ["rooms_shortname"],
+
+									APPLY: [{
+
+										maxSeats: {
+
+											MAX: "rooms_seats"
+
+										}
+
+									}]
+
+								}
+
+							})
+							.then(function (res2: any) {
+								// some logging here please!
+								console.log("no error2");
+								// console.log(res2.body);
+								expect(res2.status).to.be.equal(200);
+								expect(res2.body).to.deep.equal({
+									result:  [
+										{
+
+											rooms_shortname: "OSBO",
+
+											maxSeats: 442
+
+										},  {
+
+											rooms_shortname: "HEBB",
+
+											maxSeats: 375
+
+										}, {
+
+											rooms_shortname: "LSC",
+
+											maxSeats: 350
+
+										}	]
+								});
+								return chai.request("http://localhost:4321")
+									.post("/query")
+									.send({
+
+										WHERE: {
+
+											AND: [{
+
+												IS: {
+
+													rooms_furniture: "*Tables*"
+
+												}
+
+											}, {
+
+												GT: {
+
+													rooms_seats: 300
+
+												}
+
+											}]
+
+										},
+
+										OPTIONS: {
+
+											COLUMNS: [
+
+												"rooms_shortname",
+
+												"maxSeats"
+
+											],
+
+											ORDER: {
+
+												dir: "DOWN",
+
+												keys: ["maxSeats"]
+
+											}
+
+										},
+
+										TRANSFORMATIONS: {
+
+											GROUP: ["rooms_shortname"],
+
+											APPLY: [{
+
+												maxSeats: {
+
+													MAX: "rooms_seats"
+
+												}
+
+											}]
+
+										}
+
+									})
+									.then(function (res3: any) {
+										// some logging here please!
+										console.log("no error2");
+										// console.log(res2.body);
+										expect(res3.status).to.be.equal(200);
+										expect(res3.body).to.deep.equal({
+											result:  [
+												{
+
+													rooms_shortname: "OSBO",
+
+													maxSeats: 442
+
+												},  {
+
+													rooms_shortname: "HEBB",
+
+													maxSeats: 375
+
+												}, {
+
+													rooms_shortname: "LSC",
+
+													maxSeats: 350
+
+												}	]
+										});
+									})
+									.catch(function (err) {
+										console.log("inside error");
+										console.log(err);
+										// some logging here please!
+										expect.fail();
+									});
+							})
+							.catch(function (err) {
+								console.log("inside error");
+								console.log(err);
+								// some logging here please!
+								expect.fail();
+							});
+					})
+					.catch(function (err) {
+						console.log("inside error");
+						console.log(err);
+						// some logging here please!
+						expect.fail();
+					});
+			} catch (err) {
+				console.log("outside error");
+				console.log(err);
+				// and some more logging here!
+			}
+		});
+
 		it("POST test for complex invalid query", function () {
 			const content: string = datasetContents.get("rooms") ?? "";
 			try {
 				console.log("in test");
 				return chai.request("http://localhost:4321")
-					.put("/dataset/rooms/Rooms")
+					.put("/dataset/rooms/rooms")
 					.send(content)
 					.set("Content-Type", "application/x-zip-compressed")
 					.then(function (res: any) {
