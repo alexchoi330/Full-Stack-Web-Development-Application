@@ -81,7 +81,7 @@ describe("Facade D3", function () {
 			}
 		});
 
-		it("PUT test for invalid courses dataset", function () {
+		it("PUT test for invalid courses dataset MAIN INVALID", function () {
 			const content: string = datasetContents.get("courses") ?? "";
 			try {
 				console.log("in test");
@@ -137,7 +137,7 @@ describe("Facade D3", function () {
 			}
 		});
 
-		it("PUT test for two courses dataset", function () {
+		it("PUT test for two courses dataset MAIN PUT TEST", function () {
 			const content: string = datasetContents.get("courses") ?? "";
 			try {
 				console.log("in test");
@@ -202,6 +202,7 @@ describe("Facade D3", function () {
 					.then(function (res: any) {
 						// some logging here please!
 						console.log("no error");
+						console.log(res.body);
 						expect(res.status).to.be.equal(200);
 						expect(res.body).to.deep.equal({result: []});
 					})
@@ -239,8 +240,11 @@ describe("Facade D3", function () {
 								console.log("no error2");
 								expect(res2.status).to.be.equal(200);
 								// console.log(res);
-								expect(res2.body).to.deep.equal({result: [{
-									id: "courses", kind: InsightDatasetKind.Courses, numRows: 64612,}]});
+								expect(res2.body).to.deep.equal({
+									result: [{
+										id: "courses", kind: InsightDatasetKind.Courses, numRows: 64612,
+									}]
+								});
 							})
 							.catch(function (err) {
 								console.log("inside error");
@@ -262,7 +266,7 @@ describe("Facade D3", function () {
 			}
 		});
 
-		it("GET test for two datasets", function () {
+		it("GET test for two datasets MAIN GET TEST", function () {
 			const content: string = datasetContents.get("courses") ?? "";
 			try {
 				console.log("in test");
@@ -294,9 +298,11 @@ describe("Facade D3", function () {
 										console.log("no error3");
 										expect(res3.status).to.be.equal(200);
 										// console.log(res);
-										expect(res3.body).to.deep.equal({result: [
-											{id: "courses", kind: InsightDatasetKind.Courses, numRows: 64612,},
-											{id: "rooms", kind: InsightDatasetKind.Rooms, numRows: 364,}]});
+										expect(res3.body).to.deep.equal({
+											result: [
+												{id: "courses", kind: InsightDatasetKind.Courses, numRows: 64612,},
+												{id: "rooms", kind: InsightDatasetKind.Rooms, numRows: 364,}]
+										});
 									})
 									.catch(function (err) {
 										console.log("inside error");
@@ -326,9 +332,366 @@ describe("Facade D3", function () {
 		});
 	});
 
-	describe ("DELETE tests", function () {
-		//
+	describe("DELETE tests", function () {
+
+		it("DELETE test for one dataset", function () {
+			const content: string = datasetContents.get("courses") ?? "";
+			try {
+				console.log("in test");
+				return chai.request("http://localhost:4321")
+					.put("/dataset/courses/Courses")
+					.send(content)
+					.set("Content-Type", "application/x-zip-compressed")
+					.then(function (res: any) {
+						// some logging here please!
+						console.log("no error1");
+						expect(res.status).to.be.equal(200);
+						// console.log(res);
+						expect(res.body).to.deep.equal({result: ["courses"]});
+						return chai.request("http://localhost:4321")
+							.delete("/dataset/courses")
+							.then(function (res2: any) {
+								// some logging here please!
+								console.log("no error2");
+								expect(res2.status).to.be.equal(200);
+								// console.log(res);
+								expect(res2.body).to.deep.equal({result: "courses"});
+								return chai.request("http://localhost:4321")
+									.get("/datasets")
+									.then(function (res3: any) {
+										// some logging here please!
+										console.log("no error3");
+										expect(res3.status).to.be.equal(200);
+										// console.log(res);
+										expect(res3.body).to.deep.equal({result: []});
+									})
+									.catch(function (err) {
+										console.log("inside error");
+										console.log(err);
+										// some logging here please!
+										expect.fail();
+									});
+							})
+							.catch(function (err) {
+								console.log("inside error");
+								console.log(err);
+								// some logging here please!
+								expect.fail();
+							});
+					})
+					.catch(function (err) {
+						console.log("inside error");
+						console.log(err);
+						// some logging here please!
+						expect.fail();
+					});
+			} catch (err) {
+				console.log("outside error");
+				console.log(err);
+				// and some more logging here!
+			}
+		});
 	});
 
+	it("DELETE test with InsightError", function () {
+		const content: string = datasetContents.get("courses") ?? "";
+		try {
+			console.log("in test");
+			return chai.request("http://localhost:4321")
+				.put("/dataset/courses/Courses")
+				.send(content)
+				.set("Content-Type", "application/x-zip-compressed")
+				.then(function (res: any) {
+					// some logging here please!
+					console.log("no error1");
+					expect(res.status).to.be.equal(200);
+					// console.log(res);
+					expect(res.body).to.deep.equal({result: ["courses"]});
+					return chai.request("http://localhost:4321")
+						.delete("/dataset/cour_ses")
+						.then(function (res2: any) {
+							// some logging here please!
+							console.log("no error2");
+							expect(res2.status).to.be.equal(400);
+							console.log(res2.body);
+							// expect(res2.body).to.deep.equal({result: "courses"});
+						})
+						.catch(function (err) {
+							console.log("inside error");
+							console.log(err);
+							// some logging here please!
+							expect.fail();
+						});
+				})
+				.catch(function (err) {
+					console.log("inside error");
+					console.log(err);
+					// some logging here please!
+					expect.fail();
+				});
+		} catch (err) {
+			console.log("outside error");
+			console.log(err);
+			// and some more logging here!
+		}
+	});
+
+	it("DELETE test with NotFoundError", function () {
+		const content: string = datasetContents.get("courses") ?? "";
+		try {
+			console.log("in test");
+			return chai.request("http://localhost:4321")
+				.delete("/dataset/courses")
+				.then(function (res2: any) {
+					// some logging here please!
+					console.log("no error2");
+					expect(res2.status).to.be.equal(404);
+					console.log(res2.body);
+					// expect(res2.body).to.deep.equal({result: "courses"});
+				})
+				.catch(function (err) {
+					console.log("inside error");
+					console.log(err);
+					// some logging here please!
+					expect.fail();
+				});
+		} catch (err) {
+			console.log("outside error");
+			console.log(err);
+			// and some more logging here!
+		}
+	});
+
+	describe("POST tests", function () {
+
+		it("POST test for complex query", function () {
+			const content: string = datasetContents.get("rooms") ?? "";
+			try {
+				console.log("in test");
+				return chai.request("http://localhost:4321")
+					.put("/dataset/rooms/Rooms")
+					.send(content)
+					.set("Content-Type", "application/x-zip-compressed")
+					.then(function (res: any) {
+						// some logging here please!
+						console.log("no error1");
+						expect(res.status).to.be.equal(200);
+						// console.log(res);
+						expect(res.body).to.deep.equal({result: ["rooms"]});
+						return chai.request("http://localhost:4321")
+							.post("/query")
+							.send({
+
+								WHERE: {
+
+									AND: [{
+
+										IS: {
+
+											rooms_furniture: "*Tables*"
+
+										}
+
+									}, {
+
+										GT: {
+
+											rooms_seats: 300
+
+										}
+
+									}]
+
+								},
+
+								OPTIONS: {
+
+									COLUMNS: [
+
+										"rooms_shortname",
+
+										"maxSeats"
+
+									],
+
+									ORDER: {
+
+										dir: "DOWN",
+
+										keys: ["maxSeats"]
+
+									}
+
+								},
+
+								TRANSFORMATIONS: {
+
+									GROUP: ["rooms_shortname"],
+
+									APPLY: [{
+
+										maxSeats: {
+
+											MAX: "rooms_seats"
+
+										}
+
+									}]
+
+								}
+
+							})
+							.then(function (res2: any) {
+								// some logging here please!
+								console.log("no error2");
+								// console.log(res2.body);
+								expect(res2.status).to.be.equal(200);
+								expect(res2.body).to.deep.equal({
+									result:  [
+										{
+
+											rooms_shortname: "OSBO",
+
+											maxSeats: 442
+
+										},  {
+
+											rooms_shortname: "HEBB",
+
+											maxSeats: 375
+
+										}, {
+
+											rooms_shortname: "LSC",
+
+											maxSeats: 350
+
+										}	]
+								});
+							})
+							.catch(function (err) {
+								console.log("inside error");
+								console.log(err);
+								// some logging here please!
+								expect.fail();
+							});
+					})
+					.catch(function (err) {
+						console.log("inside error");
+						console.log(err);
+						// some logging here please!
+						expect.fail();
+					});
+			} catch (err) {
+				console.log("outside error");
+				console.log(err);
+				// and some more logging here!
+			}
+		});
+
+		it("POST test for complex invalid query", function () {
+			const content: string = datasetContents.get("rooms") ?? "";
+			try {
+				console.log("in test");
+				return chai.request("http://localhost:4321")
+					.put("/dataset/rooms/Rooms")
+					.send(content)
+					.set("Content-Type", "application/x-zip-compressed")
+					.then(function (res: any) {
+						// some logging here please!
+						console.log("no error1");
+						expect(res.status).to.be.equal(200);
+						// console.log(res);
+						expect(res.body).to.deep.equal({result: ["rooms"]});
+						return chai.request("http://localhost:4321")
+							.post("/query")
+							.send({
+
+								WHERE: {
+
+									AND: [{
+
+										IS: {
+
+											rooms_furniture: "*Tables*"
+
+										}
+
+									}, {
+
+										GT: {
+
+											rooms_seats: 300
+
+										}
+
+									}]
+
+								},
+
+								OPTIONS: {
+
+									COLUMNS: [
+
+										"room_shortname",
+
+										"maxSeats"
+
+									],
+
+									ORDER: {
+
+										dir: "DOWN",
+
+										keys: ["maxSeats"]
+
+									}
+
+								},
+
+								TRANSFORMATIONS: {
+
+									GROUP: ["rooms_shortname"],
+
+									APPLY: [{
+
+										maxSeats: {
+
+											MAX: "rooms_seats"
+
+										}
+
+									}]
+
+								}
+
+							})
+							.then(function (res2: any) {
+								// some logging here please!
+								console.log("no error2");
+								console.log(res2.body);
+								expect(res2.status).to.be.equal(400);
+								// expect(res2.body).to.deep.equal({result:  []});
+							})
+							.catch(function (err) {
+								console.log("inside error");
+								console.log(err);
+								// some logging here please!
+								expect.fail();
+							});
+					})
+					.catch(function (err) {
+						console.log("inside error");
+						console.log(err);
+						// some logging here please!
+						expect.fail();
+					});
+			} catch (err) {
+				console.log("outside error");
+				console.log(err);
+				// and some more logging here!
+			}
+		});
+	});
 	// The other endpoints work similarly. You should be able to find all instructions at the chai-http documentation
 });
