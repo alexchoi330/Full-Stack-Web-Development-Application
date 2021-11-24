@@ -84,33 +84,30 @@ export default class Server {
 
 	// Registers all request handlers to routes
 	private registerRoutes() {
+
 		// GET method route
 		this.express.get("/datasets", async (req, res) => {
 			let datasets = await this.facade.listDatasets();
 			res.status(200).json({result: datasets});
 		});
+
 		// PUT method route
 		this.express.put("/dataset/:id/:kind", async (req, res) => {
-			let [id, kind] = [req.params.id, req.params.kind];
-			if(kind === "courses") {
-				kind = "Courses";
-			} else if(kind === "rooms") {
-				kind = "Rooms";
+			let id = req.params.id;
+			let kind = req.params.kind === "courses" ? InsightDatasetKind.Courses : InsightDatasetKind.Rooms;
+			if (kind === InsightDatasetKind.Courses || kind === InsightDatasetKind.Rooms) {
+				try {
+					let content = req.body.toString("base64");
+					let result = await this.facade.addDataset(id, content, kind);
+					res.status(200).json({result: result});
+				} catch (error) {
+					res.status(400).json({error: "Error in PUT"});
+				}
 			} else {
 				res.status(400).json({error: "Dataset kind not Courses or Rooms"});
 			}
-			if (kind === "Courses" || kind === "Rooms") {
-				try {
-					let content = req.body.toString("base64");
-					let result = await this.facade.addDataset(id, content, InsightDatasetKind[kind]);
-					res.status(200).json({result: result});
-				} catch (error) {
-					if (error instanceof InsightError) {
-						res.status(400).json({error: error.message});
-					}
-				}
-			}
 		});
+
 		// DELETE method route
 		this.express.delete("/dataset/:id", async (req, res) => {
 			try {
@@ -119,21 +116,21 @@ export default class Server {
 			} catch (error) {
 				if (error instanceof InsightError) {
 					res.status(400).json({error: error.message});
-				}
-				if (error instanceof NotFoundError) {
+				} else if (error instanceof NotFoundError) {
 					res.status(404).json({error: error.message});
+				} else {
+					res.status(400).json({error: "Error in DELETE"});
 				}
 			}
 		});
+
 		// POST method route
 		this.express.post("/query", async (req, res) => {
 			try {
 				let result = await this.facade.performQuery(req.body);
 				res.status(200).json({result: result});
 			} catch (error) {
-				if (error instanceof InsightError || error instanceof ResultTooLargeError) {
-					res.status(400).json({error: error.message});
-				}
+				res.status(400).json({error: "Error in POST"});
 			}
 		});
 	}
