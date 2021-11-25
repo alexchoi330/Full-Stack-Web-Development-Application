@@ -2,24 +2,50 @@
 <html>
 	<head>
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
-		<title>CPSC 310 Team 109</title>
+		<title>CPSC 310 Team 109 Project</title>
 		<link href="/style.css" rel="stylesheet" />
+		<h1 class="pagetitle">Team 109's Project</h1>
 
 	</head>
 	<body>
 
 		<link rel="preconnect" href="https://fonts.gstatic.com">
 		<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-		<form>
+
+		<form action="index.html" method="get">
 			<div>
-				<label class="textinput">Professor Fullname</label>
-				<input class="textinput">
+				<label for="name" class="textinput">Professor Fullname</label>
+			</div>
+			<div>
+				<input id="name" class="textinput" placeholder="Professor's name" required name="profName">
 			</div>
 			<br>
 			<div>
 				<button id="search" class="button">Search</button>
 			</div>
 		</form>
+
+		<br>
+
+		<form action="index.html" method="get">
+			<div>
+				<label for="name1" class="userTwoInput">Courses Department</label>
+			</div>
+			<div>
+				<input id="name1" class="userTwoInput" placeholder="Department name" required>
+			</div>
+			<div>
+				<label for="name2" class="userTwoInput2">Courses ID</label>
+			</div>
+			<div>
+				<input id="name2" class="userTwoInput2" placeholder="ID" required>
+			</div>
+			<br>
+			<div>
+				<button id="search" class="button">Search</button>
+			</div>
+		</form>
+
 			<br><br><br><br><br><br>
 
 			<script type="text/javascript" src="/frontend.js"></script>

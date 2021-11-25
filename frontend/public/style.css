@@ -15,10 +15,29 @@
 	cursor: pointer;
 }
 
+.pagetitle {
+	font-family: "DM Sans", sans-serif;
+	margin-right: 85px;
+}
+
 .textinput {
 	font-family: "DM Sans", sans-serif;
 	font-size: 36px;
+	margin-left: 1px;
 }
+
+.userTwoInput {
+	font-family: "DM Sans", sans-serif;
+	font-size: 36px;
+	margin-left: 100px;
+}
+
+.userTwoInput2 {
+	font-family: "DM Sans", sans-serif;
+	font-size: 36px;
+	margin-left: 100px;
+}
+
 
 body {
 	display: flex;
@@ -51,7 +70,8 @@ button::after {
 	--slice-4: inset(40% -6px 43% 0);
 	--slice-5: inset(80% -6px 5% 0);
 
-	content: 'PROJECT';
+
+	content: 'ENEMY';
 	display: block;
 	position: absolute;
 	top: 0;

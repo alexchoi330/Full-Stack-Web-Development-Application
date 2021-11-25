@@ -1,4 +1,4 @@
-document.getElementById("search").addEventListener("click", handleSearch);
+document.getElementById("search").addEventListener("submit", handleSearch);
 document.getElementById("click-me-button1").addEventListener("click", handleClickMe);
 document.getElementById("click-me-button2").addEventListener("click", handleClickMe);
 document.getElementById("prof_fullname").addEventListener("focus", handleTyping);
@@ -12,5 +12,6 @@ function handleTyping() {
 }
 
 function handleSearch() {
-	alert("results..")
+	alert("results are in the next page")
+
 }
