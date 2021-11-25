@@ -1,36 +1,16 @@
 {
-	"title": "SELECT courses dept, instructor, count of titles, sum of pass, WHERE dept is 'adhe', group by dept and instructor",
+	"title": "c1 semantic checking 1",
 	"input":{
 		"WHERE": {
-			"IS": {
-				"courses_dept": "adhe"
+			"GT": {
+				"courses_avg": 98.6
 			}
 		},
 		"OPTIONS": {
 			"COLUMNS": [
-				"courses_dept",
-				"courses_instructor",
-				"overallCount",
-				"overallCount"
-			]
-		},
-		"TRANSFORMATIONS": {
-			"GROUP": [
-				"courses_dept",
-				"courses_instructor"
+				"courses_dept"
 			],
-			"APPLY": [
-				{
-					"overallCount": {
-						"COUNT": "courses_title"
-					}
-				},
-				{
-					"overallCount": {
-						"COUNT": "courses_title"
-					}
-				}
-			]
+			"ORDER": "courses_avg"
 		}
 	},
 	"errorExpected": true}

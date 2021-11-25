@@ -1,5 +1,5 @@
 {
-	"title": "SELECT courses dept, instructor, count of titles, sum of pass, WHERE dept is 'adhe', group by dept and instructor",
+	"title": "c1 semantic checking 2",
 	"input":{
 		"WHERE": {
 			"GT": {
@@ -8,7 +8,8 @@
 		},
 		"OPTIONS": {
 			"COLUMNS": [
-				"courses_dept"
+				"course_dept",
+				"courses_avg"
 			],
 			"ORDER": "courses_avg"
 		}

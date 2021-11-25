@@ -2,36 +2,45 @@
 	"title": "c1 valid query, id_datasetkey, id is not same",
 	"input":{
 		"WHERE": {
-			"IS": {
-				"courses_dept": "adhe"
+			"GT": {
+				"rooms_seats": 250
 			}
 		},
 		"OPTIONS": {
 			"COLUMNS": [
-				"courses_dept",
-				"courses_instructor",
+				"rooms_fullname",
+				"rooms_seats",
+				"rooms_furniture",
 				"overallCount",
-				"overallCount"
-			]
+				"overallSum"
+			],
+			"ORDER": {
+				"dir": "UP",
+				"keys": [
+					"rooms_seats"
+				]
+			}
 		},
 		"TRANSFORMATIONS": {
 			"GROUP": [
-				"courses_dept",
-				"courses_instructor"
+				"rooms_fullname",
+				"rooms_seats",
+				"rooms_furniture"
 			],
 			"APPLY": [
 				{
 					"overallCount": {
-						"MAX": "courses_avg"
+						"COUNT": "rooms_furniture"
 					}
 				},
 				{
-					"overallCount": {
-						"COUNT": "courses_title"
+					"overallSum": {
+						"SUM": "rooms_seats"
 					}
 				}
 			]
 		}
 	},
-	"errorExpected": true
+	"errorExpected": false,
+	"with": [{"rooms_fullname":"Hennings","rooms_seats":257,"rooms_furniture":"Classroom-Fixed Tablets","overallCount":1,"overallSum":257},{"rooms_fullname":"Henry Angus","rooms_seats":260,"rooms_furniture":"Classroom-Fixed Tables/Movable Chairs","overallCount":1,"overallSum":260},{"rooms_fullname":"Chemistry","rooms_seats":265,"rooms_furniture":"Classroom-Fixed Tablets","overallCount":1,"overallSum":265},{"rooms_fullname":"Buchanan","rooms_seats":275,"rooms_furniture":"Classroom-Fixed Tablets","overallCount":1,"overallSum":275},{"rooms_fullname":"Neville Scarfe","rooms_seats":280,"rooms_furniture":"Classroom-Fixed Tablets","overallCount":1,"overallSum":280},{"rooms_fullname":"Student Recreation Centre","rooms_seats":299,"rooms_furniture":"Classroom-Movable Tables & Chairs","overallCount":1,"overallSum":897},{"rooms_fullname":"Wesbrook","rooms_seats":325,"rooms_furniture":"Classroom-Fixed Tablets","overallCount":1,"overallSum":325},{"rooms_fullname":"Earth Sciences Building","rooms_seats":350,"rooms_furniture":"Classroom-Fixed Tablets","overallCount":1,"overallSum":350},{"rooms_fullname":"Life Sciences Centre","rooms_seats":350,"rooms_furniture":"Classroom-Fixed Tables/Movable Chairs","overallCount":1,"overallSum":700},{"rooms_fullname":"Hebb","rooms_seats":375,"rooms_furniture":"Classroom-Fixed Tables/Fixed Chairs","overallCount":1,"overallSum":375},{"rooms_fullname":"Centre for Interactive  Research on Sustainability","rooms_seats":426,"rooms_furniture":"Classroom-Fixed Tablets","overallCount":1,"overallSum":426},{"rooms_fullname":"Robert F. Osborne Centre","rooms_seats":442,"rooms_furniture":"Classroom-Movable Tables & Chairs","overallCount":1,"overallSum":442},{"rooms_fullname":"Woodward (Instructional Resources Centre-IRC)","rooms_seats":503,"rooms_furniture":"Classroom-Fixed Tablets","overallCount":1,"overallSum":503}]
 }

@@ -1,5 +1,5 @@
 {
-	"title": "c1 semantic checking 2",
+	"title": "c1 valid query, id_datasetkey, id is not same",
 	"input":{
 		"WHERE": {
 			"GT": {
@@ -8,7 +8,7 @@
 		},
 		"OPTIONS": {
 			"COLUMNS": [
-				"course_dept",
+				"rooms_seats",
 				"courses_avg"
 			],
 			"ORDER": "courses_avg"
