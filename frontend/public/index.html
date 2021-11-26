@@ -9,19 +9,25 @@
 	</head>
 	<body>
 
+	<audio class="player" controls>
+		<source src="enemy.mp3" type="audio/mp3">
+	</audio>
+
 		<link rel="preconnect" href="https://fonts.gstatic.com">
 		<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 
+
 		<form action="index.html" method="get">
+
 			<div>
-				<label for="name" class="textinput">Professor Fullname</label>
+				<label for="prof_fullname" class="textinput">Professor Fullname</label>
 			</div>
 			<div>
-				<input id="name" class="textinput" placeholder="Professor's name" required name="profName">
+				<input id="prof_fullname" class="textinput" placeholder="Professor's name" required name="courses_instructor">
 			</div>
 			<br>
 			<div>
-				<button id="search" class="button">Search</button>
+				<button id="searchCourses" class="button">Search</button>
 			</div>
 		</form>
 
@@ -32,17 +38,17 @@
 				<label for="name1" class="userTwoInput">Courses Department</label>
 			</div>
 			<div>
-				<input id="name1" class="userTwoInput" placeholder="Department name" required>
+				<input id="name1" class="userTwoInput" placeholder="Department name" required name="deptName">
 			</div>
 			<div>
 				<label for="name2" class="userTwoInput2">Courses ID</label>
 			</div>
 			<div>
-				<input id="name2" class="userTwoInput2" placeholder="ID" required>
+				<input id="name2" class="userTwoInput2" placeholder="ID" required name="courseID">
 			</div>
 			<br>
 			<div>
-				<button id="search" class="button">Search</button>
+				<button id="searchAVG" class="button">Search</button>
 			</div>
 		</form>
 

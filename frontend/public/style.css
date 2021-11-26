@@ -15,6 +15,14 @@
 	cursor: pointer;
 }
 
+.player {
+position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-209%, 60%);
+
+}
+
 .pagetitle {
 	font-family: "DM Sans", sans-serif;
 	margin-right: 85px;
