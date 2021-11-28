@@ -12,16 +12,9 @@ function handleSearchCourses() {
 		headers: {'Content-Type': 'application/json'},
 		body:JSON.stringify({
 			WHERE: {
-				"AND" : [{
-					"IS": {
-						"courses_instructor": iname
-					}
-				},
-					{
-						"GT": {
-							"courses_avg": 80
-						}
-					}]
+				"IS": {
+					"courses_instructor": iname
+				}
 			},
 			OPTIONS: {
 				COLUMNS: [
@@ -47,6 +40,11 @@ function handleSearchCourses() {
 			var tblBody = document.createElement("tbody");
 			var thead = document.createElement('thead');
 			const resultG = JSON.stringify(jsonResult.result);
+			if (JSON.parse(resultG).length <= 0) {
+				document.write("no courses found for professor " + iname)
+			} else {
+				document.write("Professor "+iname+" has taught: ")
+			}
 			const cols = ["courses_title", "courses_year", "courses_id", "courses_dept"];
 			const headers = ["Course Name", "Course Title", "Course Year"];
 			tbl.appendChild(thead);
@@ -97,8 +95,8 @@ function handleSearchCourses() {
 			// tbl border attribute to
 			tbl.setAttribute("border", "2");
 		});
-
-	document.write("Professor "+iname+" has taught: ")
+	document.write("User Story 2:")
+	document.write("<br>");
 }
 function handleSearchAVG() {
 	// get courses' dept name and ID
