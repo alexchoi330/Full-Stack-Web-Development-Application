@@ -128,39 +128,52 @@ function handleSearchAVG() {
 			}
 		})
 	}).then(response => response.json())
-		.then(json => {
-			//document.write(JSON.stringify(json))
-			var resultF = Object.values(json);
-			//document.write(JSON.stringify(resultF));
-			var resultD = JSON.stringify(resultF);
-			console.log(resultD)
-			document.write("<br>")
-			//document.write(resultD);
-			//var address = (JSON.stringify(json));
-			//console.log(address);
-			//document.write(address)
-			document.write("<br>")
-			console.log(Object.values(resultF));
+		.then(jsonResult => {
+			//body reference
+			var body = document.getElementsByTagName("body")[0];
 
-			createTable();
-			resultF.forEach(vayne => {
-				for (let value in vayne) {
-					finalL = `${JSON.stringify(Object.values(vayne[value]))}`
-					document.write(finalL);
-					document.write("<br>")
+			// create elements <table> and a <tbody>
+			var tbl = document.createElement("table");
+			var tblBody = document.createElement("tbody");
+			var thead = document.createElement('thead');
+			const resultG = JSON.stringify(jsonResult.result);
+			const cols = ["courses_instructor", "courses_id", "courses_avg", "courses_dept"];
+			const headers = ["Instructor", "ID", "AVG", "Deptartment"];
+			tbl.appendChild(thead);
+
+			for(let i = 0; i < headers.length;i++){
+				thead.appendChild(document.createElement("th")).
+				appendChild(document.createTextNode(headers[i]));
+			}
+
+			// cells creation
+			for (let j = 0; j < JSON.parse(resultG).length; j++) {
+				// table row creation
+				const row = document.createElement("tr");
+
+				for (let i = 0; i < cols.length; i++) {
+					// create element <td> and text node
+					//Make text node the contents of <td> element
+					// put <td> at end of the table row
+					let val = JSON.parse(resultG)[j][cols[i]];
+					const cell = document.createElement("td");
+					const cellText = document.createTextNode(val);
+
+					cell.appendChild(cellText);
+					row.appendChild(cell);
 				}
+
+				//row added to end of table body
+				tblBody.appendChild(row);
 			}
-			)
-			function createTable() {
-				var table = document.createElement("table")
-				let row = "";
-				table.style.border = '1px solid black';
-				row += "<tr><th>Instructor</th><th>ID</th><th>Average</th<th>Department</th></tr>"
-				table.innerHTML = row;
-				document.body.append(table);
-			}
-			}
-		)
+
+			// append the <tbody> inside the <table>
+			tbl.appendChild(tblBody);
+			// put <table> in the <body>
+			body.appendChild(tbl);
+			// tbl border attribute to
+			tbl.setAttribute("border", "2");
+		})
 	document.write("Complete, user story 2 result =")
 }
 
