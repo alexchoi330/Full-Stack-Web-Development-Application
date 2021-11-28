@@ -19,7 +19,7 @@ function handleSearchCourses() {
 				},
 					{
 						"GT": {
-							"courses_avg": 95
+							"courses_avg": 80
 						}
 					}]
 			},
@@ -48,7 +48,7 @@ function handleSearchCourses() {
 			var thead = document.createElement('thead');
 			const resultG = JSON.stringify(jsonResult.result);
 			const cols = ["courses_title", "courses_year", "courses_id", "courses_dept"];
-			const headers = ["Title", "Year", "ID", "Deptartment"];
+			const headers = ["Course Name", "Course Title", "Course Year"];
 			tbl.appendChild(thead);
 
 			for(let i = 0; i < headers.length;i++){
@@ -60,18 +60,31 @@ function handleSearchCourses() {
 			for (let j = 0; j < JSON.parse(resultG).length; j++) {
 				// table row creation
 				const row = document.createElement("tr");
+				// create element <td> and text node
+				// Make text node the contents of <td> element
+				// put <td> at end of the table row
+				let courseName = JSON.parse(resultG)[j][cols[3]] + " " + JSON.parse(resultG)[j][cols[2]];
+				let courseTitle = JSON.parse(resultG)[j][cols[0]]
+				let courseYear = JSON.parse(resultG)[j][cols[1]]
 
-				for (let i = 0; i < cols.length; i++) {
-					// create element <td> and text node
-					//Make text node the contents of <td> element
-					// put <td> at end of the table row
-					let val = JSON.parse(resultG)[j][cols[i]];
-					const cell = document.createElement("td");
-					const cellText = document.createTextNode(val);
-
-					cell.appendChild(cellText);
-					row.appendChild(cell);
+				// if we have empty cell just skip it
+				if(courseName === "" || courseTitle === "") {
+					continue;
 				}
+				const courseNameCell = document.createElement("td");
+				const courseNameText = document.createTextNode(courseName);
+				courseNameCell.appendChild(courseNameText);
+				row.appendChild(courseNameCell);
+
+				const courseTitleCell = document.createElement("td");
+				const courseTitleText = document.createTextNode(courseTitle);
+				courseTitleCell.appendChild(courseTitleText);
+				row.appendChild(courseTitleCell);
+
+				const courseYearCell = document.createElement("td");
+				const courseYearText = document.createTextNode(courseYear);
+				courseYearCell.appendChild(courseYearText);
+				row.appendChild(courseYearCell);
 
 				//row added to end of table body
 				tblBody.appendChild(row);
