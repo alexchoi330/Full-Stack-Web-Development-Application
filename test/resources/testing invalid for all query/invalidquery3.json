@@ -1,0 +1,17 @@
+{
+	"title": "c1 valid query, id_datasetkey, id is not same",
+	"input":{
+		"WHERE": {
+			"GT": {
+				"courses_avg": 98.6
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"rooms_seats",
+				"courses_avg"
+			],
+			"ORDER": "courses_avg"
+		}
+	},
+	"errorExpected": true}
