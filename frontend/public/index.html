@@ -5,6 +5,14 @@
 		<title>CPSC 310 Team 109 Project</title>
 		<link href="/style.css" rel="stylesheet" />
 		<h1 class="pagetitle">Team 109's Project</h1>
+		<style>
+			body {
+				background-image: url('arcane.jpg');
+				background-repeat: no-repeat;
+				background-attachment: fixed;
+				background-size: cover;
+			}
+		</style>
 
 	</head>
 	<body>
@@ -17,13 +25,12 @@
 		<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 
 
-		<form action="index.html" method="get">
-
+		<form>
 			<div>
 				<label for="prof_fullname" class="textinput">Professor Fullname</label>
 			</div>
 			<div>
-				<input id="prof_fullname" class="textinput" placeholder="Professor's name" required name="courses_instructor">
+				<input id="prof_fullname" class="textinput" placeholder="Professor's name" required>
 			</div>
 			<br>
 			<div>
@@ -33,18 +40,18 @@
 
 		<br>
 
-		<form action="index.html" method="get">
+		<form>
 			<div>
 				<label for="name1" class="userTwoInput">Courses Department</label>
 			</div>
 			<div>
-				<input id="name1" class="userTwoInput" placeholder="Department name" required name="deptName">
+				<input id="name1" class="userTwoInput" placeholder="Department name" required >
 			</div>
 			<div>
 				<label for="name2" class="userTwoInput2">Courses ID</label>
 			</div>
 			<div>
-				<input id="name2" class="userTwoInput2" placeholder="ID" required name="courseID">
+				<input type="number" id="name2" class="userTwoInput2" placeholder="ID" required >
 			</div>
 			<br>
 			<div>

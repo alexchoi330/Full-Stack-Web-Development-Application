@@ -24,23 +24,27 @@ position: absolute;
 }
 
 .pagetitle {
+	color: #3f51b5;
 	font-family: "DM Sans", sans-serif;
 	margin-right: 85px;
 }
 
 .textinput {
+	color: #3f51b5;
 	font-family: "DM Sans", sans-serif;
 	font-size: 36px;
 	margin-left: 1px;
 }
 
 .userTwoInput {
+	color: #3f51b5;
 	font-family: "DM Sans", sans-serif;
 	font-size: 36px;
 	margin-left: 100px;
 }
 
 .userTwoInput2 {
+	color: #3f51b5;
 	font-family: "DM Sans", sans-serif;
 	font-size: 36px;
 	margin-left: 100px;
