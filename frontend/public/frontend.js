@@ -3,9 +3,14 @@ document.getElementById("searchAVG").addEventListener("click", handleSearchAVG);
 document.getElementById("prof_fullname").addEventListener("focus", handleTyping);
 document.getElementById("name1").addEventListener("focus", handleTyping1);
 document.getElementById("name2").addEventListener("focus", handleTyping2);
+const format = /^[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/;
 
 function handleSearchCourses() {
 	var iname = document.getElementById("prof_fullname").value;
+	if(!iname.replace(/\s/g, '').length || format.test(iname)) {
+		alert("Please Enter a valid Professor Name")
+		return;
+	}
 	alert("Searching for courses taught by professor: "+iname)
 	const address = fetch("http://localhost:4321/query", {
 		method: "POST",
@@ -105,6 +110,10 @@ function handleSearchAVG() {
 
 	var dname = document.getElementById("name1").value;
 	var cid = document.getElementById("name2").value;
+	if(!dname.replace(/\s/g, '').length || format.test(dname) || !cid.replace(/\s/g, '').length) {
+		alert("Please Enter a valid Course")
+		return;
+	}
 	alert("Searching for courses with department: "+dname+" and course id: "+cid)
 
 	fetch("http://localhost:4321/query", {
@@ -148,8 +157,13 @@ function handleSearchAVG() {
 			var tblBody = document.createElement("tbody");
 			var thead = document.createElement('thead');
 			const resultG = JSON.stringify(jsonResult.result);
+			if (JSON.parse(resultG).length <= 0) {
+				document.write("no classes found for " + dname + " " + cid)
+			} else {
+				document.write("Classes found for " + dname + " " + cid)
+			}
 			const cols = ["courses_instructor", "courses_id", "courses_avg", "courses_dept"];
-			const headers = ["Instructor", "ID", "AVG", "Deptartment"];
+			const headers = ["Course Name", "Course Instructor", "Course Average"];
 			tbl.appendChild(thead);
 
 			for(let i = 0; i < headers.length;i++){
@@ -162,17 +176,31 @@ function handleSearchAVG() {
 				// table row creation
 				const row = document.createElement("tr");
 
-				for (let i = 0; i < cols.length; i++) {
-					// create element <td> and text node
-					//Make text node the contents of <td> element
-					// put <td> at end of the table row
-					let val = JSON.parse(resultG)[j][cols[i]];
-					const cell = document.createElement("td");
-					const cellText = document.createTextNode(val);
+				// create element <td> and text node
+				// Make text node the contents of <td> element
+				// put <td> at end of the table row
+				let courseName = JSON.parse(resultG)[j][cols[3]] + " " + JSON.parse(resultG)[j][cols[1]];
+				let courseInstructor = JSON.parse(resultG)[j][cols[0]]
+				let courseAvg = JSON.parse(resultG)[j][cols[2]]
 
-					cell.appendChild(cellText);
-					row.appendChild(cell);
+				// if we have empty cell just skip it
+				if(courseName === "" || courseInstructor === "") {
+					continue;
 				}
+				const courseNameCell = document.createElement("td");
+				const courseNameText = document.createTextNode(courseName);
+				courseNameCell.appendChild(courseNameText);
+				row.appendChild(courseNameCell);
+
+				const courseInstructorCell = document.createElement("td");
+				const courseInstructorText = document.createTextNode(courseInstructor);
+				courseInstructorCell.appendChild(courseInstructorText);
+				row.appendChild(courseInstructorCell);
+
+				const courseAvgCell = document.createElement("td");
+				const courseAvgText = document.createTextNode(courseAvg);
+				courseAvgCell.appendChild(courseAvgText);
+				row.appendChild(courseAvgCell);
 
 				//row added to end of table body
 				tblBody.appendChild(row);
@@ -185,7 +213,8 @@ function handleSearchAVG() {
 			// tbl border attribute to
 			tbl.setAttribute("border", "2");
 		})
-	document.write("Complete, user story 2 result =")
+	document.write("User Story 3:")
+	document.write("<br>");
 }
 
 function createTable(data) {
