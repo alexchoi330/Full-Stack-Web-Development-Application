@@ -100,7 +100,7 @@ function handleSearchCourses() {
 			// tbl border attribute to
 			tbl.setAttribute("border", "2");
 		});
-	document.write("User Story 2:")
+	// document.write("User Story 2:")
 	document.write("<br>");
 }
 function handleSearchAVG() {
@@ -158,7 +158,7 @@ function handleSearchAVG() {
 			var thead = document.createElement('thead');
 			const resultG = JSON.stringify(jsonResult.result);
 			if (JSON.parse(resultG).length <= 0) {
-				document.write("no classes found for " + dname + " " + cid)
+				document.write("<font color=\"red\">no classes found, check your input and try again</font>")
 			} else {
 				document.write("Classes found for " + dname + " " + cid)
 			}
@@ -213,7 +213,7 @@ function handleSearchAVG() {
 			// tbl border attribute to
 			tbl.setAttribute("border", "2");
 		})
-	document.write("User Story 3:")
+	// document.write("User Story 3:")
 	document.write("<br>");
 }
 
