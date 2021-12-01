@@ -84,11 +84,14 @@ export default class Server {
 
 	// Registers all request handlers to routes
 	private registerRoutes() {
-
 		// GET method route
 		this.express.get("/datasets", async (req, res) => {
-			let datasets = await this.facade.listDatasets();
-			res.status(200).json({result: datasets});
+			try {
+				let datasets = await this.facade.listDatasets();
+				res.status(200).json({result: datasets});
+			} catch (error) {
+				res.status(400).json({error: "Error in GET"});
+			}
 		});
 
 		// PUT method route
