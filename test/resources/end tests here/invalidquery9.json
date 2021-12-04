@@ -1,0 +1,37 @@
+{
+	"title": "testing course id",
+	"input": {
+		"WHERE": {
+			"GT": {
+				"courses_audit": 15
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"maxyear",
+				"courses_avg",
+				"courses_id"
+			],
+			"ORDER": {
+				"dir": "DOWN",
+				"keys": [
+					"courses_id"
+				]
+			}
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"courses_avg",
+				"courses_id"
+			],
+			"APPLY": [
+				{
+					"maxyear": {
+						"MAX": "courses_year"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": false,
+	"with": [{"maxyear":2015,"courses_avg":90.53,"courses_id":"540"},{"maxyear":2013,"courses_avg":85.56,"courses_id":"530"},{"maxyear":1900,"courses_avg":88,"courses_id":"509"},{"maxyear":1900,"courses_avg":87.26,"courses_id":"507"},{"maxyear":1900,"courses_avg":87.14,"courses_id":"505"},{"maxyear":1900,"courses_avg":87,"courses_id":"505"},{"maxyear":1900,"courses_avg":77.65,"courses_id":"503"},{"maxyear":1900,"courses_avg":86,"courses_id":"503"},{"maxyear":1900,"courses_avg":88.79,"courses_id":"501"},{"maxyear":1900,"courses_avg":86.89,"courses_id":"501"}]}

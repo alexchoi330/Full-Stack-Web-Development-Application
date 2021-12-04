@@ -1,0 +1,22 @@
+{
+	"title": "print empty array, checks for dept=zxc, show uuid, id, year, avg, order by avg",
+	"input":{
+		"WHERE":
+		{
+			"IS": {
+				"courses_dept": "zxc"
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_uuid",
+				"courses_id",
+				"courses_year",
+				"courses_avg"
+			],
+			"ORDER": "courses_avg"
+		}
+	},
+	"errorExpected": false,
+	"with": []
+}

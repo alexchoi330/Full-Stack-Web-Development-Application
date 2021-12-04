@@ -1,0 +1,46 @@
+{
+  "title": "geo wildcard test + avg of lat/lon test",
+  "input": {
+	  "WHERE":
+	  {
+		  "OR":
+		  [
+			  {
+				  "IS": {
+					  "rooms_fullname": "C*"
+				  }
+			  },
+			  {
+				  "IS": {
+					  "rooms_fullname": "H*"
+				  }
+			  }
+		  ]
+	  },
+	  "OPTIONS": {
+		  "COLUMNS": [
+			  "rooms_fullname",
+			  "AVGlat",
+			  "AVGlon"
+		  ]
+	  },
+	  "TRANSFORMATIONS": {
+		  "GROUP": [
+			  "rooms_fullname"
+		  ],
+		  "APPLY": [
+			  {
+				  "AVGlat": {
+					  "AVG": "rooms_lat"
+				  }
+			  },
+			  {
+				  "AVGlon": {
+					  "AVG": "rooms_lon"
+				  }
+			  }
+		  ]
+	  }
+  },
+  "errorExpected": false,
+  "with": [{"rooms_fullname":"Centre for Interactive  Research on Sustainability","AVGlat":49.26,"AVGlon":-123.25},{"rooms_fullname":"Chemical and Biological Engineering Building","AVGlat":49.26,"AVGlon":-123.25},{"rooms_fullname":"Chemistry","AVGlat":49.27,"AVGlon":-123.25},{"rooms_fullname":"Civil and Mechanical Engineering","AVGlat":49.26,"AVGlon":-123.25},{"rooms_fullname":"Hebb","AVGlat":49.27,"AVGlon":-123.25},{"rooms_fullname":"Hennings","AVGlat":49.27,"AVGlon":-123.25},{"rooms_fullname":"Henry Angus","AVGlat":49.26,"AVGlon":-123.25},{"rooms_fullname":"Hugh Dempster Pavilion","AVGlat":49.26,"AVGlon":-123.25}]}

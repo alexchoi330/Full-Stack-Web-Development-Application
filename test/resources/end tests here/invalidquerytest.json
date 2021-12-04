@@ -1,0 +1,29 @@
+{
+	"title": "group by  audit tests ",
+	"input":{
+		"WHERE": {
+
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"maxyear",
+				"courses_audit"
+			],
+			"ORDER": "maxyear"
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"courses_audit"
+			],
+			"APPLY": [
+				{
+					"maxyear": {
+						"MAX": "courses_year"
+					}
+				}
+			]
+		}
+	},
+	"errorExpected": false,
+"with": [{"maxyear":1900,"courses_audit":13},{"maxyear":1900,"courses_audit":14},{"maxyear":1900,"courses_audit":15},{"maxyear":1900,"courses_audit":17},{"maxyear":1900,"courses_audit":20},{"maxyear":1900,"courses_audit":21},{"maxyear":1900,"courses_audit":23},{"maxyear":2007,"courses_audit":12},{"maxyear":2010,"courses_audit":8},{"maxyear":2013,"courses_audit":19},{"maxyear":2014,"courses_audit":6},{"maxyear":2014,"courses_audit":7},{"maxyear":2015,"courses_audit":9},{"maxyear":2015,"courses_audit":10},{"maxyear":2015,"courses_audit":11},{"maxyear":2015,"courses_audit":18},{"maxyear":2016,"courses_audit":0},{"maxyear":2016,"courses_audit":1},{"maxyear":2016,"courses_audit":2},{"maxyear":2016,"courses_audit":3},{"maxyear":2016,"courses_audit":4},{"maxyear":2016,"courses_audit":5}]
+}
