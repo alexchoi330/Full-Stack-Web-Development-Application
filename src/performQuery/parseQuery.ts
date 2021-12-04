@@ -98,6 +98,17 @@ export function logicComparisonHelper (key: string, queryList: Array<Map<string,
 	throw new InsightError("should not be here");
 }
 
+function getCourseID(columns: string[]): string {
+	for (const column in columns) {
+		// console.log(columns[column]);
+		if (columns[column].includes("_")) {
+			return columns[column].split("_", 1)[0];
+		}
+	}
+	return "";
+}
+
+
 export function checkOptions (query: any, names: any[]): string {
 	let orderBool = false;
 	if (!(Object.prototype.hasOwnProperty.call(query, "COLUMNS"))) {
@@ -110,7 +121,8 @@ export function checkOptions (query: any, names: any[]): string {
 	}
 	let columns = query["COLUMNS"] as string[];
 	let order = query["ORDER"] as any;
-	let courseID = columns[0].split("_", 1)[0];
+	let courseID = getCourseID(columns);
+	// console.log(courseID);
 	for (const column in columns) {
 		if (names.length !== 0 && !names.includes(columns[column])) {
 			throw new InsightError("column name is not in transformations");

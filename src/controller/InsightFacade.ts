@@ -185,13 +185,21 @@ export default class InsightFacade implements IInsightFacade {
 		checkOptions(optionObj, columnCheck(transformationsObj));
 		let whereReturn;
 		if (Object.keys(whereObj).length === 0) {
-			this.currentDatasetID = optionObj["COLUMNS"][0].split("_", 1)[0];
+			// this.currentDatasetID = optionObj["COLUMNS"][0].split("_", 1)[0];
 			whereReturn = new Map(this.datasetContents.get(this.currentDatasetID) as Map<string, any[]>);
 		} else if (Object.keys(whereObj).length > 1) {
 			return Promise.reject(new InsightError("Too many objects in WHERE"));
 		} else {
 			whereReturn = whereParse(this.datasetContents, this.currentDatasetID, whereObj);
 		}
+		if (whereReturn.size === 0) {
+			return Promise.resolve([]);
+		}
+		return this.performQueryCont(transformations, optionObj, anyKeys, whereReturn, apply, transformationsObj);
+	}
+
+	private performQueryCont(transformations: boolean, optionObj: any,
+		anyKeys: any[], whereReturn: Map<string, any[]>, apply: any[], transformationsObj: any) {
 		let columnsCopy: any[] = [];
 		if (transformations) {
 			columnsCopy = [...optionObj["COLUMNS"]];
