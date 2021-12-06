@@ -1,0 +1,25 @@
+{
+	"title": "SELECT dept, avg WHERE avg not < 98.8",
+	"input": {
+		"WHERE": {
+			"IS": {
+				"courses_dept": "adhe"
+			}
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_dept",
+				"courses_instructor"
+			]
+		},
+		"TRANSFORMATIONS": {
+			"GROUP": [
+				"courses_dept",
+				"courses_instructor"
+			],
+			"APPLY": [
+			]
+		}
+	},
+	"errorExpected": false,
+"with": [{"courses_dept":"adhe","courses_instructor":""},{"courses_dept":"adhe","courses_instructor":"smulders, dave"},{"courses_dept":"adhe","courses_instructor":"palacios, carolina"},{"courses_dept":"adhe","courses_instructor":"walker, judith"},{"courses_dept":"adhe","courses_instructor":"regmi, kapil"},{"courses_dept":"adhe","courses_instructor":"crisfield, erin"},{"courses_dept":"adhe","courses_instructor":"elfert, maren"},{"courses_dept":"adhe","courses_instructor":"chan, jennifer"},{"courses_dept":"adhe","courses_instructor":"vanwynsberghe, robert"},{"courses_dept":"adhe","courses_instructor":"bishundayal, deonarine"},{"courses_dept":"adhe","courses_instructor":"aijazi, omer"},{"courses_dept":"adhe","courses_instructor":"palacios, carolina;sork, thomas joda"},{"courses_dept":"adhe","courses_instructor":"wilson, mary"},{"courses_dept":"adhe","courses_instructor":"butterwick, shauna;jubas, kaela"},{"courses_dept":"adhe","courses_instructor":"falk, clifford"}]}

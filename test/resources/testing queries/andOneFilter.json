@@ -1,0 +1,22 @@
+{
+	"title": "SELECT dept, avg WHERE avg not < 98.8",
+	"input": {
+		"WHERE": {
+			"AND": [
+				{
+					"GT": {
+						"courses_avg": 99
+					}
+				}
+			]
+		},
+		"OPTIONS": {
+			"COLUMNS": [
+				"courses_id",
+				"courses_avg"
+			],
+			"ORDER": "courses_avg"
+		}
+	},
+	"errorExpected": false,
+	"with": [{"courses_id":"574","courses_avg":99.19},{"courses_id":"527","courses_avg":99.78},{"courses_id":"527","courses_avg":99.78}]}
